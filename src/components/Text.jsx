@@ -13,7 +13,7 @@ export default function TrylleLanding() {
       </p>
 
       <p className="text-black mt-10 text-xl font-semibold">
-        We’re now inviting select brands to join our launch. Register today!
+        We’re now inviting  brands to join our launch. Register today!
       </p>
 
       {/* Updated Button */}
