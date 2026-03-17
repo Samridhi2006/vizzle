@@ -76,7 +76,7 @@ function Homesection({ launchingRef, aboutRef, setIsFormOpen }) {
             
 
             <a
-              href="https://app.vizzle.in"
+              href="https://play.google.com/store/apps/details?id=app.vercel.vizzle_pwa.twa&pcampaignid=web_share"
               target="_blank"
               rel="noopener noreferrer"
               className={`flex items-center gap-2 px-3 py-3 rounded-full shadow-lg border sm:px-4 ${
