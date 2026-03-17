@@ -81,15 +81,6 @@ function Navbar({ launchingRef, setIsFormOpen }) {
             Download Now
           </a>
 
-          {/* Download App */}
-          <a
-            href="https://app.vizzle.in"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 px-4 py-3 rounded-full bg-[#1D8DB2] text-white text-xs shadow-md"
-          >
-            Download App
-          </a>
         </div>
       </nav>
     </header>
