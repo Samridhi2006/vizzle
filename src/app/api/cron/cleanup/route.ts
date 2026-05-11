@@ -5,9 +5,9 @@ import { deleteCloudinaryImages } from "@/lib/server/cloudinary";
 /**
  * GET /api/cron/cleanup
  *
- * Invoked every hour by Vercel Cron (see vercel.json).
- * Deletes expired temporary Cloudinary assets (shopper photos + try-on outputs)
- * that are older than 1 hour, then marks them as deleted in the DB.
+ * Invoked once daily at 03:00 UTC by Vercel Cron (see vercel.json).
+ * Deletes any remaining expired temp Cloudinary assets not already cleaned up
+ * by the lazy cleanup that runs on each /api/v1/upload call.
  *
  * Protected by CRON_SECRET so it cannot be triggered by random callers.
  */

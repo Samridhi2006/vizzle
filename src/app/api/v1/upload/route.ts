@@ -5,6 +5,7 @@ import { assertWidgetCors } from "@/server/cors";
 import { corsHeaders, handleApiError } from "@/server/http";
 import { uploadImageBuffer } from "@/lib/server/cloudinary";
 import { prisma } from "@/lib/server/prisma";
+import { cleanupExpiredAssets } from "@/lib/server/cleanup";
 
 const ALLOWED_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 const MAX_BYTES      = 10 * 1024 * 1024; // 10 MB
@@ -68,6 +69,10 @@ export async function POST(request: NextRequest) {
         expiresAt: new Date(Date.now() + TTL_MS),
       },
     }).catch(() => {}); // cleanup tracking is best-effort
+
+    // Fire-and-forget: clean up expired assets in the background.
+    // This supplements the daily Vercel cron (Hobby plan limit).
+    cleanupExpiredAssets();
 
     return NextResponse.json({ url }, { status: 200, headers: corsHeaders(origin) });
   } catch (error) {
