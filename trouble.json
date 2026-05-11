@@ -1,0 +1,72 @@
+{
+  "updated": "2026-05-11T2",
+  "summary": "Try-on flow: start + poll /status/. Key fix: catch AbortError in checkImageTryOnStatus so polls don't crash the route.",
+
+  "current_architecture": {
+    "flow": [
+      "1. POST /api/v1/upload       → Cloudinary → { url }",
+      "2. POST /api/v1/tryon        → ML POST /api/virtual-try-on/ → { prediction_id }  (up to 90s for cold start)",
+      "3. GET /api/v1/tryon/status/{id} → ML GET /api/virtual-try-on/status/{id} → { status, output_url }",
+      "   Client polls step 3 every 3s until status=succeeded"
+    ]
+  },
+
+  "latest_fix": {
+    "problem": "{error: 'This operation was aborted'} — AbortController killed request before ML responded",
+    "causes": [
+      "startVirtualTryOn had 30s timeout but Render cold start takes 30-60s → abort at 30s",
+      "getTryonStatus had 15s timeout — if Render was briefly slow, abort killed it",
+      "AbortError in checkImageTryOnStatus was uncaught → threw 500 error to client → polling showed error instead of continuing"
+    ],
+    "fixes": [
+      "startVirtualTryOn timeout: 30s → 90s",
+      "getTryonStatus timeout: 15s → 30s",
+      "mlFetch now retries on AbortError (up to 2 retries) before throwing",
+      "AbortError wrapped in human-readable message instead of raw 'This operation was aborted'",
+      "checkImageTryOnStatus catches ALL errors and returns {status:'processing'} so client keeps polling instead of crashing",
+      "Test page now shows detailed live log for every HTTP call and response"
+    ]
+  },
+
+  "timeout_settings": {
+    "startVirtualTryOn":  "90s (POST to start ML job — Render cold start can be 60s)",
+    "getTryonStatus":     "30s (GET /status/ — instant when warm, 10-20s if Render just woke)",
+    "mlFetch retries":    "up to 2 retries on AbortError and TypeError, 2s delay between",
+    "test page polling":  "every 3s, max 80 polls = 4 min"
+  },
+
+  "field_mapping": {
+    "ML backend returns": "TransformResponse { id, status, output, error, model_used }",
+    "Our API returns":    "{ status, output_url, error, model_used }",
+    "mapping": "raw.output (string|array|null) → extractOutputUrl() → output_url (string|null)"
+  },
+
+  "ml_backend_payload": {
+    "what_we_send": {
+      "human_img": "Cloudinary URL of shopper photo",
+      "garm_img": "Cloudinary URL of product/garment image from DB",
+      "garment_type": "auto_detect",
+      "use_vision": true,
+      "params": { "category": "upper_body", "steps": 20 }
+    },
+    "what_ml_expects": {
+      "human_img": "string URL ✓",
+      "garm_img": "string URL ✓",
+      "garment_type": "GarmentType enum ✓ (auto_detect is valid)",
+      "use_vision": "boolean ✓",
+      "params": "IDMVTONParams { garment_des, category, mask_img, crop, force_dc, mask_only, steps, seed } ✓"
+    },
+    "verdict": "Payload matches schema. ML POST returns prediction_id successfully."
+  },
+
+  "debugging": {
+    "how_to_debug": [
+      "1. Open /test page, run try-on, watch the Live Log panel",
+      "2. Log shows every HTTP call with status code and response body",
+      "3. Also check Next.js server console for [tryon] and [ml-client] lines",
+      "4. If Poll shows 'Status check failed: ML backend timed out' → Render is slow, keep waiting",
+      "5. If Poll shows status=processing for 4+ min → ML model may be stuck, check Render logs"
+    ],
+    "warm_render_first": "curl https://vizzle-backend-vvc6.onrender.com/health"
+  }
+}

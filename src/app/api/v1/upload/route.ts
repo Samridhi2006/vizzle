@@ -4,24 +4,27 @@ import { withRateLimit } from "@/server/middleware/withRateLimit";
 import { assertWidgetCors } from "@/server/cors";
 import { corsHeaders, handleApiError } from "@/server/http";
 import { uploadImageBuffer } from "@/lib/server/cloudinary";
+import { prisma } from "@/lib/server/prisma";
 
 const ALLOWED_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
-const MAX_BYTES = 10 * 1024 * 1024; // 10 MB
+const MAX_BYTES      = 10 * 1024 * 1024; // 10 MB
+const TTL_MS         = 60 * 60 * 1000;   // 1 hour
 
 /**
  * POST /api/v1/upload
  *
- * Called by the brand's widget when a shopper selects their photo.
- * Uploads the photo to Cloudinary and returns a public URL so the
- * widget can immediately pass it to POST /api/v1/tryon.
+ * Widget step 1: shopper picks a photo → brand's script sends it here.
+ * We upload to our Cloudinary temp folder and return a public URL.
+ * The URL is then passed to POST /api/v1/tryon.
+ * Temp assets are auto-deleted after 1 hour by /api/cron/cleanup.
  *
- * Auth   : x-api-key header (brand's vzk_ key)
- * Body   : multipart/form-data  { photo: File }
+ * Auth:    x-api-key  (brand's vzk_ key)
+ * Body:    multipart/form-data  { photo: File }
  * Returns: { url: string }
  */
 export async function POST(request: NextRequest) {
   try {
-    const store = await withApiKey(request);
+    const store  = await withApiKey(request);
     const origin = await assertWidgetCors(request, store.id);
     withRateLimit(`upload:${store.id}`);
 
@@ -37,7 +40,7 @@ export async function POST(request: NextRequest) {
 
     if (!ALLOWED_TYPES.includes(file.type)) {
       return NextResponse.json(
-        { error: `Unsupported file type: ${file.type}. Use JPEG, PNG or WebP.` },
+        { error: `Unsupported type: ${file.type}. Use JPEG, PNG or WebP.` },
         { status: 400, headers: corsHeaders(origin) }
       );
     }
@@ -50,8 +53,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Store under a per-store folder so each brand's usage is isolated
-    const url = await uploadImageBuffer(buffer, `vizzle/user-photos/${store.id}`);
+    // Upload to a dedicated temp folder — never mixed with permanent product images
+    const { url, publicId } = await uploadImageBuffer(
+      buffer,
+      `vizzle/tryon-temp/${store.id}`
+    );
+
+    // Track for automatic cleanup after 1 hour
+    await prisma.tempAsset.create({
+      data: {
+        publicId,
+        folder:    "tryon-temp",
+        storeId:   store.id,
+        expiresAt: new Date(Date.now() + TTL_MS),
+      },
+    }).catch(() => {}); // cleanup tracking is best-effort
 
     return NextResponse.json({ url }, { status: 200, headers: corsHeaders(origin) });
   } catch (error) {

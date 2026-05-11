@@ -30,10 +30,22 @@ interface CreateForm {
   domain: string;
 }
 
+const LS_KEY = (storeId: string) => `vizzle_apikey_${storeId}`;
+
+function saveKeyToStorage(storeId: string, fullKey: string) {
+  try { localStorage.setItem(LS_KEY(storeId), fullKey); } catch { /* ignore */ }
+}
+function loadKeyFromStorage(storeId: string): string | null {
+  try { return localStorage.getItem(LS_KEY(storeId)); } catch { return null; }
+}
+function clearKeyFromStorage(storeId: string) {
+  try { localStorage.removeItem(LS_KEY(storeId)); } catch { /* ignore */ }
+}
+
 export default function StoresPage() {
   const [createOpen, setCreateOpen] = useState(false);
   const [createdApiKey, setCreatedApiKey] = useState<string | null>(null);
-  const [rotatedApiKey, setRotatedApiKey] = useState<string | null>(null);
+  const [rotatedApiKeysByStore, setRotatedApiKeysByStore] = useState<Record<string, string>>({});
   const [copied, setCopied] = useState<string | null>(null);
 
   const { data, isLoading, error } = useStoresQuery();
@@ -55,6 +67,8 @@ export default function StoresPage() {
     try {
       const res = await createMutation.mutateAsync(values);
       setCreatedApiKey(res.api_key);
+      // Persist so copy button works after page refresh
+      if (res.store_id) saveKeyToStorage(res.store_id, res.api_key);
       setCreateOpen(false);
       reset();
       addToast({ tone: "success", title: "Store created — copy your API key below!" });
@@ -70,14 +84,25 @@ export default function StoresPage() {
   async function onRotate(storeId: string) {
     try {
       const res = await rotateMutation.mutateAsync(storeId);
-      setRotatedApiKey(res.new_api_key);
-      addToast({ tone: "success", title: "API key rotated" });
+      setRotatedApiKeysByStore((prev) => ({ ...prev, [storeId]: res.new_api_key }));
+      // Overwrite old stored key — old one is now invalid
+      saveKeyToStorage(storeId, res.new_api_key);
+      addToast({ tone: "success", title: "API key rotated — copy it from the banner below" });
     } catch (err) {
       addToast({
         tone: "error",
         title: "Failed to rotate key",
         message: err instanceof Error ? err.message : "Please try again.",
       });
+    }
+  }
+
+  function copyFullKey(storeId: string) {
+    const full = rotatedApiKeysByStore[storeId] ?? loadKeyFromStorage(storeId);
+    if (full) {
+      copy(full);
+    } else {
+      addToast({ tone: "error", title: "Full key not available — click Rotate key to generate a new one" });
     }
   }
 
@@ -129,23 +154,6 @@ export default function StoresPage() {
               className="shrink-0 text-emerald-700 hover:text-emerald-900"
             >
               {copied === createdApiKey ? <Check size={14} /> : <Copy size={14} />}
-            </button>
-          </div>
-        </div>
-      )}
-
-      {rotatedApiKey && (
-        <div className="rounded-xl border border-amber-200 bg-amber-50 p-4">
-          <p className="mb-2 text-sm font-semibold text-amber-800">
-            New API key — old key is now invalid, save this immediately
-          </p>
-          <div className="flex items-center gap-2 rounded-lg border border-amber-300 bg-white px-3 py-2">
-            <code className="flex-1 break-all text-xs text-gray-800">{rotatedApiKey}</code>
-            <button
-              onClick={() => copy(rotatedApiKey)}
-              className="shrink-0 text-amber-700 hover:text-amber-900"
-            >
-              {copied === rotatedApiKey ? <Check size={14} /> : <Copy size={14} />}
             </button>
           </div>
         </div>
@@ -261,6 +269,18 @@ export default function StoresPage() {
                     <span className="inline-flex items-center gap-1 font-mono">
                       <Key size={12} />
                       {maskApiKey(store.active_key_prefix)}
+                      <button
+                        type="button"
+                        onClick={() => copyFullKey(store.store_id)}
+                        title="Copy full API key"
+                        className="ml-1 inline-flex items-center justify-center rounded-md p-1 text-gray-400 hover:bg-brand-50 hover:text-gray-700 transition-colors"
+                      >
+                        {copied === (rotatedApiKeysByStore[store.store_id] ?? loadKeyFromStorage(store.store_id)) ? (
+                          <Check size={12} />
+                        ) : (
+                          <Copy size={12} />
+                        )}
+                      </button>
                     </span>
                   </div>
                 </div>
@@ -279,6 +299,31 @@ export default function StoresPage() {
                   <RefreshCw size={14} /> Rotate key
                 </Button>
               </div>
+
+              {/* Per-store rotated key banner (shown after rotate/copy) */}
+              {rotatedApiKeysByStore[store.store_id] && (
+                <div className="border-t border-amber-200 bg-amber-50 p-4">
+                  <p className="mb-2 text-sm font-semibold text-amber-800">
+                    New API key for <span className="font-bold">{store.store_name}</span> — old key is now invalid
+                  </p>
+                  <div className="flex items-center gap-2 rounded-lg border border-amber-300 bg-white px-3 py-2">
+                    <code className="flex-1 break-all text-xs text-gray-800">
+                      {rotatedApiKeysByStore[store.store_id]}
+                    </code>
+                    <button
+                      onClick={() => copy(rotatedApiKeysByStore[store.store_id])}
+                      className="shrink-0 text-amber-700 hover:text-amber-900"
+                      title="Copy"
+                    >
+                      {copied === rotatedApiKeysByStore[store.store_id] ? (
+                        <Check size={14} />
+                      ) : (
+                        <Copy size={14} />
+                      )}
+                    </button>
+                  </div>
+                </div>
+              )}
             </Card>
           ))}
         </div>

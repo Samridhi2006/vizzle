@@ -5,12 +5,59 @@ import { ApiError } from "@/server/errors";
 const widgetCorsCache = new Map<string, { domain: string; expiresAt: number }>();
 const WIDGET_CORS_TTL_MS = 60_000;
 
+/**
+ * Normalise whatever the brand typed into the domain field so we always
+ * compare bare hostnames:
+ *   "https://shop.acme.com"  →  "shop.acme.com"
+ *   "shop.acme.com:3000"     →  "shop.acme.com"
+ *   "shop.acme.com/path"     →  "shop.acme.com"
+ *   "localhost"              →  "localhost"
+ */
+function normalizeStoreDomain(raw: string): string {
+  const s = raw.trim().toLowerCase();
+  if (!s) return "";
+  try {
+    if (s.includes("://")) return new URL(s).hostname.toLowerCase();
+  } catch {
+    // fall through
+  }
+  return (s.split("/")[0] ?? s).split(":")[0]?.trim() ?? s;
+}
+
+/**
+ * Returns true if the request origin hostname matches the stored domain.
+ *
+ * Rules:
+ *  • Exact match after normalisation (covers 99% of production cases)
+ *  • localhost ↔ 127.0.0.1 (convenience for local dev)
+ *  • Stored domain "*.acme.com" matches any subdomain of acme.com
+ */
+function originMatchesDomain(hostname: string, storedDomain: string): boolean {
+  const normalized = normalizeStoreDomain(storedDomain);
+
+  if (hostname === normalized) return true;
+
+  // localhost / loopback equivalence (dev only)
+  if (
+    (normalized === "localhost" || normalized === "127.0.0.1") &&
+    (hostname === "localhost" || hostname === "127.0.0.1")
+  ) {
+    return true;
+  }
+
+  // Wildcard subdomain: stored domain "*.acme.com"
+  if (normalized.startsWith("*.")) {
+    const base = normalized.slice(2); // "acme.com"
+    if (hostname === base || hostname.endsWith(`.${base}`)) return true;
+  }
+
+  return false;
+}
+
 export function getDashboardAllowedOrigins(): string[] {
-  // Default includes production domain + local dev.
-  // Override via DASHBOARD_CORS_ORIGINS env var (comma-separated).
   const raw =
     process.env.DASHBOARD_CORS_ORIGINS ??
-    "https://dashboard.vizzle.in,http://localhost:3001";
+    "https://dashboard.vizzle.in,http://localhost:3000";
   return raw
     .split(",")
     .map((s) => s.trim())
@@ -32,7 +79,13 @@ export async function assertWidgetCors(
   storeId: string
 ): Promise<string> {
   const origin = request.headers.get("origin");
-  if (!origin) throw new ApiError(403, "Missing Origin header");
+
+  // No Origin header = server-to-server call (cURL, Postman, server-side fetch).
+  // These are fine — they don't need CORS, just the API key.
+  if (!origin) {
+    const store = await prisma.store.findUnique({ where: { id: storeId }, select: { domain: true } });
+    return store?.domain ?? "*";
+  }
 
   let hostname: string;
   try {
@@ -51,13 +104,24 @@ export async function assertWidgetCors(
   });
   if (!store) throw new ApiError(403, "Store not found");
 
-  const normalized = store.domain.toLowerCase();
-  if (hostname !== normalized) {
-    throw new ApiError(403, "Origin not allowed for this store");
+  // Local widget QA: relax domain check on loopback (API key still authenticates the store).
+  if (hostname === "localhost" || hostname === "127.0.0.1") {
+    widgetCorsCache.set(cacheKey, {
+      domain: normalizeStoreDomain(store.domain),
+      expiresAt: Date.now() + WIDGET_CORS_TTL_MS,
+    });
+    return origin;
+  }
+
+  if (!originMatchesDomain(hostname, store.domain)) {
+    throw new ApiError(
+      403,
+      `Origin "${hostname}" not allowed. Add "${hostname}" as the store domain in Dashboard → Stores.`
+    );
   }
 
   widgetCorsCache.set(cacheKey, {
-    domain: normalized,
+    domain: normalizeStoreDomain(store.domain),
     expiresAt: Date.now() + WIDGET_CORS_TTL_MS,
   });
 

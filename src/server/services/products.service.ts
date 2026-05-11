@@ -49,7 +49,8 @@ export async function createOrUpdateProduct(input: {
 
   let imageUrl = input.imageUrl;
   if (!imageUrl && input.imageFileBuffer) {
-    imageUrl = await uploadImageBuffer(input.imageFileBuffer);
+    const result = await uploadImageBuffer(input.imageFileBuffer);
+    imageUrl = result.url;
   }
   if (!imageUrl) {
     throw new ApiError(400, "image or image_url is required");

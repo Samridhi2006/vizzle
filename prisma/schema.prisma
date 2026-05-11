@@ -90,3 +90,17 @@ model TryonLog {
   @@index([storeId, success])
   @@index([vizzleProductId])
 }
+
+// Tracks temporary Cloudinary uploads (shopper photos + try-on results).
+// Cleaned up hourly by /api/cron/cleanup.
+model TempAsset {
+  id        String   @id @default(cuid())
+  publicId  String   @unique   // Cloudinary public_id — used for deletion
+  folder    String             // "tryon-temp" | "tryon-output"
+  storeId   String
+  expiresAt DateTime
+  deleted   Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([expiresAt, deleted])
+}

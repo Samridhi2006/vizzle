@@ -12,38 +12,66 @@ function IC({ children }: { children: string }) {
   return <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs text-gray-800">{children}</code>;
 }
 
-// ── snippet builders ─────────────────────────────────────────────────────────
+// ── snippet builders (2-call flow: upload → tryon → output_url) ──────────────
 
 function makeCurl(base: string, key: string, sku: string) {
-  return `curl -X POST ${base}/api/v1/tryon \\
+  return `# 1. Upload shopper photo → get a URL
+curl -X POST ${base}/api/v1/upload \\
+  -H "x-api-key: ${key}" \\
+  -F "photo=@shopper.jpg"
+# → { "url": "https://res.cloudinary.com/..." }
+
+# 2. Run try-on → get result image URL (waits 30–90 s)
+curl -X POST ${base}/api/v1/tryon \\
   -H "x-api-key: ${key}" \\
   -H "Content-Type: application/json" \\
-  -d '{"product_id":"${sku}","user_photo_url":"https://your-cdn.com/photo.jpg"}'`;
+  -d '{"product_id":"${sku}","user_photo_url":"<url from step 1>"}'
+# → { "output_url": "https://replicate.delivery/..." }`;
 }
 
 function makeReact(base: string, key: string, sku: string) {
-  return `const res = await fetch("${base}/api/v1/tryon", {
-  method: "POST",
-  headers: { "x-api-key": "${key}", "Content-Type": "application/json" },
-  body: JSON.stringify({ product_id: "${sku}", user_photo_url: photoUrl }),
-});
-const { output_url } = await res.json();  // show output_url in <img>`;
+  return `async function tryon(file) {
+  // 1. Upload shopper photo
+  const form = new FormData();
+  form.append("photo", file);
+  const { url } = await fetch("${base}/api/v1/upload", {
+    method: "POST", headers: { "x-api-key": "${key}" }, body: form,
+  }).then(r => r.json());
+
+  // 2. Run try-on (server waits for the model, ~30–90 s)
+  const { output_url } = await fetch("${base}/api/v1/tryon", {
+    method: "POST",
+    headers: { "x-api-key": "${key}", "Content-Type": "application/json" },
+    body: JSON.stringify({ product_id: "${sku}", user_photo_url: url }),
+  }).then(r => r.json());
+
+  return output_url; // set as <img src={output_url} />
+}`;
 }
 
 function makeHtml(base: string, key: string, sku: string) {
-  return `<script>
-async function vizzleTryon(photoUrl) {
-  const r = await fetch("${base}/api/v1/tryon", {
-    method:"POST", headers:{"x-api-key":"${key}","Content-Type":"application/json"},
-    body: JSON.stringify({ product_id:"${sku}", user_photo_url: photoUrl })
-  });
-  const { output_url } = await r.json();
+  return `<input type="file" id="photo" accept="image/*" />
+<button onclick="runTryon()">Try it on!</button>
+<img id="result" style="max-width:400px;margin-top:12px" />
+
+<script>
+async function runTryon() {
+  const form = new FormData();
+  form.append("photo", document.getElementById("photo").files[0]);
+
+  const { url } = await fetch("${base}/api/v1/upload", {
+    method: "POST", headers: { "x-api-key": "${key}" }, body: form,
+  }).then(r => r.json());
+
+  const { output_url } = await fetch("${base}/api/v1/tryon", {
+    method: "POST",
+    headers: { "x-api-key": "${key}", "Content-Type": "application/json" },
+    body: JSON.stringify({ product_id: "${sku}", user_photo_url: url }),
+  }).then(r => r.json());
+
   document.getElementById("result").src = output_url;
 }
-</script>
-
-<input type="file" onchange="vizzleTryon(URL.createObjectURL(this.files[0]))" />
-<img id="result" />`;
+</script>`;
 }
 
 function buildJson(opts: { base: string; key: string; sku: string; store: { store_name: string; domain: string } | null }) {
@@ -51,11 +79,13 @@ function buildJson(opts: { base: string; key: string; sku: string; store: { stor
     title: "Vizzle Integration",
     base_url: opts.base,
     store: opts.store,
-    endpoint: `POST ${opts.base}/api/v1/tryon`,
-    headers: { "x-api-key": opts.key, "Content-Type": "application/json" },
-    body: { product_id: opts.sku, user_photo_url: "<shopper photo URL you host>" },
-    response: { output_url: "<try-on result image URL>" },
+    flow: [
+      `POST ${opts.base}/api/v1/upload  (multipart photo)  →  { url }`,
+      `POST ${opts.base}/api/v1/tryon   (product_id + url)  →  { output_url }`,
+    ],
+    auth_header: `x-api-key: ${opts.key}`,
     snippets: { curl: makeCurl(opts.base, opts.key, opts.sku), js: makeReact(opts.base, opts.key, opts.sku) },
+    note: "Server waits for the ML model (30–90 s). Shopper photos and results are auto-deleted after 1 hour.",
   };
 }
 
@@ -158,9 +188,9 @@ export default function DocsPage() {
         <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-gray-500">How to integrate</p>
         <ol className="space-y-4">
           {[
-            { icon: Key,       n: 1, title: "Get your API key",        body: <><Link href="/dashboard/stores" className="font-medium text-brand-600 hover:underline">Create a store</Link> → copy the <IC>vzk_…</IC> key shown once. Put it in your backend env vars.</> },
-            { icon: Package,   n: 2, title: "Add your products",       body: <><Link href="/dashboard/products" className="font-medium text-brand-600 hover:underline">Upload garments</Link> and note each <IC>product_id</IC> (your SKU). That's all Vizzle needs from you.</> },
-            { icon: Zap,       n: 3, title: "Embed the widget",        body: <>When a shopper picks a photo, host it on your server, then call <IC>POST /api/v1/tryon</IC> with the photo URL + SKU. Show the returned <IC>output_url</IC> in an image tag.</> },
+            { icon: Key,     n: 1, title: "Get your API key",   body: <><Link href="/dashboard/stores" className="font-medium text-brand-600 hover:underline">Create a store</Link> → copy the <IC>vzk_…</IC> key shown once.</> },
+            { icon: Package, n: 2, title: "Upload your garments", body: <><Link href="/dashboard/products" className="font-medium text-brand-600 hover:underline">Add products</Link> and note each <IC>product_id</IC> (your SKU).</> },
+            { icon: Zap,     n: 3, title: "2 API calls in your widget", body: <>Call <IC>POST /api/v1/upload</IC> with the shopper photo → then <IC>POST /api/v1/tryon</IC> with the URL + SKU → show the returned <IC>output_url</IC> in an <IC>{"<img>"}</IC>. The server waits for the ML model (30–90 s). Photos auto-deleted after 1 hour.</> },
           ].map(({ icon: Icon, n, title, body }) => (
             <li key={n} className="flex items-start gap-3">
               <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-600 text-xs font-bold text-white">{n}</span>
@@ -176,30 +206,42 @@ export default function DocsPage() {
         </ol>
       </div>
 
-      {/* Request / response at a glance */}
+      {/* Request / response at a glance — 2 calls */}
       <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-        <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-gray-500">Request at a glance</p>
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div>
-            <p className="mb-1.5 text-xs font-semibold text-gray-700">Send</p>
+        <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-gray-500">API flow at a glance</p>
+        <div className="space-y-3">
+          {/* Call 1 */}
+          <div className="grid gap-3 sm:grid-cols-2">
             <div className="rounded-xl bg-gray-50 border border-gray-200 p-3 font-mono text-xs text-gray-700 space-y-1">
+              <div className="mb-1 text-gray-400 not-mono text-[11px] font-semibold">① Upload shopper photo</div>
+              <div><span className="text-brand-600 font-bold">POST</span> /api/v1/upload</div>
+              <div className="text-gray-500">x-api-key: {liveKey}</div>
+              <div className="text-gray-800">body: photo (multipart)</div>
+            </div>
+            <div className="rounded-xl bg-emerald-50 border border-emerald-200 p-3 font-mono text-xs text-emerald-800 space-y-1">
+              <div className="mb-1 text-emerald-600 not-mono text-[11px] font-semibold">Response</div>
+              <div>{`{ "url": "https://res.cloudinary.com/…" }`}</div>
+              <div className="mt-1 text-emerald-600 text-[11px]">Pass url into call ②</div>
+            </div>
+          </div>
+          {/* Call 2 */}
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div className="rounded-xl bg-gray-50 border border-gray-200 p-3 font-mono text-xs text-gray-700 space-y-1">
+              <div className="mb-1 text-gray-400 not-mono text-[11px] font-semibold">② Virtual try-on (waits for result)</div>
               <div><span className="text-brand-600 font-bold">POST</span> /api/v1/tryon</div>
               <div className="text-gray-500">x-api-key: {liveKey}</div>
               <div className="text-gray-800">{`{ "product_id": "${liveSku}",`}</div>
-              <div className="text-gray-800">&nbsp;&nbsp;{`"user_photo_url": "…" }`}</div>
+              <div className="text-gray-800">&nbsp;&nbsp;{`"user_photo_url": "<url from ①>" }`}</div>
             </div>
-          </div>
-          <div>
-            <p className="mb-1.5 text-xs font-semibold text-gray-700">Receive</p>
             <div className="rounded-xl bg-emerald-50 border border-emerald-200 p-3 font-mono text-xs text-emerald-800 space-y-1">
-              <div className="font-bold">200 OK</div>
-              <div>{`{ "output_url": "https://…/result.jpg",`}</div>
+              <div className="mb-1 text-emerald-600 not-mono text-[11px] font-semibold">Response (200 when done)</div>
+              <div>{`{ "output_url": "https://replicate.delivery/…",`}</div>
               <div>&nbsp;&nbsp;{`"prediction_id": "abc123" }`}</div>
-              <div className="mt-2 text-emerald-600 not-italic text-xs">Use output_url as &lt;img src&gt;</div>
+              <div className="mt-1 text-emerald-600 text-[11px]">Set output_url as &lt;img src&gt;</div>
             </div>
           </div>
         </div>
-        <p className="mt-3 text-xs text-gray-400">Typical response time: 20–45 seconds. Show a loading state.</p>
+        <p className="mt-3 text-xs text-gray-400">Server waits for the ML model (30–90 s typical). Shopper photos and results auto-deleted after 1 hour.</p>
       </div>
 
       {/* Code snippets — tabbed */}

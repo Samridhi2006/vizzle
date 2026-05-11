@@ -12,15 +12,54 @@ import {
   waitVirtualTryOn,
 } from "@/lib/server/ml-client";
 import { resolveProductImageByStoreAndSku } from "@/server/services/products.service";
+import { uploadImageUrl } from "@/lib/server/cloudinary";
 import { ApiError } from "@/server/errors";
 import { TryonMode } from "@/types";
 
-function extractOutputUrl(output: string | string[] | undefined): string {
-  if (!output) return "";
-  if (Array.isArray(output)) {
-    return output[0] ?? "";
+const OUTPUT_TTL_MS = 60 * 60 * 1000; // 1 hour
+
+/**
+ * Mirror an external output URL (Replicate) to our Cloudinary temp folder.
+ * Returns our own stable URL. Tracks the asset for hourly cleanup.
+ */
+async function mirrorOutputToCloudinary(
+  externalUrl: string,
+  storeId: string
+): Promise<string> {
+  try {
+    const { url, publicId } = await uploadImageUrl(
+      externalUrl,
+      `vizzle/tryon-output/${storeId}`
+    );
+    await prisma.tempAsset
+      .create({
+        data: {
+          publicId,
+          folder:    "tryon-output",
+          storeId,
+          expiresAt: new Date(Date.now() + OUTPUT_TTL_MS),
+        },
+      })
+      .catch(() => {});
+    return url;
+  } catch {
+    // If mirroring fails, fall back to the original external URL
+    return externalUrl;
   }
-  return output;
+}
+
+/**
+ * Extract the result image URL from the ML model's `output` field.
+ * TransformResponse.output is Optional[Union[str, list]] per the official backend schema.
+ *   - string  → single Replicate delivery URL (common case)
+ *   - list    → array of URLs, first element is the result
+ *   - null    → not yet available (caller should have already waited)
+ */
+function extractOutputUrl(output: unknown): string {
+  if (!output) return "";
+  if (typeof output === "string") return output;
+  if (Array.isArray(output)) return extractOutputUrl(output[0]);
+  return "";
 }
 
 async function writeTryonLog(input: {
@@ -53,6 +92,48 @@ async function writeTryonLog(input: {
     .catch(() => {});
 }
 
+/**
+ * STEP 1 — Start a try-on prediction and return immediately.
+ * Resolves the product, validates it belongs to the store, fires the ML job.
+ * Returns prediction_id so the client can poll /status/{id}.
+ */
+export async function startImageTryOn(input: {
+  storeId: string;
+  productId: string;
+  userPhotoUrl: string;
+  garmentType?: string;
+  useVision?: boolean;
+  params?: Record<string, unknown>;
+}) {
+  const product = await resolveProductImageByStoreAndSku({
+    storeId: input.storeId,
+    productId: input.productId,
+  });
+
+  const mlPayload = {
+    human_img: input.userPhotoUrl,
+    garm_img: product.imageUrl,
+    garment_type: input.garmentType ?? "auto_detect",
+    use_vision: input.useVision ?? true,
+    // IDM-VTON defaults matching the reference app
+    params: { category: "upper_body", steps: 20, ...(input.params ?? {}) },
+  };
+
+  console.log("[tryon] starting ML:", JSON.stringify(mlPayload));
+  const start = await startVirtualTryOn(mlPayload);
+  console.log("[tryon] prediction started:", start.id, "status:", start.status);
+
+  return {
+    prediction_id: start.id,
+    status: start.status,
+  };
+}
+
+/**
+ * Blocking try-on — resolves product, fires the ML job, waits up to 5 min,
+ * and returns { prediction_id, output_url, model_used } in one shot.
+ * Used by POST /api/v1/tryon (the widget-facing endpoint).
+ */
 export async function executeImageTryOn(input: {
   storeId: string;
   productId: string;
@@ -68,18 +149,30 @@ export async function executeImageTryOn(input: {
     productId: input.productId,
   });
 
-  try {
-    const start = await startVirtualTryOn({
-      human_img: input.userPhotoUrl,
-      garm_img: product.imageUrl,
-      garment_type: input.garmentType ?? "auto_detect",
-      use_vision: input.useVision ?? true,
-      params: input.params ?? {},
-    });
+  const mlPayload = {
+    human_img: input.userPhotoUrl,
+    garm_img: product.imageUrl,
+    garment_type: input.garmentType ?? "auto_detect",
+    use_vision: input.useVision ?? true,
+    params: { category: "upper_body", steps: 20, ...(input.params ?? {}) },
+  };
 
-    const done = await waitVirtualTryOn(start.id, 360000);
+  try {
+    console.log("[tryon] starting ML:", JSON.stringify(mlPayload));
+    const start = await startVirtualTryOn(mlPayload);
+    console.log("[tryon] prediction started:", start.id);
+
+    const done = await waitVirtualTryOn(start.id, 300_000);
+    console.log("[tryon] done:", done.status, "output:", done.output);
+
+    if (done.status !== "succeeded") {
+      throw new ApiError(
+        502,
+        `ML model returned status: ${done.status}${done.error ? ` — ${done.error}` : ""}`
+      );
+    }
     const outputUrl = extractOutputUrl(done.output);
-    if (!outputUrl) throw new ApiError(502, "ML service did not return output");
+    if (!outputUrl) throw new ApiError(502, "ML model succeeded but output is empty");
 
     writeTryonLog({
       storeId: input.storeId,
@@ -92,11 +185,7 @@ export async function executeImageTryOn(input: {
       userIdentifier: input.userIdentifier,
     });
 
-    return {
-      prediction_id: start.id,
-      output_url: outputUrl,
-      model_used: done.model_used ?? "idm-vton",
-    };
+    return { prediction_id: start.id, output_url: outputUrl, model_used: done.model_used ?? "idm-vton" };
   } catch (error) {
     writeTryonLog({
       storeId: input.storeId,
@@ -109,6 +198,47 @@ export async function executeImageTryOn(input: {
     });
     throw error;
   }
+}
+
+/**
+ * Check status of a try-on prediction.
+ * Calls ML backend GET /api/virtual-try-on/status/{id} — instant, < 3 s.
+ * Maps ML backend's `output` field → our `output_url` field.
+ */
+export async function checkImageTryOnStatus(predictionId: string, storeId: string) {
+  let raw;
+  try {
+    raw = await getTryonStatus(predictionId);
+  } catch (err) {
+    // If ML backend is unreachable or timed out, return "processing" so client keeps polling
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error("[tryon] status poll FAILED:", predictionId, msg);
+    return {
+      status:     "processing",
+      output_url: null,
+      error:      `Status check failed: ${msg}`,
+      model_used: null,
+    };
+  }
+
+  console.log("[tryon] status poll:", predictionId, "→", raw.status,
+    "output:", JSON.stringify(raw.output), "model:", raw.model_used);
+
+  const status    = raw.status ?? "unknown";
+  const outputUrl = extractOutputUrl(raw.output) || null;
+
+  if (status === "succeeded" && outputUrl) {
+    writeTryonLog({ storeId, mode: "image_id", success: true, predictionId, outputUrl });
+  } else if (status === "failed" || status === "canceled") {
+    writeTryonLog({ storeId, mode: "image_id", success: false, predictionId, errorCode: "ML_ERROR" });
+  }
+
+  return {
+    status,
+    output_url:  outputUrl,
+    error:       raw.error ?? null,
+    model_used:  raw.model_used ?? null,
+  };
 }
 
 export async function executeVideoTryOn(input: {
@@ -134,8 +264,10 @@ export async function executeVideoTryOn(input: {
     });
 
     const done = await waitVirtualTryOn(start.id, 360000);
-    const outputUrl = extractOutputUrl(done.output);
-    if (!outputUrl) throw new ApiError(502, "ML service did not return output");
+    const rawOutputUrl = extractOutputUrl(done.output);
+    if (!rawOutputUrl) throw new ApiError(502, "ML service did not return output");
+
+    const outputUrl = await mirrorOutputToCloudinary(rawOutputUrl, input.storeId);
 
     writeTryonLog({
       storeId: input.storeId,
@@ -185,8 +317,10 @@ export async function executeDirectTryOn(input: {
     });
 
     const done = await waitVirtualTryOn(start.id, 360000);
-    const outputUrl = extractOutputUrl(done.output);
-    if (!outputUrl) throw new ApiError(502, "ML service did not return output");
+    const rawOutputUrl = extractOutputUrl(done.output);
+    if (!rawOutputUrl) throw new ApiError(502, "ML service did not return output");
+
+    const outputUrl = await mirrorOutputToCloudinary(rawOutputUrl, input.storeId);
 
     writeTryonLog({
       storeId: input.storeId,
