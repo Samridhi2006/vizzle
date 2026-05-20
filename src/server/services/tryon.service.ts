@@ -224,18 +224,26 @@ export async function checkImageTryOnStatus(predictionId: string, storeId: strin
   console.log("[tryon] status poll:", predictionId, "→", raw.status,
     "output:", JSON.stringify(raw.output), "model:", raw.model_used);
 
-  const status    = raw.status ?? "unknown";
-  const outputUrl = extractOutputUrl(raw.output) || null;
+  const status        = raw.status ?? "unknown";
+  const replicateUrl  = extractOutputUrl(raw.output) || null;
 
-  if (status === "succeeded" && outputUrl) {
-    writeTryonLog({ storeId, mode: "image_id", success: true, predictionId, outputUrl });
-  } else if (status === "failed" || status === "canceled") {
+  if (status === "failed" || status === "canceled") {
     writeTryonLog({ storeId, mode: "image_id", success: false, predictionId, errorCode: "ML_ERROR" });
+    return { status, output_url: null, error: raw.error ?? null, model_used: raw.model_used ?? null };
   }
 
+  if (status === "succeeded" && replicateUrl) {
+    // Mirror Replicate URL → Cloudinary so the client gets a stable, public URL
+    // that never expires and has no CORS restrictions.
+    const outputUrl = await mirrorOutputToCloudinary(replicateUrl, storeId);
+    writeTryonLog({ storeId, mode: "image_id", success: true, predictionId, outputUrl });
+    return { status, output_url: outputUrl, error: null, model_used: raw.model_used ?? null };
+  }
+
+  // still starting / processing
   return {
     status,
-    output_url:  outputUrl,
+    output_url:  null,
     error:       raw.error ?? null,
     model_used:  raw.model_used ?? null,
   };
