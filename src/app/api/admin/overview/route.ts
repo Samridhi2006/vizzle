@@ -17,17 +17,18 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const [usersCount, storesCount, usageCount, users] = await Promise.all([
+    const [usersCount, storesCount, usageCount, productsCount, users] = await Promise.all([
       prisma.user.count(),
       prisma.store.count(),
       prisma.tryonLog.count(),
+      prisma.product.count(),
       prisma.user.findMany({
         orderBy: { createdAt: "desc" },
         include: {
           stores: {
             include: {
               _count: {
-                select: { tryonLogs: true },
+                select: { tryonLogs: true, products: true },
               },
             },
           },
@@ -38,16 +39,20 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(
       {
         totals: {
-          users: usersCount,
-          stores: storesCount,
-          usage: usageCount,
+          users:    usersCount,
+          stores:   storesCount,
+          usage:    usageCount,
+          products: productsCount,
         },
         users: users.map((u) => ({
-          id: u.id,
-          name: u.name,
-          email: u.email,
-          stores: u.stores.length,
-          usage: u.stores.reduce((sum, store) => sum + store._count.tryonLogs, 0),
+          id:         u.id,
+          name:       u.name,
+          email:      u.email,
+          joinedAt:   u.createdAt,
+          stores:     u.stores.length,
+          storeNames: u.stores.map((s) => s.storeName),
+          products:   u.stores.reduce((sum, s) => sum + s._count.products, 0),
+          usage:      u.stores.reduce((sum, s) => sum + s._count.tryonLogs, 0),
         })),
       },
       { status: 200, headers: corsHeaders(origin) }

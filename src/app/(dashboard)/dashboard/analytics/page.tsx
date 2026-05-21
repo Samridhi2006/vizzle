@@ -71,13 +71,7 @@ export default function AnalyticsPage() {
           <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
             <StatCard label="Total Try-ons" value={formatNumber(data.tryons)} icon={Zap} color="violet" />
             <StatCard label="Unique Users" value={formatNumber(data.users)} icon={Users} color="blue" />
-            <StatCard label="Video Try-ons" value={formatNumber(data.video_tryons)} icon={Video} color="emerald" />
             <StatCard label="Direct Mode" value={formatNumber(data.direct_mode_calls)} icon={LinkIcon} color="amber" />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <Card><div className="flex items-center gap-4"><div className="flex h-10 w-10 items-center justify-center rounded-lg bg-rose-50"><AlertCircle size={18} className="text-rose-500" /></div><div><p className="text-sm font-medium text-gray-600">Error rate</p><p className="text-2xl font-bold text-gray-900">{data.error_rate.toFixed(2)}%</p></div><div className="ml-auto"><Badge variant={data.error_rate < 2 ? "success" : "warning"}>{data.error_rate < 2 ? "Healthy" : "Watch"}</Badge></div></div></Card>
-            <Card><div className="flex items-center gap-4"><div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50"><Clock size={18} className="text-blue-500" /></div><div><p className="text-sm font-medium text-gray-600">Avg latency</p><p className="text-2xl font-bold text-gray-900">{(data.avg_latency_ms / 1000).toFixed(1)}s</p></div></div></Card>
           </div>
 
           <div className="grid gap-6 lg:grid-cols-2">

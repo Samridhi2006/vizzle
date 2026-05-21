@@ -21,7 +21,10 @@ export interface AdminOverviewUser {
   id: string;
   name: string;
   email: string;
+  joinedAt: string;
   stores: number;
+  storeNames: string[];
+  products: number;
   usage: number;
 }
 
@@ -30,6 +33,7 @@ export interface AdminOverviewResponse {
     users: number;
     stores: number;
     usage: number;
+    products: number;
   };
   users: AdminOverviewUser[];
 }

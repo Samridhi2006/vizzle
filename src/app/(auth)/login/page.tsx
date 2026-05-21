@@ -24,7 +24,7 @@ export default function LoginPage() {
 
   function handleAuthResponse(r: { token: string; user?: { id: string; email: string; name: string }; is_admin?: boolean }) {
     setSession({ token: r.token, user: r.user, isAdmin: r.is_admin });
-    router.push("/dashboard");
+    router.push(r.is_admin ? "/admin" : "/dashboard");
   }
 
   async function onSubmit(values: LoginForm) {
