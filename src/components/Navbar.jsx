@@ -43,6 +43,14 @@ function Navbar({ launchingRef, setIsFormOpen }) {
           >
             Download App
           </a>
+          <a
+            href="https://dashboard.vizzle.in"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 px-6 py-4 rounded-full bg-[#1D8DB2] text-white text-sm shadow-md hover:shadow-inner"
+          >
+            Integrate Us
+          </a>
         </div>
 
         {/* Mobile Menu Icon */}
