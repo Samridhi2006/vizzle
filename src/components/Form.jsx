@@ -32,6 +32,23 @@ export default function TrylleForm() {
         createdAt: new Date(),
       });
 
+      // Also send an email notification
+      await fetch("https://formsubmit.co/ajax/omitterang@gmail.com", {
+        method: "POST",
+        headers: { 
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          phone: formData.phone,
+          email: formData.email,
+          feedback: formData.feedback,
+          _subject: "New Form Submission from Vizzle (/form)",
+          _template: "table"
+        })
+      });
+
       navigate("/greeting");
     } catch (error) {
       console.error("Error adding document: ", error);
