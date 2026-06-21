@@ -33,7 +33,7 @@ export default function TrylleForm() {
       });
 
       // Also send an email notification
-      await fetch("https://formsubmit.co/ajax/omitterang@gmail.com", {
+      await fetch("https://formsubmit.co/ajax/info@vizzle.in", {
         method: "POST",
         headers: { 
           'Content-Type': 'application/json',
