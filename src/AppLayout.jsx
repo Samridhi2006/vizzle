@@ -6,6 +6,8 @@ import Navbar from "./components/Navbar";
 import VizzlePage from "./components/VizzlePage";
 import VizzlePage2 from "./components/VizzlePage2";
 import Text from "./components/Text";
+import Steps from "./components/Steps";
+import Platforms from "./components/Platforms";
 
 
 function AppLayout() {
@@ -15,6 +17,7 @@ function AppLayout() {
   const VizzlePageRef = useRef(null);
   const VizzlePage2Ref = useRef(null);
   const TextRef = useRef(null);
+  const stepsRef = useRef(null);
 
   return (
     <div>
@@ -25,6 +28,15 @@ function AppLayout() {
         aboutRef={aboutRef}
         setIsFormOpen={setIsFormOpen}
       />
+
+      <div ref={stepsRef}>
+        <Steps />
+      </div>
+
+      <div>
+        <Platforms />
+      </div>
+      
       <div ref={VizzlePageRef}>
         <VizzlePage />
       </div>

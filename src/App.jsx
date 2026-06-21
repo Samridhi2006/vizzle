@@ -4,7 +4,10 @@ import AppLayout from "./AppLayout";
 import PrivacyPolicy from "./components/privacy";
 import Form from "./components/Form";
 import Greeting from "./components/Greeting";
-import Admin from "./components/Admin";   
+import Admin from "./components/Admin";  
+import DocsPage from "./docs/DocsPage";
+import Contact from "./components/Contact";
+import Pricing from "./components/Pricing"; 
 
 function App() {
   return (
@@ -24,6 +27,15 @@ function App() {
 
         {/* Admin Page */}
         <Route path="/admin" element={<Admin />} />
+
+        {/* Docs Page */}
+        <Route path="/docs" element={<DocsPage />} />
+
+        {/* Contact Page */}
+        <Route path="/contact" element={<Contact />} />
+
+        {/* Pricing Page */}
+        <Route path="/pricing" element={<Pricing />} />
       </Routes>
     </BrowserRouter>
   );

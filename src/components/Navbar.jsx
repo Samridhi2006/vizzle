@@ -31,6 +31,14 @@ function Navbar({ launchingRef, setIsFormOpen }) {
           />
         </Link>
 
+        {/* Center Menu */}
+        <div className="hidden lg:flex items-center gap-8 font-semibold text-gray-600 text-sm xl:text-base">
+          <Link to="/" className="hover:text-[#1D8DB2] transition-colors">Home</Link>
+          <Link to="/docs" className="hover:text-[#1D8DB2] transition-colors">Documentation</Link>
+          <Link to="/pricing" className="hover:text-[#1D8DB2] transition-colors">Pricing</Link>
+          <Link to="/contact" className="hover:text-[#1D8DB2] transition-colors">Contact</Link>
+        </div>
+
         {/* Desktop Buttons */}
         <div className="hidden sm:flex gap-3">
 
@@ -70,33 +78,42 @@ function Navbar({ launchingRef, setIsFormOpen }) {
 
         {/* Mobile Menu */}
         <div
-          className={`absolute sm:hidden top-24 left-0 w-full p-5 flex gap-3 bg-[#F9F3FA] transition-all duration-500 ${
+          className={`absolute sm:hidden top-24 left-0 w-full p-5 flex flex-col gap-3 bg-[#F9F3FA] transition-all duration-500 ${
             isMenuOpen
               ? "opacity-100 translate-x-0"
               : "opacity-0 translate-x-full pointer-events-none"
           }`}
         >
-          {/* Google Play */}
-          <a
-            href="https://play.google.com/store/apps/details?id=app.vercel.vizzle_pwa.twa&pcampaignid=web_share"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 px-4 py-3 rounded-full bg-[#1D8DB2] text-white text-xs shadow-md"
-          >
-            <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.61 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.53,12.9 20.18,13.18L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z"/>
-            </svg>
-            Download Now
-          </a>
+          {/* Mobile Links */}
+          <div className="flex flex-col gap-2 w-full pt-2">
+            <Link to="/" className="text-gray-700 font-semibold px-2" onClick={() => setIsMenuOpen(false)}>Home</Link>
+            <Link to="/docs" className="text-gray-700 font-semibold px-2" onClick={() => setIsMenuOpen(false)}>Documentation</Link>
+            <Link to="/pricing" className="text-gray-700 font-semibold px-2" onClick={() => setIsMenuOpen(false)}>Pricing</Link>
+            <Link to="/contact" className="text-gray-700 font-semibold px-2" onClick={() => setIsMenuOpen(false)}>Contact</Link>
+          </div>
 
-          <a
-            href="https://dashboard.vizzle.in"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 px-4 py-3 rounded-full bg-[#1D8DB2] text-white text-xs shadow-md"
-          >
-            Integrate Us
-          </a>
+          <div className="flex flex-col gap-3 w-full mt-4 border-t border-gray-200 pt-4">
+            <a
+              href="https://play.google.com/store/apps/details?id=app.vercel.vizzle_pwa.twa&pcampaignid=web_share"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 px-4 py-3 rounded-full bg-[#1D8DB2] text-white text-xs shadow-md justify-center"
+            >
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.61 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.53,12.9 20.18,13.18L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z"/>
+              </svg>
+              Download Now
+            </a>
+
+            <a
+              href="https://dashboard.vizzle.in"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 px-4 py-3 rounded-full bg-[#1D8DB2] text-white text-xs shadow-md justify-center"
+            >
+              Integrate Us
+            </a>
+          </div>
 
         </div>
       </nav>
