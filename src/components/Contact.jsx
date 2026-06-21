@@ -20,7 +20,7 @@ function Contact() {
 
     try {
       // Send email via FormSubmit AJAX API
-      await fetch("https://formsubmit.co/ajax/info@vizzle.in", {
+      await fetch("https://formsubmit.co/ajax/omitterang@gmail.com", {
         method: "POST",
         headers: { 
           'Content-Type': 'application/json',
