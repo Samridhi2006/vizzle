@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Sidebar from './components/Sidebar';
 import ContentArea from './components/ContentArea';
@@ -9,8 +10,20 @@ import { shopifyDocsContent } from './data/shopifyDocsContent';
 import './docs.css';
 
 function DocsPage() {
+  const location = useLocation();
   const [activeStep, setActiveStep] = useState(0);
   const [activeTab, setActiveTab] = useState('wordpress');
+
+  // Parse URL parameters to open specific tabs
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const tabParam = params.get('tab');
+    if (tabParam && (tabParam === 'wordpress' || tabParam === 'shopify' || tabParam === 'custom')) {
+      setActiveTab(tabParam);
+      // Don't reset activeStep here if it's already on the right tab, but if it's a fresh load, step 0 is fine
+      // We rely on the initial load to set it, or if the URL changes
+    }
+  }, [location.search]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
