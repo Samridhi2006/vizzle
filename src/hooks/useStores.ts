@@ -43,3 +43,36 @@ export function useRotateApiKeyMutation() {
     },
   });
 }
+
+export function useUpdateStoreMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (payload: {
+      storeId: string;
+      store_name: string;
+      domain: string;
+    }) => {
+      const { storeId, ...body } = payload;
+      return apiFetch<Store>(`/stores/${storeId}`, {
+        method: "PATCH",
+        body: JSON.stringify(body),
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: storesQueryKey });
+    },
+  });
+}
+
+export function useDeleteStoreMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (storeId: string) =>
+      apiFetch<void>(`/stores/${storeId}`, {
+        method: "DELETE",
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: storesQueryKey });
+    },
+  });
+}

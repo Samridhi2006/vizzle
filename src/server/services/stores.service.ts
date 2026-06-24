@@ -101,3 +101,49 @@ export async function rotateStoreApiKey(input: {
     new_api_key: rawApiKey,
   };
 }
+
+export async function getStoreById(userId: string, storeId: string) {
+  const store = await prisma.store.findUnique({ where: { id: storeId } });
+  if (!store) throw new ApiError(404, "Store not found");
+  if (store.userId !== userId) throw new ApiError(403, "Forbidden");
+  return store;
+}
+
+export async function updateStoreById(input: {
+  userId: string;
+  storeId: string;
+  storeName: string;
+  domain: string;
+}) {
+  await getStoreById(input.userId, input.storeId);
+
+  const store = await prisma.store.update({
+    where: { id: input.storeId },
+    data: {
+      storeName: input.storeName.trim(),
+      domain: normalizeDomain(input.domain),
+    },
+    include: {
+      products: { select: { id: true } },
+      apiKeys: {
+        where: { isActive: true },
+        orderBy: { createdAt: "desc" },
+        take: 1,
+      },
+    },
+  });
+
+  return {
+    store_id: store.id,
+    store_name: store.storeName,
+    domain: store.domain,
+    created_at: store.createdAt.toISOString(),
+    active_key_prefix: store.apiKeys[0]?.keyPrefix ?? "vzk_",
+    product_count: store.products.length,
+  };
+}
+
+export async function deleteStoreById(userId: string, storeId: string) {
+  await getStoreById(userId, storeId);
+  await prisma.store.delete({ where: { id: storeId } });
+}
