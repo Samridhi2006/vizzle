@@ -13,7 +13,6 @@ import {
   Package,
   Pencil,
   Plus,
-  RefreshCw,
   Search,
   Store as StoreIcon,
   Trash2,
@@ -32,7 +31,7 @@ import {
   useCreateProductMutation,
   useDeleteProductMutation,
   useProductsQuery,
-  useSyncProductsMutation,
+  // useSyncProductsMutation,
   useUpdateProductMutation,
 } from "@/hooks/useProducts";
 import { useStoresStore } from "@/store/stores.store";
@@ -69,7 +68,7 @@ export default function ProductsPage() {
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
   const [storeMenuOpen, setStoreMenuOpen] = useState(false);
-  const [syncMenuOpen, setSyncMenuOpen] = useState(false);
+  // const [syncMenuOpen, setSyncMenuOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
@@ -105,7 +104,7 @@ export default function ProductsPage() {
 
   const createProduct = useCreateProductMutation(selectedStore?.store_id ?? null);
   const bulkProducts = useBulkProductsMutation(selectedStore?.store_id ?? null);
-  const syncProducts = useSyncProductsMutation(selectedStore?.store_id ?? null);
+  // const syncProducts = useSyncProductsMutation(selectedStore?.store_id ?? null);
   const updateProduct = useUpdateProductMutation(selectedStore?.store_id ?? null);
   const deleteProduct = useDeleteProductMutation(selectedStore?.store_id ?? null);
   const urlForm = useForm<UrlFormData>();
@@ -177,6 +176,8 @@ export default function ProductsPage() {
     }
   }
 
+  // Sync UI hidden until Shopify/WordPress integration is ready.
+  /*
   async function onSync(platform: "shopify" | "wordpress") {
     setSyncMenuOpen(false);
     try {
@@ -216,6 +217,7 @@ export default function ProductsPage() {
       });
     }
   }
+  */
 
   function openEditModal(product: Product) {
     setEditingProduct(product);
@@ -298,7 +300,7 @@ export default function ProductsPage() {
   return (
     <div className="max-w-6xl space-y-6">
       {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
           <div>
             <h2 className="text-xl font-bold text-gray-900">Products</h2>
@@ -314,20 +316,23 @@ export default function ProductsPage() {
             <span className="inline-flex h-6 w-8 animate-pulse rounded-full bg-brand-100" />
           )}
         </div>
-        <div className="flex items-center gap-2">
-          {/* Store selector */}
+        <div className="flex w-full flex-row items-stretch gap-2 sm:w-auto">
+          {/* Store selector, Sync, Add — equal width on mobile */}
           {stores.length > 0 && (
-            <div className="relative">
+            <div className="relative min-w-0 flex-1 sm:flex-none">
               <button
+                type="button"
                 onClick={() => setStoreMenuOpen((s) => !s)}
-                className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                className="flex h-10 w-full items-center justify-center gap-1.5 rounded-lg border-2 border-black bg-white px-2 text-sm font-semibold text-gray-900 hover:bg-gray-50 sm:w-auto sm:justify-start sm:px-3"
               >
-                <StoreIcon size={14} className="text-brand-600" />
-                {selectedStore?.store_name ?? "Select store"}
-                <ChevronDown size={14} />
+                <StoreIcon size={14} className="shrink-0 text-brand-600" />
+                <span className="min-w-0 truncate">
+                  {selectedStore?.store_name ?? "Select store"}
+                </span>
+                <ChevronDown size={14} className="shrink-0" />
               </button>
               {storeMenuOpen && (
-                <div className="absolute right-0 top-full z-20 mt-1 w-56 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg">
+                <div className="absolute left-0 right-0 top-full z-20 mt-1 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg sm:left-auto sm:right-0 sm:w-56">
                   {stores.map((store) => (
                     <button
                       key={store.store_id}
@@ -346,18 +351,21 @@ export default function ProductsPage() {
               )}
             </div>
           )}
-          <div className="relative">
+          {/* Sync button — hidden until Shopify/WordPress integration is ready
+          <div className="relative min-w-0 flex-1 sm:flex-none">
             <Button
               variant="outline"
               disabled={!selectedStore || syncProducts.isPending}
               loading={syncProducts.isPending}
               onClick={() => setSyncMenuOpen((s) => !s)}
+              className="h-10 w-full px-2 sm:w-auto sm:px-4"
             >
-              <RefreshCw size={14} /> Sync
-              <ChevronDown size={14} />
+              <RefreshCw size={14} className="shrink-0" />
+              <span className="truncate">Sync</span>
+              <ChevronDown size={14} className="shrink-0" />
             </Button>
             {syncMenuOpen && (
-              <div className="absolute right-0 top-full z-20 mt-1 w-52 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg">
+              <div className="absolute left-0 right-0 top-full z-20 mt-1 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg sm:left-auto sm:right-0 sm:w-52">
                 <button
                   onClick={() => onSync("shopify")}
                   className="w-full px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-brand-50"
@@ -373,8 +381,15 @@ export default function ProductsPage() {
               </div>
             )}
           </div>
-          <Button disabled={!selectedStore} onClick={() => setOpen(true)}>
-            <Plus size={14} /> Add Product
+          */}
+          <Button
+            disabled={!selectedStore}
+            onClick={() => setOpen(true)}
+            className="h-10 w-full min-w-0 flex-1 px-2 sm:w-auto sm:flex-none sm:px-4"
+          >
+            <Plus size={14} className="shrink-0" />
+            <span className="truncate sm:hidden">Add</span>
+            <span className="hidden truncate sm:inline">Add Product</span>
           </Button>
         </div>
       </div>

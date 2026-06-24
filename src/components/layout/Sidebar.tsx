@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/client/utils";
 import {
-  ChevronLeft, ChevronRight,
+  ChevronLeft, ChevronRight, X,
   Shield, LayoutDashboard, Store, Package, BarChart2, Code2, LogOut,
 } from "lucide-react";
 import { useAuthStore } from "@/store/auth.store";
@@ -30,18 +30,42 @@ export default function Sidebar() {
 
   function handleLogout() { clearSession(); router.push("/login"); }
 
+  function closeMobileSidebar() {
+    if (typeof window !== "undefined" && window.matchMedia("(max-width: 767px)").matches) {
+      setSidebarOpen(false);
+    }
+  }
+
   return (
     <>
+      {/* Mobile backdrop — tap outside to close */}
+      {sidebarOpen && (
+        <button
+          type="button"
+          aria-label="Close menu"
+          onClick={() => setSidebarOpen(false)}
+          className="fixed inset-0 z-40 bg-black/40 md:hidden"
+        />
+      )}
+
       {/* ── Sidebar panel ─────────────────────────────────────── */}
       <aside className={cn(
-        "fixed left-0 top-0 z-40 flex h-screen w-60 flex-col bg-white border-r border-brand-200 transition-transform duration-200",
+        "fixed left-0 top-0 z-50 flex h-screen w-60 max-w-[85vw] flex-col bg-white border-r border-brand-200 shadow-xl transition-transform duration-200 ease-in-out md:shadow-none",
         sidebarOpen ? "translate-x-0" : "-translate-x-full"
       )}>
 
-        {/* Logo row — clean, no chevron cramped here */}
+        {/* Logo row */}
         <div className="flex h-14 shrink-0 items-center border-b border-brand-100 px-5">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/logo.png" alt="Vizzle" style={{ height: 32, width: "auto", maxWidth: 140 }} />
+          <button
+            type="button"
+            aria-label="Close sidebar"
+            onClick={() => setSidebarOpen(false)}
+            className="ml-auto inline-flex h-8 w-8 items-center justify-center rounded-lg text-gray-500 hover:bg-brand-50 md:hidden"
+          >
+            <X size={18} />
+          </button>
         </div>
 
         {/* Nav items */}
@@ -52,6 +76,7 @@ export default function Sidebar() {
               <Link
                 key={href}
                 href={href}
+                onClick={closeMobileSidebar}
                 className={cn(
                   "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
                   active
@@ -78,13 +103,13 @@ export default function Sidebar() {
         </div>
       </aside>
 
-      {/* ── Collapse tab (right edge of sidebar, always visible when open) */}
+      {/* ── Collapse tab (desktop only) */}
       {sidebarOpen && (
         <button
           type="button"
           aria-label="Collapse sidebar"
           onClick={() => setSidebarOpen(false)}
-          className="fixed left-60 top-1/2 z-50 -translate-y-1/2 flex h-8 w-5 items-center justify-center rounded-r-lg border border-l-0 border-brand-200 bg-white text-brand-600 shadow-sm hover:bg-brand-50 transition-colors"
+          className="fixed left-60 top-1/2 z-50 hidden -translate-y-1/2 md:flex h-8 w-5 items-center justify-center rounded-r-lg border border-l-0 border-brand-200 bg-white text-brand-600 shadow-sm hover:bg-brand-50 transition-colors"
         >
           <ChevronLeft size={14} />
         </button>
@@ -96,7 +121,7 @@ export default function Sidebar() {
           type="button"
           aria-label="Expand sidebar"
           onClick={() => setSidebarOpen(true)}
-          className="fixed left-0 top-1/2 z-50 -translate-y-1/2 flex h-8 w-5 items-center justify-center rounded-r-lg border border-l-0 border-brand-200 bg-white text-brand-600 shadow-sm hover:bg-brand-50 transition-colors"
+          className="fixed left-0 top-1/2 z-50 -translate-y-1/2 flex h-10 w-6 items-center justify-center rounded-r-lg border border-l-0 border-brand-200 bg-white text-brand-600 shadow-sm hover:bg-brand-50 transition-colors md:h-8 md:w-5"
         >
           <ChevronRight size={14} />
         </button>

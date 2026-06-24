@@ -80,12 +80,12 @@ export default function DashboardPage() {
     <div className="max-w-5xl space-y-5">
 
       {/* ── Page title ──────────────────────────────────────────── */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-2xl font-extrabold text-gray-900">Dashboard</h2>
           <p className="text-sm text-gray-500">Virtual try-on platform — stores, products, analytics.</p>
         </div>
-        <Button onClick={() => setCreateOpen(true)} size="lg">
+        <Button onClick={() => setCreateOpen(true)} className="h-10 w-full sm:w-auto">
           <Plus size={15} /> New Store
         </Button>
       </div>
@@ -135,7 +135,9 @@ export default function DashboardPage() {
                 <p className="text-sm text-gray-600">Get an API key instantly.</p>
               </div>
             </div>
-            <Button onClick={() => setCreateOpen(true)}><Plus size={14} /> Create Store</Button>
+            <Button onClick={() => setCreateOpen(true)} className="h-10 w-full sm:w-auto">
+              <Plus size={14} /> Create Store
+            </Button>
           </div>
         ) : !hasProducts ? (
           <div className="flex flex-wrap items-center justify-between gap-4">

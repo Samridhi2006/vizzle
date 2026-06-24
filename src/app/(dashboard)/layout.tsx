@@ -29,11 +29,11 @@ export default function DashboardLayout({
       <div
         className={cn(
           "flex flex-1 flex-col overflow-hidden transition-[margin] duration-200",
-          sidebarOpen ? "ml-60" : "ml-0"
+          sidebarOpen ? "md:ml-60" : "ml-0"
         )}
       >
         <Header />
-        <main className="flex-1 overflow-y-auto px-6 py-7 lg:px-8">{children}</main>
+        <main className="flex-1 overflow-y-auto px-4 py-6 sm:px-6 sm:py-7 lg:px-8">{children}</main>
       </div>
     </div>
   );
