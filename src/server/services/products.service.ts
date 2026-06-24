@@ -3,7 +3,7 @@ import { uploadImageBuffer } from "@/lib/server/cloudinary";
 import { ApiError } from "@/server/errors";
 import { Prisma } from "@prisma/client";
 
-async function assertStoreOwnership(userId: string, storeId: string) {
+export async function assertStoreOwnership(userId: string, storeId: string) {
   const store = await prisma.store.findUnique({ where: { id: storeId } });
   if (!store) throw new ApiError(404, "Store not found");
   if (store.userId !== userId) throw new ApiError(403, "Forbidden");
@@ -155,6 +155,66 @@ export async function bulkImportProducts(input: {
     imported,
     errors,
   };
+}
+
+export async function getProductById(userId: string, vizzleProductId: string) {
+  const product = await prisma.product.findUnique({
+    where: { id: vizzleProductId },
+    include: { store: true },
+  });
+  if (!product) throw new ApiError(404, "Product not found");
+  if (product.store.userId !== userId) throw new ApiError(403, "Forbidden");
+  return product;
+}
+
+export async function updateProductById(input: {
+  userId: string;
+  vizzleProductId: string;
+  name: string;
+  brand: string;
+  cost: number;
+  category?: string;
+  sizeChartUrl?: string;
+  customFields?: Prisma.InputJsonValue;
+  imageUrl?: string;
+  imageFileBuffer?: Buffer;
+}) {
+  const existing = await getProductById(input.userId, input.vizzleProductId);
+
+  let imageUrl = input.imageUrl ?? existing.imageUrl;
+  if (input.imageFileBuffer) {
+    const result = await uploadImageBuffer(input.imageFileBuffer);
+    imageUrl = result.url;
+  }
+
+  const product = await prisma.product.update({
+    where: { id: input.vizzleProductId },
+    data: {
+      name: input.name,
+      brand: input.brand,
+      cost: input.cost,
+      imageUrl,
+      category: input.category ?? null,
+      sizeChartUrl: input.sizeChartUrl ?? null,
+      customFields:
+        input.customFields !== undefined
+          ? input.customFields
+          : existing.customFields ?? Prisma.JsonNull,
+    },
+  });
+
+  return {
+    vizzle_product_id: product.id,
+    image_url: product.imageUrl,
+  };
+}
+
+export async function deleteProductById(
+  userId: string,
+  vizzleProductId: string
+) {
+  await getProductById(userId, vizzleProductId);
+  await prisma.product.delete({ where: { id: vizzleProductId } });
 }
 
 export async function resolveProductImageByStoreAndSku(input: {

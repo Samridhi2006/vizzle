@@ -11,9 +11,12 @@ import {
   Image as ImageIcon,
   Link as LinkIcon,
   Package,
+  Pencil,
   Plus,
+  RefreshCw,
   Search,
   Store as StoreIcon,
+  Trash2,
   Upload,
   X,
 } from "lucide-react";
@@ -27,13 +30,17 @@ import { useStoresQuery } from "@/hooks/useStores";
 import {
   useBulkProductsMutation,
   useCreateProductMutation,
+  useDeleteProductMutation,
   useProductsQuery,
+  useSyncProductsMutation,
+  useUpdateProductMutation,
 } from "@/hooks/useProducts";
 import { useStoresStore } from "@/store/stores.store";
 import { useUIStore } from "@/store/ui.store";
 import { apiFetch } from "@/lib/client/fetcher";
 import { productsQueryKey } from "@/hooks/useProducts";
 import { storesQueryKey } from "@/hooks/useStores";
+import { Product } from "@/types";
 
 type UploadTab = "file" | "url" | "bulk";
 interface UrlFormData {
@@ -49,12 +56,24 @@ interface FileFormData {
   brand: string;
   cost: number;
 }
+interface EditFormData {
+  name: string;
+  brand: string;
+  cost: number;
+  image_url: string;
+  category: string;
+}
 
 export default function ProductsPage() {
   const [uploadTab, setUploadTab] = useState<UploadTab>("url");
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
   const [storeMenuOpen, setStoreMenuOpen] = useState(false);
+  const [syncMenuOpen, setSyncMenuOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [deletingProduct, setDeletingProduct] = useState<Product | null>(null);
   const [bulkText, setBulkText] = useState(
     JSON.stringify(
       [{ id: "sku-001", name: "Blue Shirt", brand: "Acme", cost: 29.99, image_url: "https://..." }],
@@ -86,8 +105,12 @@ export default function ProductsPage() {
 
   const createProduct = useCreateProductMutation(selectedStore?.store_id ?? null);
   const bulkProducts = useBulkProductsMutation(selectedStore?.store_id ?? null);
+  const syncProducts = useSyncProductsMutation(selectedStore?.store_id ?? null);
+  const updateProduct = useUpdateProductMutation(selectedStore?.store_id ?? null);
+  const deleteProduct = useDeleteProductMutation(selectedStore?.store_id ?? null);
   const urlForm = useForm<UrlFormData>();
   const fileForm = useForm<FileFormData>();
+  const editForm = useForm<EditFormData>();
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase();
@@ -151,6 +174,97 @@ export default function ProductsPage() {
       setOpen(false);
     } catch (err) {
       addToast({ tone: "error", title: "Bulk import failed", message: err instanceof Error ? err.message : "Check your JSON format." });
+    }
+  }
+
+  async function onSync(platform: "shopify" | "wordpress") {
+    setSyncMenuOpen(false);
+    try {
+      const result = await syncProducts.mutateAsync(platform);
+      if (result.status === "not_implemented") {
+        addToast({
+          tone: "warning",
+          title: "Integration not configured yet",
+          message: result.message,
+        });
+        return;
+      }
+      addToast({
+        tone: "success",
+        title: `Synced ${result.imported} products from ${platform}`,
+      });
+      if (result.errors.length > 0) {
+        addToast({
+          tone: "warning",
+          title: `${result.errors.length} products failed to sync`,
+        });
+      }
+      queryClient.invalidateQueries({ queryKey: storesQueryKey });
+    } catch (err) {
+      const status = (err as Error & { status?: number }).status;
+      if (status === 501) {
+        addToast({
+          tone: "warning",
+          title: "Integration not configured yet",
+        });
+        return;
+      }
+      addToast({
+        tone: "error",
+        title: "Sync failed",
+        message: err instanceof Error ? err.message : "Please try again.",
+      });
+    }
+  }
+
+  function openEditModal(product: Product) {
+    setEditingProduct(product);
+    editForm.reset({
+      name: product.name,
+      brand: product.brand,
+      cost: product.cost,
+      image_url: product.image_url,
+      category: product.category ?? "",
+    });
+    setEditOpen(true);
+  }
+
+  async function onEditSubmit(values: EditFormData) {
+    if (!editingProduct) return;
+    try {
+      await updateProduct.mutateAsync({
+        vizzleProductId: editingProduct.vizzle_product_id,
+        name: values.name,
+        brand: values.brand,
+        cost: values.cost,
+        image_url: values.image_url,
+        category: values.category || undefined,
+      });
+      setEditOpen(false);
+      setEditingProduct(null);
+      addToast({ tone: "success", title: "Product updated" });
+    } catch (err) {
+      addToast({
+        tone: "error",
+        title: "Failed to update product",
+        message: err instanceof Error ? err.message : "Please try again.",
+      });
+    }
+  }
+
+  async function onDeleteConfirm() {
+    if (!deletingProduct) return;
+    try {
+      await deleteProduct.mutateAsync(deletingProduct.vizzle_product_id);
+      setDeleteOpen(false);
+      setDeletingProduct(null);
+      addToast({ tone: "success", title: "Product deleted" });
+    } catch (err) {
+      addToast({
+        tone: "error",
+        title: "Failed to delete product",
+        message: err instanceof Error ? err.message : "Please try again.",
+      });
     }
   }
 
@@ -232,6 +346,33 @@ export default function ProductsPage() {
               )}
             </div>
           )}
+          <div className="relative">
+            <Button
+              variant="outline"
+              disabled={!selectedStore || syncProducts.isPending}
+              loading={syncProducts.isPending}
+              onClick={() => setSyncMenuOpen((s) => !s)}
+            >
+              <RefreshCw size={14} /> Sync
+              <ChevronDown size={14} />
+            </Button>
+            {syncMenuOpen && (
+              <div className="absolute right-0 top-full z-20 mt-1 w-52 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg">
+                <button
+                  onClick={() => onSync("shopify")}
+                  className="w-full px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-brand-50"
+                >
+                  Sync from Shopify
+                </button>
+                <button
+                  onClick={() => onSync("wordpress")}
+                  className="w-full px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-brand-50"
+                >
+                  Sync from WordPress
+                </button>
+              </div>
+            )}
+          </div>
           <Button disabled={!selectedStore} onClick={() => setOpen(true)}>
             <Plus size={14} /> Add Product
           </Button>
@@ -319,7 +460,7 @@ export default function ProductsPage() {
             <span className="hidden w-24 text-right sm:block">Cost</span>
             <span className="hidden w-28 text-right md:block">Category</span>
             <span className="hidden w-28 text-right lg:block">Added</span>
-            <span className="w-8" />
+            <span className="w-24 text-right">Actions</span>
           </div>
           {filtered.map((product) => (
             <div
@@ -354,17 +495,37 @@ export default function ProductsPage() {
               <span className="hidden w-28 text-right text-xs text-gray-500 lg:block">
                 {formatDate(product.created_at)}
               </span>
-              <div className="w-8 text-right">
+              <div className="flex w-24 items-center justify-end gap-1">
                 {product.image_url && (
                   <a
                     href={product.image_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="opacity-0 transition group-hover:opacity-100"
+                    className="inline-flex h-7 w-7 items-center justify-center rounded-md text-gray-500 opacity-0 transition hover:bg-gray-100 group-hover:opacity-100"
+                    aria-label="Open image"
                   >
                     <ExternalLink size={13} />
                   </a>
                 )}
+                <button
+                  type="button"
+                  onClick={() => openEditModal(product)}
+                  className="inline-flex h-7 w-7 items-center justify-center rounded-md text-gray-500 hover:bg-brand-50 hover:text-brand-700"
+                  aria-label="Edit product"
+                >
+                  <Pencil size={13} />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setDeletingProduct(product);
+                    setDeleteOpen(true);
+                  }}
+                  className="inline-flex h-7 w-7 items-center justify-center rounded-md text-gray-500 hover:bg-red-50 hover:text-red-600"
+                  aria-label="Delete product"
+                >
+                  <Trash2 size={13} />
+                </button>
               </div>
             </div>
           ))}
@@ -499,6 +660,93 @@ export default function ProductsPage() {
             </Button>
           </div>
         )}
+      </Modal>
+
+      {/* Edit product modal */}
+      <Modal
+        open={editOpen}
+        onClose={() => {
+          setEditOpen(false);
+          setEditingProduct(null);
+        }}
+        title="Edit Product"
+        size="lg"
+      >
+        {editingProduct && (
+          <form className="space-y-4" onSubmit={editForm.handleSubmit(onEditSubmit)}>
+            <Input
+              label="Product ID (SKU)"
+              value={editingProduct.product_id}
+              disabled
+            />
+            <Input
+              label="Image URL"
+              placeholder="https://cdn.example.com/shirt.jpg"
+              {...editForm.register("image_url", { required: "Image URL is required" })}
+              error={editForm.formState.errors.image_url?.message}
+            />
+            <div className="grid grid-cols-2 gap-3">
+              <Input
+                label="Name"
+                placeholder="Blue Shirt"
+                {...editForm.register("name", { required: true })}
+              />
+              <Input
+                label="Brand"
+                placeholder="Acme"
+                {...editForm.register("brand", { required: true })}
+              />
+              <Input
+                label="Cost ($)"
+                type="number"
+                step="0.01"
+                placeholder="29.99"
+                {...editForm.register("cost", { required: true, valueAsNumber: true })}
+              />
+              <Input
+                label="Category"
+                placeholder="Shirts"
+                {...editForm.register("category")}
+              />
+            </div>
+            <Button className="w-full" type="submit" loading={updateProduct.isPending}>
+              Save Changes
+            </Button>
+          </form>
+        )}
+      </Modal>
+
+      {/* Delete confirm modal */}
+      <Modal
+        open={deleteOpen}
+        onClose={() => {
+          setDeleteOpen(false);
+          setDeletingProduct(null);
+        }}
+        title="Delete Product"
+      >
+        <p className="text-sm text-gray-600">
+          Delete <span className="font-semibold text-gray-900">{deletingProduct?.name}</span>?
+          This cannot be undone.
+        </p>
+        <div className="mt-5 flex justify-end gap-2">
+          <Button
+            variant="secondary"
+            onClick={() => {
+              setDeleteOpen(false);
+              setDeletingProduct(null);
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="danger"
+            loading={deleteProduct.isPending}
+            onClick={onDeleteConfirm}
+          >
+            Delete
+          </Button>
+        </div>
       </Modal>
     </div>
   );

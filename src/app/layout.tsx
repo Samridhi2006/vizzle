@@ -5,6 +5,9 @@ import AppProviders from "@/components/providers/AppProviders";
 export const metadata: Metadata = {
   title: "Vizzle Dashboard",
   description: "Virtual Try-On Platform — Admin Dashboard",
+  icons: {
+    icon: "/favicon.png",
+  },
 };
 
 export default function RootLayout({

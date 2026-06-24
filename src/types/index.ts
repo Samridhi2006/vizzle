@@ -60,6 +60,14 @@ export interface Product {
   created_at: string;
 }
 
+export interface SyncProductsResponse {
+  status: string;
+  message: string;
+  imported: number;
+  errors: Array<{ id: string; error: string }>;
+  source?: "shopify" | "wordpress";
+}
+
 export interface ByProductMetric {
   vizzle_product_id: string;
   product_id: string | null;
