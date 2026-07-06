@@ -3,9 +3,10 @@ import { useLocation } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Sidebar from './components/Sidebar';
 import ContentArea from './components/ContentArea';
-import StepNavigation from './components/StepNavigation';
+import StepNavigation, { CUSTOM_API_DOCS_URL } from './components/StepNavigation';
 import { docsContent as wordpressContent } from './data/docsContent';
 import { shopifyDocsContent } from './data/shopifyDocsContent';
+import { customApiDocsContent } from './data/customApiDocsContent';
 
 import './docs.css';
 
@@ -20,8 +21,6 @@ function DocsPage() {
     const tabParam = params.get('tab');
     if (tabParam && (tabParam === 'wordpress' || tabParam === 'shopify' || tabParam === 'custom')) {
       setActiveTab(tabParam);
-      // Don't reset activeStep here if it's already on the right tab, but if it's a fresh load, step 0 is fine
-      // We rely on the initial load to set it, or if the URL changes
     }
   }, [location.search]);
 
@@ -29,7 +28,12 @@ function DocsPage() {
     window.scrollTo(0, 0);
   }, [activeStep, activeTab]);
 
-  const currentDocsContent = activeTab === 'shopify' ? shopifyDocsContent : wordpressContent;
+  const currentDocsContent =
+    activeTab === 'shopify'
+      ? shopifyDocsContent
+      : activeTab === 'custom'
+        ? customApiDocsContent
+        : wordpressContent;
 
   return (
     <div className="vizzle-docs-container pt-28">
@@ -50,13 +54,15 @@ function DocsPage() {
         
         <main className="flex-1 min-w-0">
           <div className="content-container">
-            {activeTab === 'wordpress' || activeTab === 'shopify' ? (
-              <ContentArea activeStep={activeStep} docsContent={currentDocsContent} />
-            ) : (
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '16rem', color: '#8b95a5' }}>
-                <p>Documentation for Custom API is coming soon.</p>
-              </div>
-            )}
+            <ContentArea
+              activeStep={activeStep}
+              docsContent={currentDocsContent}
+              externalLink={
+                activeTab === 'custom' && activeStep === customApiDocsContent.length - 1
+                  ? { url: CUSTOM_API_DOCS_URL, label: 'Open Full API Reference' }
+                  : null
+              }
+            />
           </div>
         </main>
       </div>

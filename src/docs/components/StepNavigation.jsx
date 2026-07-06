@@ -2,6 +2,8 @@ import React from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { FaShopify, FaWordpress, FaCode } from 'react-icons/fa';
 
+export const CUSTOM_API_DOCS_URL = 'https://dashboard.vizzle.in/dashboard/docs';
+
 export default function StepNavigation({ activeStep, setActiveStep, activeTab, setActiveTab, docsContent }) {
   const tabs = [
     { id: 'wordpress', label: 'WordPress', icon: <FaWordpress /> },
