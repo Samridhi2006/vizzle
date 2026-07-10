@@ -254,7 +254,7 @@ Your WordPress store now has Virtual Try-On powered by Vizzle. Here's a quick re
 
 - **Documentation:** Check our Help Center for FAQs
 - **Issues?** Contact support via Vizzle Dashboard
-- **Custom Integration?** See our Custom API Guide
+- **Custom Integration?** See our [Custom API Guide](/docs?tab=custom)
     `
   }
 ];

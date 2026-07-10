@@ -69,7 +69,7 @@ function Platforms() {
               </p>
               
               <a 
-                href={`/docs?tab=${platform.id}`} 
+                href={`/docs?tab=${platform.id}`}
                 className="inline-flex items-center text-[#1D8DB2] font-bold tracking-wide hover:text-[#156e8c] transition-colors mt-auto group-hover:translate-x-2 duration-300"
               >
                 View Documentation
