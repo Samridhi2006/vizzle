@@ -26,7 +26,7 @@ curl -X POST ${base}/api/v1/tryon \\
   -H "x-api-key: ${key}" \\
   -H "Content-Type: application/json" \\
   -d '{"product_id":"${sku}","user_photo_url":"<url from step 1>"}'
-# → { "output_url": "https://replicate.delivery/..." }`;
+# → { "output_url": "https://res.cloudinary.com/..." }`;
 }
 
 function makeReact(base: string, key: string, sku: string) {
@@ -74,6 +74,41 @@ async function runTryon() {
 </script>`;
 }
 
+function makeCatalogCurl(base: string, key: string, sku: string) {
+  return `# 1. Upload garment image → get a permanent URL
+curl -X POST ${base}/api/v1/products/upload-image \\
+  -H "x-api-key: ${key}" \\
+  -F "garment=@shirt.jpg"
+# → { "image_url": "https://res.cloudinary.com/..." }
+
+# 2. Register / update product with that URL (upsert by product_id)
+curl -X POST ${base}/api/v1/products \\
+  -H "x-api-key: ${key}" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "product_id": "${sku}",
+    "name": "Blue Linen Shirt",
+    "brand": "Zara",
+    "cost": 1299,
+    "image_url": "<url from step 1>",
+    "category": "shirt",
+    "size_chart_url": "https://..."
+  }'
+# → { "vizzle_product_id": "clx...", "product_id": "${sku}", "image_url": "..." }
+
+# 2b. (Optional) Batch upsert up to 1 000 products at once
+curl -X POST ${base}/api/v1/products/batch \\
+  -H "x-api-key: ${key}" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "products": [
+      { "product_id": "SKU-001", "name": "Blue Shirt", "brand": "Zara", "cost": 1299, "image_url": "https://..." },
+      { "product_id": "SKU-002", "name": "Red Shirt",  "brand": "Zara", "cost": 999,  "image_url": "https://..." }
+    ]
+  }'
+# → { "imported": 2, "errors": [] }`;
+}
+
 function buildJson(opts: { base: string; key: string; sku: string; store: { store_name: string; domain: string } | null }) {
   return {
     title: "Vizzle Integration",
@@ -106,9 +141,10 @@ export default function DocsPage() {
   const liveKey = active ? `vzk_${active.active_key_prefix}•••` : "vzk_YOUR_KEY";
   const liveSku = "PRODUCT_SKU";
 
-  const curlSnip  = useMemo(() => makeCurl(baseUrl, liveKey, liveSku),  [baseUrl, liveKey]);
-  const jsSnip    = useMemo(() => makeReact(baseUrl, liveKey, liveSku), [baseUrl, liveKey]);
-  const htmlSnip  = useMemo(() => makeHtml(baseUrl, liveKey, liveSku),  [baseUrl, liveKey]);
+  const curlSnip    = useMemo(() => makeCurl(baseUrl, liveKey, liveSku),        [baseUrl, liveKey]);
+  const jsSnip      = useMemo(() => makeReact(baseUrl, liveKey, liveSku),       [baseUrl, liveKey]);
+  const htmlSnip    = useMemo(() => makeHtml(baseUrl, liveKey, liveSku),        [baseUrl, liveKey]);
+  const catalogSnip = useMemo(() => makeCatalogCurl(baseUrl, liveKey, liveSku), [baseUrl, liveKey]);
 
   const copyGuide = useCallback(async () => {
     try {
@@ -235,7 +271,7 @@ export default function DocsPage() {
             </div>
             <div className="rounded-xl bg-emerald-50 border border-emerald-200 p-3 font-mono text-xs text-emerald-800 space-y-1">
               <div className="mb-1 text-emerald-600 not-mono text-[11px] font-semibold">Response (200 when done)</div>
-              <div>{`{ "output_url": "https://replicate.delivery/…",`}</div>
+              <div>{`{ "output_url": "https://res.cloudinary.com/…",`}</div>
               <div>&nbsp;&nbsp;{`"prediction_id": "abc123" }`}</div>
               <div className="mt-1 text-emerald-600 text-[11px]">Set output_url as &lt;img src&gt;</div>
             </div>
@@ -244,13 +280,83 @@ export default function DocsPage() {
         <p className="mt-3 text-xs text-gray-400">Server waits for the ML model (30–90 s typical). Shopper photos and results auto-deleted after 1 hour.</p>
       </div>
 
+      {/* Catalog API — product upload & management */}
+      <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+        <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-gray-500">Catalog API</p>
+        <p className="mb-4 text-sm text-gray-500">
+          Register your garment catalog via API key. All endpoints are upserts — posting the same{" "}
+          <IC>product_id</IC> again updates the existing product.
+        </p>
+        <div className="space-y-3">
+
+          {/* Upload image */}
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div className="rounded-xl bg-gray-50 border border-gray-200 p-3 font-mono text-xs text-gray-700 space-y-1">
+              <div className="mb-1 text-gray-400 not-mono text-[11px] font-semibold">① Upload garment image</div>
+              <div><span className="text-brand-600 font-bold">POST</span> /api/v1/products/upload-image</div>
+              <div className="text-gray-500">x-api-key: {liveKey}</div>
+              <div className="text-gray-800">body: garment (multipart, ≤ 10 MB)</div>
+              <div className="text-gray-500 text-[10px] mt-1">JPEG · PNG · WebP</div>
+            </div>
+            <div className="rounded-xl bg-emerald-50 border border-emerald-200 p-3 font-mono text-xs text-emerald-800 space-y-1">
+              <div className="mb-1 text-emerald-600 not-mono text-[11px] font-semibold">Response</div>
+              <div>{`{ "image_url": "https://res.cloudinary.com/…" }`}</div>
+              <div className="mt-1 text-emerald-600 text-[11px]">Permanent URL — pass into ②</div>
+            </div>
+          </div>
+
+          {/* Upsert single */}
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div className="rounded-xl bg-gray-50 border border-gray-200 p-3 font-mono text-xs text-gray-700 space-y-1">
+              <div className="mb-1 text-gray-400 not-mono text-[11px] font-semibold">② Register / update product</div>
+              <div><span className="text-brand-600 font-bold">POST</span> /api/v1/products</div>
+              <div className="text-gray-500">x-api-key: {liveKey}</div>
+              <div className="text-gray-800">{`{ "product_id": "${liveSku}",`}</div>
+              <div className="text-gray-800">&nbsp;&nbsp;{`"name": "…", "brand": "…", "cost": 0,`}</div>
+              <div className="text-gray-800">&nbsp;&nbsp;{`"image_url": "<url from ①>" }`}</div>
+              <div className="text-gray-400 text-[10px] mt-1">Optional: category · size_chart_url · custom_fields</div>
+            </div>
+            <div className="rounded-xl bg-emerald-50 border border-emerald-200 p-3 font-mono text-xs text-emerald-800 space-y-1">
+              <div className="mb-1 text-emerald-600 not-mono text-[11px] font-semibold">Response</div>
+              <div>{`{ "vizzle_product_id": "clx…",`}</div>
+              <div>&nbsp;&nbsp;{`"product_id": "${liveSku}",`}</div>
+              <div>&nbsp;&nbsp;{`"image_url": "https://…" }`}</div>
+              <div className="mt-1 text-emerald-600 text-[11px]">Use product_id in /api/v1/tryon</div>
+            </div>
+          </div>
+
+          {/* Batch */}
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div className="rounded-xl bg-gray-50 border border-gray-200 p-3 font-mono text-xs text-gray-700 space-y-1">
+              <div className="mb-1 text-gray-400 not-mono text-[11px] font-semibold">② (batch) Register up to 1 000 products</div>
+              <div><span className="text-brand-600 font-bold">POST</span> /api/v1/products/batch</div>
+              <div className="text-gray-500">x-api-key: {liveKey}</div>
+              <div className="text-gray-800">{`{ "products": [`}</div>
+              <div className="text-gray-800">&nbsp;&nbsp;{`{ "product_id": "…", "name": "…",`}</div>
+              <div className="text-gray-800">&nbsp;&nbsp;&nbsp;&nbsp;{`"brand": "…", "cost": 0, "image_url": "…" }`}</div>
+              <div className="text-gray-800">{`] }`}</div>
+            </div>
+            <div className="rounded-xl bg-emerald-50 border border-emerald-200 p-3 font-mono text-xs text-emerald-800 space-y-1">
+              <div className="mb-1 text-emerald-600 not-mono text-[11px] font-semibold">Response (HTTP 207)</div>
+              <div>{`{ "imported": 2, "errors": [] }`}</div>
+              <div className="mt-1 text-emerald-600 text-[11px]">Partial success — check errors array</div>
+            </div>
+          </div>
+
+        </div>
+        <p className="mt-3 text-xs text-gray-400">
+          Rate limit: 100 requests / 60 s per store. All endpoints are upserts — safe to re-run for catalog sync.
+        </p>
+      </div>
+
       {/* Code snippets — tabbed */}
       <SnippetTabs
         active={active}
         tabs={[
-          { id: "curl",  label: "cURL",      code: curlSnip  },
-          { id: "js",    label: "JavaScript", code: jsSnip    },
-          { id: "html",  label: "HTML",        code: htmlSnip  },
+          { id: "curl",    label: "Try-on cURL",  code: curlSnip    },
+          { id: "js",      label: "JavaScript",   code: jsSnip      },
+          { id: "html",    label: "HTML",          code: htmlSnip    },
+          { id: "catalog", label: "Catalog cURL",  code: catalogSnip },
         ]}
       />
 

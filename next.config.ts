@@ -9,10 +9,6 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "res.cloudinary.com" },
       // ML backend (Render) — raw result images before Cloudinary upload
       { protocol: "https", hostname: "vizzle-backend-vvc6.onrender.com" },
-      // Replicate / Hugging Face CDN used by the ML pipeline
-      { protocol: "https", hostname: "pbxt.replicate.delivery" },
-      { protocol: "https", hostname: "replicate.delivery" },
-      { protocol: "https", hostname: "*.replicate.delivery" },
       // Shopify product catalog imports (bulk JSON)
       { protocol: "https", hostname: "cdn.shopify.com" },
     ],
@@ -38,7 +34,7 @@ const nextConfig: NextConfig = {
               "default-src 'self'",
               "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.vizzle.io https://apis.google.com",
               "style-src 'self' 'unsafe-inline'",
-              "img-src 'self' data: blob: https://res.cloudinary.com https://cdn.shopify.com https://*.shopify.com https://*.replicate.delivery https://vizzle-backend-vvc6.onrender.com https://*.googleusercontent.com",
+              "img-src 'self' data: blob: https://res.cloudinary.com https://cdn.shopify.com https://*.shopify.com https://vizzle-backend-vvc6.onrender.com https://*.googleusercontent.com",
               "font-src 'self'",
               // Firebase Auth popup + Google Sign-In need these connect targets
               "connect-src 'self' https://*.firebaseapp.com https://*.googleapis.com https://securetoken.googleapis.com https://identitytoolkit.googleapis.com https://res.cloudinary.com https://vizzle-backend-vvc6.onrender.com",
