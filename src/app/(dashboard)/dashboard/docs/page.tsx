@@ -74,6 +74,19 @@ async function runTryon() {
 </script>`;
 }
 
+function makeDirectCurl(base: string, key: string) {
+  return `# One call — no catalog registration needed.
+# Pass your garment's image URL directly; usage is still tracked by your API key.
+curl -X POST ${base}/api/v1/tryon/direct \\
+  -H "x-api-key: ${key}" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "user_photo_url": "https://your-cdn.com/shopper.jpg",
+    "product_image_url": "https://your-cdn.com/shirt.jpg"
+  }'
+# → { "prediction_id": "abc123", "output_url": "https://res.cloudinary.com/..." }`;
+}
+
 function makeCatalogCurl(base: string, key: string, sku: string) {
   return `# 1. Upload garment image → get a permanent URL
 curl -X POST ${base}/api/v1/products/upload-image \\
@@ -144,6 +157,7 @@ export default function DocsPage() {
   const curlSnip    = useMemo(() => makeCurl(baseUrl, liveKey, liveSku),        [baseUrl, liveKey]);
   const jsSnip      = useMemo(() => makeReact(baseUrl, liveKey, liveSku),       [baseUrl, liveKey]);
   const htmlSnip    = useMemo(() => makeHtml(baseUrl, liveKey, liveSku),        [baseUrl, liveKey]);
+  const directSnip  = useMemo(() => makeDirectCurl(baseUrl, liveKey),           [baseUrl, liveKey]);
   const catalogSnip = useMemo(() => makeCatalogCurl(baseUrl, liveKey, liveSku), [baseUrl, liveKey]);
 
   const copyGuide = useCallback(async () => {
@@ -280,6 +294,34 @@ export default function DocsPage() {
         <p className="mt-3 text-xs text-gray-400">Server waits for the ML model (30–90 s typical). Shopper photos and results auto-deleted after 1 hour.</p>
       </div>
 
+      {/* Quick try-on — no catalog sync required */}
+      <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+        <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-gray-500">Quick try-on (no catalog sync)</p>
+        <p className="mb-4 text-sm text-gray-500">
+          Can&apos;t always sync your catalog? Skip product registration entirely — pass both image URLs
+          directly in one call. Usage is still tracked against your API key.
+        </p>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div className="rounded-xl bg-gray-50 border border-gray-200 p-3 font-mono text-xs text-gray-700 space-y-1">
+            <div className="mb-1 text-gray-400 not-mono text-[11px] font-semibold">One call · no product_id needed</div>
+            <div><span className="text-brand-600 font-bold">POST</span> /api/v1/tryon/direct</div>
+            <div className="text-gray-500">x-api-key: {liveKey}</div>
+            <div className="text-gray-800">{`{ "user_photo_url": "…",`}</div>
+            <div className="text-gray-800">&nbsp;&nbsp;{`"product_image_url": "…" }`}</div>
+          </div>
+          <div className="rounded-xl bg-emerald-50 border border-emerald-200 p-3 font-mono text-xs text-emerald-800 space-y-1">
+            <div className="mb-1 text-emerald-600 not-mono text-[11px] font-semibold">Response</div>
+            <div>{`{ "prediction_id": "abc123",`}</div>
+            <div>&nbsp;&nbsp;{`"output_url": "https://…" }`}</div>
+            <div className="mt-1 text-emerald-600 text-[11px]">Tracked by your API key automatically</div>
+          </div>
+        </div>
+        <p className="mt-3 text-xs text-gray-400">
+          Tracking here is per-store (by API key) only — no per-product breakdown. For per-product analytics,
+          register products via the Catalog API below and use <IC>POST /api/v1/tryon</IC> instead.
+        </p>
+      </div>
+
       {/* Catalog API — product upload & management */}
       <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
         <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-gray-500">Catalog API</p>
@@ -356,6 +398,7 @@ export default function DocsPage() {
           { id: "curl",    label: "Try-on cURL",  code: curlSnip    },
           { id: "js",      label: "JavaScript",   code: jsSnip      },
           { id: "html",    label: "HTML",          code: htmlSnip    },
+          { id: "direct",  label: "Quick cURL",    code: directSnip  },
           { id: "catalog", label: "Catalog cURL",  code: catalogSnip },
         ]}
       />
