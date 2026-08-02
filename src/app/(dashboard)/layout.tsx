@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Sidebar from "@/components/layout/Sidebar";
 import Header from "@/components/layout/Header";
@@ -17,11 +17,33 @@ export default function DashboardLayout({
   const token = useAuthStore((state) => state.token);
   const sidebarOpen = useUIStore((state) => state.sidebarOpen);
 
+  // Wait for Zustand persist to hydrate from localStorage before checking auth.
+  // Without this, `token` is null on the first render (SSR/hydration),
+  // causing an immediate redirect to /login even when the user IS logged in.
+  const [hydrated, setHydrated] = useState(false);
   useEffect(() => {
-    if (!token) {
+    // Zustand's persist rehydrates synchronously on the client in a microtask.
+    // Deferring by one tick ensures the store is populated before we check.
+    const unsub = useAuthStore.persist.onFinishHydration(() => {
+      setHydrated(true);
+    });
+
+    // If already hydrated (e.g. navigating between pages), resolve immediately
+    if (useAuthStore.persist.hasHydrated()) {
+      setHydrated(true);
+    }
+
+    return () => unsub();
+  }, []);
+
+  useEffect(() => {
+    if (hydrated && !token) {
       router.replace("/login");
     }
-  }, [token, router]);
+  }, [hydrated, token, router]);
+
+  // Render nothing until hydration is complete to avoid flash
+  if (!hydrated) return null;
 
   return (
     <div className="flex h-screen overflow-hidden bg-brand-50">

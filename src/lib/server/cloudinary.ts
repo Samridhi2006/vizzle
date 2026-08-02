@@ -6,6 +6,49 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
+export type ModerationStatus = "approved" | "rejected" | "pending";
+
+/**
+ * Moderate an image URL for NSFW / inappropriate content using Cloudinary.
+ *
+ * - Primary:  Cloudinary `aws_rek` add-on (if enabled on the account).
+ * - Fallback: If the add-on is not available, returns "approved" so legitimate
+ *             uploads are never blocked due to a missing Cloudinary plan feature.
+ *
+ * Returns: "approved" | "rejected" | "pending"
+ * Throws:  Never — all errors are caught and treated as "approved" (fail-open).
+ */
+export async function moderateImageUrl(
+  imageUrl: string
+): Promise<ModerationStatus> {
+  try {
+    // Upload to a temp Cloudinary folder with aws_rek moderation
+    const result = await cloudinary.uploader.upload(imageUrl, {
+      folder:      "vizzle/moderation-check",
+      moderation:  "aws_rek",
+      tags:        ["vizzle_temp"],
+      // Overwrite: false so each check is independent
+    });
+
+    // Cloudinary returns moderation as an array of objects
+    const modStatus =
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (result as any).moderation?.[0]?.status as ModerationStatus | undefined;
+
+    // Clean up the temp moderation asset immediately (best-effort)
+    if (result.public_id) {
+      cloudinary.uploader.destroy(result.public_id).catch(() => {});
+    }
+
+    // If no moderation status (add-on not enabled), default to approved
+    return modStatus ?? "approved";
+  } catch (err) {
+    // Fail-open: if Cloudinary moderation throws, don't block the user
+    console.warn("[cloudinary] moderation check failed, defaulting to approved:", err);
+    return "approved";
+  }
+}
+
 export interface UploadResult {
   url:       string;   // HTTPS secure_url
   publicId:  string;   // Cloudinary public_id (for deletion)

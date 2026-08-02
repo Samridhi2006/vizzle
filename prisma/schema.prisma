@@ -28,10 +28,13 @@ model Store {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  apiKeys   ApiKey[]
-  products  Product[]
-  tryonLogs TryonLog[]
+  user             User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  apiKeys          ApiKey[]
+  products         Product[]
+  tryonLogs        TryonLog[]
+  creditWallet     CreditWallet?
+  creditTxns       CreditTransaction[]
+  storeTier        StoreTier?
 
   @@index([userId])
 }
@@ -103,4 +106,48 @@ model TempAsset {
   createdAt DateTime @default(now())
 
   @@index([expiresAt, deleted])
+}
+
+// ── Credit System ────────────────────────────────────────────────────────────
+
+// One wallet per store — tracks current INR credit balance.
+model CreditWallet {
+  id        String   @id @default(cuid())
+  storeId   String   @unique
+  balance   Float    @default(0)
+  updatedAt DateTime @updatedAt
+
+  store Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
+}
+
+// Ledger of every credit/debit event for audit + history display.
+model CreditTransaction {
+  id                String   @id @default(cuid())
+  storeId           String
+  // PURCHASE | USAGE_IMAGE | USAGE_VIDEO | REFUND
+  type              String
+  amount            Float    // positive = credit added, negative = debit
+  description       String?
+  razorpayOrderId   String?
+  razorpayPaymentId String?
+  createdAt         DateTime @default(now())
+
+  store Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
+
+  @@index([storeId, createdAt])
+}
+
+// One tier per store — controls rate limits.
+// Default BASIC: 100 req/hr, 1000 req/day.
+model StoreTier {
+  id              String    @id @default(cuid())
+  storeId         String    @unique
+  // BASIC | GOLD | PREMIUM | ENTERPRISE
+  tier            String    @default("BASIC")
+  requestsPerHour Int       @default(100)
+  requestsPerDay  Int       @default(1000)
+  activatedAt     DateTime  @default(now())
+  expiresAt       DateTime?
+
+  store Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
 }

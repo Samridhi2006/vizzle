@@ -35,6 +35,25 @@ export async function createStore(input: {
     },
   });
 
+  // Initialize One-Time Setup Tier as UNPAID (Store owner must choose and pay for a setup plan)
+  await prisma.storeTier.upsert({
+    where: { storeId: store.id },
+    create: {
+      storeId: store.id,
+      tier: "UNPAID",
+      requestsPerHour: 0,
+      requestsPerDay: 0,
+    },
+    update: {},
+  });
+
+  // Initialize Credit Wallet with 0 balance (Store must complete One-Time Setup & Top-Up)
+  await prisma.creditWallet.upsert({
+    where: { storeId: store.id },
+    create: { storeId: store.id, balance: 0 },
+    update: {},
+  });
+
   return {
     store_id: store.id,
     api_key: rawApiKey,

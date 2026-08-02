@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import {
-  ArrowRight, Check, Copy, Package, Plus,
+  ArrowRight, Check, Copy, Package, Plus, CreditCard,
   Store as StoreIcon, TrendingUp, Users, Zap,
 } from "lucide-react";
 import Button from "@/components/ui/Button";
@@ -13,6 +13,7 @@ import Input from "@/components/ui/Input";
 import { formatDate, formatNumber } from "@/lib/client/utils";
 import { useCreateStoreMutation, useStoresQuery } from "@/hooks/useStores";
 import { useAnalyticsQuery } from "@/hooks/useAnalytics";
+import { useCreditsQuery } from "@/hooks/useCredits";
 import { useStoresStore } from "@/store/stores.store";
 import { useUIStore } from "@/store/ui.store";
 
@@ -51,6 +52,7 @@ export default function DashboardPage() {
   }, [selectedStore, setSelectedStore, storeList]);
 
   const { data: analytics } = useAnalyticsQuery(selectedStore?.store_id ?? null);
+  const { data: creditsData } = useCreditsQuery(selectedStore?.store_id ?? null);
   const totalProducts = storeList.reduce((s, x) => s + x.product_count, 0);
   const hasStores = storeList.length > 0;
   const hasProducts = totalProducts > 0;
@@ -96,6 +98,26 @@ export default function DashboardPage() {
         <Stat label="Products"         value={dash ?? formatNumber(totalProducts)}               icon={Package} />
         <Stat label="Try-ons (30d)"    value={dash ?? formatNumber(analytics?.tryons ?? 0)}      icon={Zap} />
         <Stat label="Unique users (30d)" value={dash ?? formatNumber(analytics?.users ?? 0)}    icon={Users} />
+      </div>
+
+      {/* ── Credits widget ───────────────────────────────────────── */}
+      <div className="flex items-center justify-between rounded-2xl border border-brand-200 bg-white px-5 py-4">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-100">
+            <CreditCard size={18} className="text-brand-600" />
+          </div>
+          <div>
+            <p className="text-xs text-gray-500">Credit Balance</p>
+            <p className="text-xl font-extrabold text-gray-900">
+              ₹{(creditsData?.balance ?? 0).toFixed(2)}
+            </p>
+          </div>
+        </div>
+        <Link href="/dashboard/billing">
+          <Button size="sm" variant="outline">
+            Top Up <ArrowRight size={13} />
+          </Button>
+        </Link>
       </div>
 
       {/* ── API key reveal ──────────────────────────────────────── */}
