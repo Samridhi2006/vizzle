@@ -19,7 +19,7 @@ import { TryonMode } from "@/types";
 const OUTPUT_TTL_MS = 60 * 60 * 1000; // 1 hour
 
 /**
- * Mirror an external output URL (Replicate) to our Cloudinary temp folder.
+ * Mirror an external ML output URL to our Cloudinary temp folder.
  * Returns our own stable URL. Tracks the asset for hourly cleanup.
  */
 async function mirrorOutputToCloudinary(
@@ -51,7 +51,7 @@ async function mirrorOutputToCloudinary(
 /**
  * Extract the result image URL from the ML model's `output` field.
  * TransformResponse.output is Optional[Union[str, list]] per the official backend schema.
- *   - string  → single Replicate delivery URL (common case)
+ *   - string  → single result image URL (common case)
  *   - list    → array of URLs, first element is the result
  *   - null    → not yet available (caller should have already waited)
  */
@@ -225,17 +225,17 @@ export async function checkImageTryOnStatus(predictionId: string, storeId: strin
     "output:", JSON.stringify(raw.output), "model:", raw.model_used);
 
   const status        = raw.status ?? "unknown";
-  const replicateUrl  = extractOutputUrl(raw.output) || null;
+  const mlOutputUrl   = extractOutputUrl(raw.output) || null;
 
   if (status === "failed" || status === "canceled") {
     writeTryonLog({ storeId, mode: "image_id", success: false, predictionId, errorCode: "ML_ERROR" });
     return { status, output_url: null, error: raw.error ?? null, model_used: raw.model_used ?? null };
   }
 
-  if (status === "succeeded" && replicateUrl) {
-    // Mirror Replicate URL → Cloudinary so the client gets a stable, public URL
+  if (status === "succeeded" && mlOutputUrl) {
+    // Mirror ML output → Cloudinary so the client gets a stable, public URL
     // that never expires and has no CORS restrictions.
-    const outputUrl = await mirrorOutputToCloudinary(replicateUrl, storeId);
+    const outputUrl = await mirrorOutputToCloudinary(mlOutputUrl, storeId);
     writeTryonLog({ storeId, mode: "image_id", success: true, predictionId, outputUrl });
     return { status, output_url: outputUrl, error: null, model_used: raw.model_used ?? null };
   }
