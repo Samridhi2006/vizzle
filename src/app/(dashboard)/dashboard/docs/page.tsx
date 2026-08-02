@@ -74,6 +74,51 @@ async function runTryon() {
 </script>`;
 }
 
+function makePython(base: string, key: string, sku: string) {
+  return `pip install vizzle  # or: pip install -e sdk/python/
+
+from vizzle import VizzleClient
+
+client = VizzleClient(api_key="${key}")
+
+# 1. Upload shopper photo
+with open("shopper.jpg", "rb") as f:
+    # For Python use multipart/form-data via requests:
+    import requests
+    resp = requests.post(
+        "${base}/api/v1/upload",
+        headers={"x-api-key": "${key}"},
+        files={"photo": f},
+    )
+    photo_url = resp.json()["url"]
+
+# 2. Run try-on (async) and wait for result
+result = client.tryon(product_id="${sku}", user_photo_url=photo_url)
+status = client.wait_for_tryon(result.prediction_id)
+print(status.output_url)  # → display in <img>
+
+# 3. Generate video from result
+video = client.generate_video(image_url=status.output_url, motion_type="subtle_walk")
+video_status = client.wait_for_video(video.prediction_id)
+print(video_status.output_url)  # → <video src=...>`;
+}
+
+function makeVideoFlow(base: string, key: string) {
+  return `# After getting output_url from POST /api/v1/tryon:
+curl -X POST ${base}/api/v1/generate-video \\
+  -H "x-api-key: ${key}" \\
+  -H "Content-Type: application/json" \\
+  -d '{ "image_url": "<output_url from tryon>",
+         "motion_type": "subtle_walk",
+         "duration": 4, "fps": 24 }'
+# → { "prediction_id": "xyz", "status": "starting" }
+
+# Poll until done:
+curl ${base}/api/v1/generate-video/status/xyz \\
+  -H "x-api-key: ${key}"
+# → { "status": "succeeded", "output_url": "https://.../result.mp4" }`;
+}
+
 function buildJson(opts: { base: string; key: string; sku: string; store: { store_name: string; domain: string } | null }) {
   return {
     title: "Vizzle Integration",
@@ -82,10 +127,13 @@ function buildJson(opts: { base: string; key: string; sku: string; store: { stor
     flow: [
       `POST ${opts.base}/api/v1/upload  (multipart photo)  →  { url }`,
       `POST ${opts.base}/api/v1/tryon   (product_id + url)  →  { output_url }`,
+      `POST ${opts.base}/api/v1/generate-video  (image_url)  →  { prediction_id }`,
     ],
     auth_header: `x-api-key: ${opts.key}`,
     snippets: { curl: makeCurl(opts.base, opts.key, opts.sku), js: makeReact(opts.base, opts.key, opts.sku) },
     note: "Server waits for the ML model (30–90 s). Shopper photos and results are auto-deleted after 1 hour.",
+    moderation: "All uploaded images are scanned for inappropriate content. Rejected images are not charged.",
+    python_sdk: "pip install vizzle",
   };
 }
 
@@ -106,9 +154,11 @@ export default function DocsPage() {
   const liveKey = active ? `vzk_${active.active_key_prefix}•••` : "vzk_YOUR_KEY";
   const liveSku = "PRODUCT_SKU";
 
-  const curlSnip  = useMemo(() => makeCurl(baseUrl, liveKey, liveSku),  [baseUrl, liveKey]);
-  const jsSnip    = useMemo(() => makeReact(baseUrl, liveKey, liveSku), [baseUrl, liveKey]);
-  const htmlSnip  = useMemo(() => makeHtml(baseUrl, liveKey, liveSku),  [baseUrl, liveKey]);
+  const curlSnip    = useMemo(() => makeCurl(baseUrl, liveKey, liveSku),       [baseUrl, liveKey]);
+  const jsSnip      = useMemo(() => makeReact(baseUrl, liveKey, liveSku),      [baseUrl, liveKey]);
+  const htmlSnip    = useMemo(() => makeHtml(baseUrl, liveKey, liveSku),        [baseUrl, liveKey]);
+  const pythonSnip  = useMemo(() => makePython(baseUrl, liveKey, liveSku),     [baseUrl, liveKey]);
+  const videoSnip   = useMemo(() => makeVideoFlow(baseUrl, liveKey),            [baseUrl, liveKey]);
 
   const copyGuide = useCallback(async () => {
     try {
@@ -248,11 +298,34 @@ export default function DocsPage() {
       <SnippetTabs
         active={active}
         tabs={[
-          { id: "curl",  label: "cURL",      code: curlSnip  },
-          { id: "js",    label: "JavaScript", code: jsSnip    },
-          { id: "html",  label: "HTML",        code: htmlSnip  },
+          { id: "curl",   label: "cURL",       code: curlSnip   },
+          { id: "js",     label: "JavaScript",  code: jsSnip     },
+          { id: "html",   label: "HTML",        code: htmlSnip   },
+          { id: "python", label: "Python SDK",  code: pythonSnip },
+          { id: "video",  label: "Video API",   code: videoSnip  },
         ]}
       />
+
+      {/* Moderation notice */}
+      <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
+        <p className="text-xs font-semibold uppercase tracking-widest text-amber-700 mb-1">AI Content Moderation</p>
+        <p className="text-sm text-amber-800">
+          All uploaded images are automatically scanned for NSFW and misleading content.
+          Rejected images return <IC>422 MODERATION_REJECTED</IC> and are <strong>never charged</strong>.
+        </p>
+      </div>
+
+      {/* Python SDK install card */}
+      <div className="rounded-2xl border border-brand-200 bg-white p-5 shadow-sm">
+        <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-gray-500">Python SDK</p>
+        <div className="rounded-xl bg-gray-950 p-4 font-mono text-xs text-gray-100 mb-3">
+          pip install vizzle
+        </div>
+        <p className="text-sm text-gray-500">
+          Zero dependencies — uses stdlib only. Supports try-on, video generation, and credit balance.
+          Full source at <IC>sdk/python/</IC> in the repository.
+        </p>
+      </div>
 
     </div>
   );

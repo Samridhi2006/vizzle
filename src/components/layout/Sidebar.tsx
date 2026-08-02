@@ -5,17 +5,18 @@ import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/client/utils";
 import {
   ChevronLeft, ChevronRight, X,
-  Shield, LayoutDashboard, Store, Package, BarChart2, Code2, LogOut,
+  Shield, LayoutDashboard, Store, Package, BarChart2, Code2, LogOut, CreditCard, MessageCircle,
 } from "lucide-react";
 import { useAuthStore } from "@/store/auth.store";
 import { useUIStore } from "@/store/ui.store";
 
 const NAV = [
-  { href: "/dashboard",           label: "Overview",    icon: LayoutDashboard },
-  { href: "/dashboard/stores",    label: "Stores",      icon: Store },
-  { href: "/dashboard/products",  label: "Products",    icon: Package },
-  { href: "/dashboard/analytics", label: "Analytics",   icon: BarChart2 },
-  { href: "/dashboard/docs",      label: "Integration", icon: Code2 },
+  { href: "/dashboard",           label: "Overview",          icon: LayoutDashboard },
+  { href: "/dashboard/stores",    label: "Stores",            icon: Store },
+  { href: "/dashboard/products",  label: "Products",          icon: Package },
+  { href: "/dashboard/analytics", label: "Analytics",         icon: BarChart2 },
+  { href: "/dashboard/billing",   label: "Credits & Billing", icon: CreditCard },
+  { href: "/dashboard/docs",      label: "Integration",       icon: Code2 },
 ];
 
 export default function Sidebar() {
@@ -100,6 +101,17 @@ export default function Sidebar() {
             <LogOut size={16} className="text-gray-400" />
             Sign out
           </button>
+
+          {/* WhatsApp support */}
+          <a
+            href="https://wa.me/918310247975?text=Hi%20Vizzle%20Team%2C%20I%20need%20support"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex w-full items-center gap-2.5 rounded-xl border border-green-200 bg-green-50 px-3 py-2.5 text-sm font-medium text-green-700 hover:bg-green-100 transition-colors mt-2"
+          >
+            <MessageCircle size={16} className="text-green-600" />
+            WhatsApp Support
+          </a>
         </div>
       </aside>
 

@@ -17,16 +17,19 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const [usersCount, storesCount, usageCount, productsCount, users] = await Promise.all([
+    const [usersCount, storesCount, usageCount, productsCount, totalCreditsRes, users] = await Promise.all([
       prisma.user.count(),
       prisma.store.count(),
       prisma.tryonLog.count(),
       prisma.product.count(),
+      prisma.creditWallet.aggregate({ _sum: { balance: true } }),
       prisma.user.findMany({
         orderBy: { createdAt: "desc" },
         include: {
           stores: {
             include: {
+              creditWallet: true,
+              storeTier: true,
               _count: {
                 select: { tryonLogs: true, products: true },
               },
@@ -39,20 +42,32 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(
       {
         totals: {
-          users:    usersCount,
-          stores:   storesCount,
-          usage:    usageCount,
-          products: productsCount,
+          users:        usersCount,
+          stores:       storesCount,
+          usage:        usageCount,
+          products:     productsCount,
+          totalCredits: totalCreditsRes._sum.balance ?? 0,
         },
         users: users.map((u) => ({
           id:         u.id,
           name:       u.name,
           email:      u.email,
           joinedAt:   u.createdAt,
-          stores:     u.stores.length,
-          storeNames: u.stores.map((s) => s.storeName),
+          storesCount: u.stores.length,
+          stores: u.stores.map((s) => ({
+            id:          s.id,
+            storeName:   s.storeName,
+            domain:      s.domain,
+            tier:        s.storeTier?.tier ?? "BASIC",
+            reqsPerHr:   s.storeTier?.requestsPerHour ?? 100,
+            reqsPerDay:  s.storeTier?.requestsPerDay ?? 1000,
+            balance:     s.creditWallet?.balance ?? 0,
+            usage:       s._count.tryonLogs,
+            products:    s._count.products,
+          })),
           products:   u.stores.reduce((sum, s) => sum + s._count.products, 0),
           usage:      u.stores.reduce((sum, s) => sum + s._count.tryonLogs, 0),
+          totalBalance: u.stores.reduce((sum, s) => sum + (s.creditWallet?.balance ?? 0), 0),
         })),
       },
       { status: 200, headers: corsHeaders(origin) }

@@ -36,14 +36,14 @@ const nextConfig: NextConfig = {
             key: "Content-Security-Policy",
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.vizzle.io https://apis.google.com",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.vizzle.io https://apis.google.com https://checkout.razorpay.com",
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: blob: https://res.cloudinary.com https://cdn.shopify.com https://*.shopify.com https://*.replicate.delivery https://vizzle-backend-vvc6.onrender.com https://*.googleusercontent.com",
               "font-src 'self'",
               // Firebase Auth popup + Google Sign-In need these connect targets
-              "connect-src 'self' https://*.firebaseapp.com https://*.googleapis.com https://securetoken.googleapis.com https://identitytoolkit.googleapis.com https://res.cloudinary.com https://vizzle-backend-vvc6.onrender.com",
+              "connect-src 'self' https://*.firebaseapp.com https://*.googleapis.com https://securetoken.googleapis.com https://identitytoolkit.googleapis.com https://res.cloudinary.com https://vizzle-backend-vvc6.onrender.com https://api.razorpay.com https://lumberjack.razorpay.com",
               // Firebase signInWithPopup opens an iframe on accounts.google.com / firebaseapp.com
-              "frame-src https://*.firebaseapp.com https://accounts.google.com",
+              "frame-src https://*.firebaseapp.com https://accounts.google.com https://api.razorpay.com",
             ].join("; "),
           },
         ],

@@ -128,3 +128,71 @@ export const analytics = {
     );
   },
 };
+
+// ── Credits ───────────────────────────────────────────────────────────────────
+
+export interface CreditTransaction {
+  id: string;
+  storeId: string;
+  type: string;
+  amount: number;
+  description: string | null;
+  razorpayOrderId: string | null;
+  razorpayPaymentId: string | null;
+  createdAt: string;
+}
+
+export interface StoreTierInfo {
+  tier: string;
+  requestsPerHour: number;
+  requestsPerDay: number;
+}
+
+export interface CreditsData {
+  balance: number;
+  transactions: CreditTransaction[];
+  tier: StoreTierInfo;
+}
+
+export const credits = {
+  get: (store_id: string) =>
+    request<CreditsData>(`/credits?store_id=${store_id}`),
+};
+
+// ── Payments ──────────────────────────────────────────────────────────────────
+
+export interface CreateOrderResponse {
+  order_id: string;
+  amount: number;
+  currency: string;
+  key_id: string;
+  credits_to_receive: number;
+  package: { label: string; amountPaid: number; creditsGiven: number };
+}
+
+export interface VerifyPaymentResponse {
+  success: boolean;
+  new_balance: number;
+  credits_added: number;
+}
+
+export const payments = {
+  createOrder: (data: { packageIndex: number; store_id: string }) =>
+    request<CreateOrderResponse>("/payments/create-order", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+
+  verify: (data: {
+    razorpay_order_id: string;
+    razorpay_payment_id: string;
+    razorpay_signature: string;
+    store_id: string;
+    package_index: number;
+  }) =>
+    request<VerifyPaymentResponse>("/payments/verify", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+};
+
