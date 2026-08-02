@@ -6,6 +6,7 @@ import Form from "./components/Form";
 import Greeting from "./components/Greeting";
 import Admin from "./components/Admin";  
 import DocsPage from "./docs/DocsPage";
+import ApiRefPage from "./docs/ApiRefPage";
 import Contact from "./components/Contact";
 import Pricing from "./components/Pricing"; 
 
@@ -30,6 +31,9 @@ function App() {
 
         {/* Docs Page */}
         <Route path="/docs" element={<DocsPage />} />
+
+        {/* API Reference */}
+        <Route path="/docs/api" element={<ApiRefPage />} />
 
         {/* Contact Page */}
         <Route path="/contact" element={<Contact />} />

@@ -35,6 +35,10 @@ function Navbar({ launchingRef, setIsFormOpen }) {
         <div className="hidden lg:flex items-center gap-8 font-semibold text-gray-600 text-sm xl:text-base">
           <Link to="/" className="hover:text-[#1D8DB2] transition-colors">Home</Link>
           <Link to="/docs" className="hover:text-[#1D8DB2] transition-colors">Documentation</Link>
+          <Link to="/docs/api" className="flex items-center gap-1.5 hover:text-[#1D8DB2] transition-colors">
+            <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#4A91FD]"></span>
+            API Reference
+          </Link>
           <Link to="/pricing" className="hover:text-[#1D8DB2] transition-colors">Pricing</Link>
           <Link to="/contact" className="hover:text-[#1D8DB2] transition-colors">Contact</Link>
         </div>
@@ -88,6 +92,7 @@ function Navbar({ launchingRef, setIsFormOpen }) {
           <div className="flex flex-col gap-2 w-full pt-2">
             <Link to="/" className="text-gray-700 font-semibold px-2" onClick={() => setIsMenuOpen(false)}>Home</Link>
             <Link to="/docs" className="text-gray-700 font-semibold px-2" onClick={() => setIsMenuOpen(false)}>Documentation</Link>
+            <Link to="/docs/api" className="text-[#4A91FD] font-semibold px-2" onClick={() => setIsMenuOpen(false)}>⚡ API Reference</Link>
             <Link to="/pricing" className="text-gray-700 font-semibold px-2" onClick={() => setIsMenuOpen(false)}>Pricing</Link>
             <Link to="/contact" className="text-gray-700 font-semibold px-2" onClick={() => setIsMenuOpen(false)}>Contact</Link>
           </div>
