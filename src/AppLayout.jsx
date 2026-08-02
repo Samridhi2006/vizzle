@@ -56,7 +56,7 @@ function AppLayout() {
 
       {/* Floating WhatsApp Button */}
       <a
-        href="https://wa.me/918310247975"
+        href="https://wa.me/918310247975?text=Hey%21%20I%20want%20more%20info%20about%20vizzle"
         target="_blank"
         rel="noopener noreferrer"
         title="Chat with us on WhatsApp"
