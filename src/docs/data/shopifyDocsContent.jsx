@@ -28,15 +28,15 @@ Create your Vizzle account and get started for free.
 
 ---
 
-## Step 2: Get Started for Free
+## Step 2: One-Time Setup & Store Activation
 
-Currently, Vizzle Virtual Try-On is completely free to use! You automatically get access to our full suite of features upon signing up.
+To start using Vizzle Virtual Try-On, stores must first complete a **One-Time Setup Plan** to activate their storefront and set API rate limits.
 
-1. Once your email is verified, log in to your dashboard.
-2. You'll be automatically enrolled in our **Free Plan**.
-3. No credit card or payment details are required!
+1. Log in to your **Vizzle Dashboard** at [dashboard.vizzle.in](https://dashboard.vizzle.in).
+2. Go to **Billing** and select your store's One-Time Setup Plan (**Basic ₹2,000** for 100 req/hr up to **Premium ₹15,000** for 1,500 req/hr).
+3. Once activated, top up your store wallet with prepaid credits to start generating (**₹2.50 per Try-On** and **₹5.00 per AI Video**).
 
-> **Tip:** We are continually adding new features. Enjoy full access while it's free!
+> **Tip:** Photo uploads and AI safety moderation checks are completely free!
 
 ---
 
