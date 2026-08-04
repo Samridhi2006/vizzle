@@ -1,10 +1,16 @@
 import { prisma } from "@/lib/server/prisma";
 import { ApiError } from "@/server/errors";
+import { getPricingConfig } from "@/server/services/pricing.service";
 
 const COST_IMAGE = Number(process.env.CREDIT_COST_IMAGE ?? "2.5");
 const COST_VIDEO = Number(process.env.CREDIT_COST_VIDEO ?? "5.0");
 
 export { COST_IMAGE, COST_VIDEO };
+
+export async function getCostForType(type: "USAGE_IMAGE" | "USAGE_VIDEO"): Promise<number> {
+  const config = await getPricingConfig();
+  return type === "USAGE_VIDEO" ? config.creditCostVideo : config.creditCostImage;
+}
 
 export type CreditTxType = "PURCHASE" | "USAGE_IMAGE" | "USAGE_VIDEO" | "REFUND";
 

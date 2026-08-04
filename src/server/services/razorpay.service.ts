@@ -39,7 +39,8 @@ export async function createRazorpayOrder(
   });
 
   if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
+    const err = await res.json().catch(() => ({})) as { error?: { description?: string; code?: string } };
+    // Throw as a JSON string so callers can parse error.description for friendly UX
     throw new Error(`Razorpay order creation failed: ${JSON.stringify(err)}`);
   }
 

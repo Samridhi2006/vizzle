@@ -132,6 +132,10 @@ function SetupPaySection({
   const isUnpaid = currentTier === "UNPAID";
 
   async function handlePaySetup(tierKey: string, tierName: string) {
+    if (!storeId) {
+      addToast({ tone: "error", title: "Please select a store first" });
+      return;
+    }
     setLoadingTier(tierKey);
     try {
       // 1. Create Razorpay order for setup plan
@@ -154,10 +158,24 @@ function SetupPaySection({
       addToast({ tone: "success", title: `🎉 One-Time Setup Plan activated: ${result.tier} (${result.requests_per_hour} req/hr)` });
       onSuccess(result.tier);
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Payment failed";
-      if (msg !== "Payment cancelled") {
-        addToast({ tone: "error", title: `Setup payment failed: ${msg}` });
-      }
+      const rawMsg = err instanceof Error ? err.message : "Payment failed";
+      if (rawMsg === "Payment cancelled") return;
+
+      // Parse Razorpay JSON error like:
+      // "Razorpay order creation failed: {\"error\":{\"description\":\"...\",\"code\":\"...\"}}"
+      let friendlyMsg = rawMsg;
+      try {
+        const jsonStart = rawMsg.indexOf("{");
+        if (jsonStart !== -1) {
+          const parsed = JSON.parse(rawMsg.slice(jsonStart)) as { error?: { description?: string; code?: string } };
+          if (parsed?.error?.description) {
+            friendlyMsg = parsed.error.description;
+            if (parsed.error.code) friendlyMsg += ` (${parsed.error.code})`;
+          }
+        }
+      } catch { /* keep rawMsg */ }
+
+      addToast({ tone: "error", title: `Payment failed: ${friendlyMsg}` });
     } finally {
       setLoadingTier(null);
     }
@@ -283,10 +301,20 @@ function TopUpSection({
       onSuccess(result.credits_added);
       setSelected(null);
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Payment failed";
-      if (msg !== "Payment cancelled") {
-        addToast({ tone: "error", title: `Payment failed: ${msg}` });
-      }
+      const rawMsg = err instanceof Error ? err.message : "Payment failed";
+      if (rawMsg === "Payment cancelled") return;
+      let friendlyMsg = rawMsg;
+      try {
+        const jsonStart = rawMsg.indexOf("{");
+        if (jsonStart !== -1) {
+          const parsed = JSON.parse(rawMsg.slice(jsonStart)) as { error?: { description?: string; code?: string } };
+          if (parsed?.error?.description) {
+            friendlyMsg = parsed.error.description;
+            if (parsed.error.code) friendlyMsg += ` (${parsed.error.code})`;
+          }
+        }
+      } catch { /* keep rawMsg */ }
+      addToast({ tone: "error", title: `Payment failed: ${friendlyMsg}` });
     } finally {
       setLoading(false);
     }

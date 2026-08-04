@@ -20,6 +20,7 @@ import { startGenerateVideo } from "@/lib/server/ml-client";
 import {
   deductCredit,
   addCredit,
+  getCostForType,
   COST_VIDEO,
 } from "@/server/services/credits.service";
 
@@ -36,8 +37,9 @@ export async function POST(request: NextRequest) {
     const origin = await assertWidgetCors(request, store.id);
     await withRateLimit(`video:${store.id}`, store.id);
 
-    // Deduct ₹5.00 credit — refunded if ML fails to start
-    await deductCredit(store.id, COST_VIDEO, "USAGE_VIDEO", "Video generation");
+    // Deduct video credit — refunded if ML fails to start
+    const costVideo = await getCostForType("USAGE_VIDEO");
+    await deductCredit(store.id, costVideo, "USAGE_VIDEO", "Video generation");
 
     const body = schema.parse(await request.json());
 
@@ -51,7 +53,7 @@ export async function POST(request: NextRequest) {
       });
     } catch (mlError) {
       // Refund if ML fails to start
-      await addCredit(store.id, COST_VIDEO, "REFUND", {
+      await addCredit(store.id, costVideo, "REFUND", {
         description: "Refund — video generation failed to start",
       }).catch(() => {});
       throw mlError;

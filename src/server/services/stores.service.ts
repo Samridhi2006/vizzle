@@ -60,6 +60,82 @@ export async function createStore(input: {
   };
 }
 
+export async function createDemoStore(input: {
+  userId: string;
+  storeName: string;
+  domain: string;
+  tier: string;
+  requestsPerHour: number;
+  requestsPerDay: number;
+  initialCredits: number;
+}) {
+  const normalizedDomain = normalizeDomain(input.domain);
+  const store = await prisma.store.create({
+    data: {
+      userId: input.userId,
+      storeName: input.storeName.trim(),
+      domain: normalizedDomain,
+    },
+  });
+
+  const rawApiKey = generateApiKey();
+  await prisma.apiKey.create({
+    data: {
+      storeId: store.id,
+      keyHash: await hashApiKey(rawApiKey),
+      keyPrefix: getApiKeyPrefix(rawApiKey),
+      isActive: true,
+    },
+  });
+
+  // Activate store tier with rate limits
+  await prisma.storeTier.upsert({
+    where: { storeId: store.id },
+    create: {
+      storeId: store.id,
+      tier: input.tier || "BASIC",
+      requestsPerHour: input.requestsPerHour,
+      requestsPerDay: input.requestsPerDay,
+      activatedAt: new Date(),
+    },
+    update: {
+      tier: input.tier || "BASIC",
+      requestsPerHour: input.requestsPerHour,
+      requestsPerDay: input.requestsPerDay,
+      activatedAt: new Date(),
+    },
+  });
+
+  // Grant initial credits
+  await prisma.creditWallet.upsert({
+    where: { storeId: store.id },
+    create: { storeId: store.id, balance: input.initialCredits },
+    update: { balance: input.initialCredits },
+  });
+
+  if (input.initialCredits > 0) {
+    await prisma.creditTransaction.create({
+      data: {
+        storeId: store.id,
+        type: "PURCHASE",
+        amount: input.initialCredits,
+        description: `Admin Demo Store Grant (₹${input.initialCredits})`,
+      },
+    }).catch(() => {});
+  }
+
+  return {
+    store_id: store.id,
+    store_name: store.storeName,
+    domain: store.domain,
+    api_key: rawApiKey,
+    tier: input.tier || "BASIC",
+    requests_per_hour: input.requestsPerHour,
+    requests_per_day: input.requestsPerDay,
+    credits: input.initialCredits,
+  };
+}
+
 export async function listStores(userId: string) {
   const stores = await prisma.store.findMany({
     where: { userId },
