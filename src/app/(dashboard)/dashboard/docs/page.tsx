@@ -1,11 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Check, ChevronDown, Copy, ExternalLink, Key, Package, Store as StoreIcon, Zap } from "lucide-react";
+import { AlertTriangle, Check, ChevronDown, Copy, ExternalLink, Key, Package, Store as StoreIcon, Zap, Gauge, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import { useStoresStore } from "@/store/stores.store";
 import { useStoresQuery } from "@/hooks/useStores";
 import { useUIStore } from "@/store/ui.store";
+import { useCreditsQuery } from "@/hooks/useCredits";
 import { cn } from "@/lib/client/utils";
 
 function IC({ children }: { children: string }) {
@@ -19,14 +20,14 @@ function makeCurl(base: string, key: string, sku: string) {
 curl -X POST ${base}/api/v1/upload \\
   -H "x-api-key: ${key}" \\
   -F "photo=@shopper.jpg"
-# → { "url": "https://res.cloudinary.com/..." }
+# → { "url": "https://cdn.vizzle.in/vizzle/..." }
 
 # 2. Run try-on → get result image URL (waits 30–90 s)
 curl -X POST ${base}/api/v1/tryon \\
   -H "x-api-key: ${key}" \\
   -H "Content-Type: application/json" \\
   -d '{"product_id":"${sku}","user_photo_url":"<url from step 1>"}'
-# → { "output_url": "https://res.cloudinary.com/..." }`;
+# → { "output_url": "https://cdn.vizzle.in/vizzle/..." }`;
 }
 
 function makeReact(base: string, key: string, sku: string) {
@@ -160,6 +161,10 @@ export default function DocsPage() {
   const pythonSnip  = useMemo(() => makePython(baseUrl, liveKey, liveSku),     [baseUrl, liveKey]);
   const videoSnip   = useMemo(() => makeVideoFlow(baseUrl, liveKey),            [baseUrl, liveKey]);
 
+  // ── Live tier/rate-limit from credits endpoint ─────────────────────────────
+  const { data: creditsData } = useCreditsQuery(active?.store_id ?? null);
+  const tierInfo = creditsData?.tier ?? null;
+
   const copyGuide = useCallback(async () => {
     try {
       const json = buildJson({ base: baseUrl, key: liveKey, sku: liveSku, store: active ? { store_name: active.store_name, domain: active.domain } : null });
@@ -270,7 +275,7 @@ export default function DocsPage() {
             </div>
             <div className="rounded-xl bg-emerald-50 border border-emerald-200 p-3 font-mono text-xs text-emerald-800 space-y-1">
               <div className="mb-1 text-emerald-600 not-mono text-[11px] font-semibold">Response</div>
-              <div>{`{ "url": "https://res.cloudinary.com/…" }`}</div>
+              <div>{`{ "url": "https://cdn.vizzle.in/vizzle/…" }`}</div>
               <div className="mt-1 text-emerald-600 text-[11px]">Pass url into call ②</div>
             </div>
           </div>
@@ -285,7 +290,7 @@ export default function DocsPage() {
             </div>
             <div className="rounded-xl bg-emerald-50 border border-emerald-200 p-3 font-mono text-xs text-emerald-800 space-y-1">
               <div className="mb-1 text-emerald-600 not-mono text-[11px] font-semibold">Response (200 when done)</div>
-              <div>{`{ "output_url": "https://res.cloudinary.com/…",`}</div>
+              <div>{`{ "output_url": "https://cdn.vizzle.in/vizzle/…",`}</div>
               <div>&nbsp;&nbsp;{`"prediction_id": "abc123" }`}</div>
               <div className="mt-1 text-emerald-600 text-[11px]">Set output_url as &lt;img src&gt;</div>
             </div>
@@ -342,7 +347,7 @@ export default function DocsPage() {
             </div>
             <div className="rounded-xl bg-emerald-50 border border-emerald-200 p-3 font-mono text-xs text-emerald-800 space-y-1">
               <div className="mb-1 text-emerald-600 not-mono text-[11px] font-semibold">Response</div>
-              <div>{`{ "image_url": "https://res.cloudinary.com/…" }`}</div>
+              <div>{`{ "image_url": "https://cdn.vizzle.in/vizzle/…" }`}</div>
               <div className="mt-1 text-emerald-600 text-[11px]">Permanent URL — pass into ②</div>
             </div>
           </div>
@@ -387,7 +392,7 @@ export default function DocsPage() {
 
         </div>
         <p className="mt-3 text-xs text-gray-400">
-          Rate limit: 100 requests / 60 s per store. All endpoints are upserts — safe to re-run for catalog sync.
+          Rate limits are governed by your store&apos;s activated setup tier (Basic: 100 req/hr · Gold: 300 req/hr · Premium: 1,500 req/hr). All endpoints are upserts — safe to re-run for catalog sync.
         </p>
       </div>
 
@@ -424,6 +429,179 @@ export default function DocsPage() {
         </p>
       </div>
 
+      {/* ── Errors & Rate Limits — plan-aware ─────────────────────────────── */}
+      <ErrorsAndRateLimits storeId={active?.store_id ?? null} tierInfo={tierInfo} />
+
+    </div>
+  );
+}
+
+
+// ── Errors & Rate Limits — plan-aware ────────────────────────────────────────
+const TIER_META: Record<string, { label: string; color: string; bg: string; border: string }> = {
+  UNPAID:     { label: "Unpaid",     color: "text-gray-600",   bg: "bg-gray-100",   border: "border-gray-200" },
+  BASIC:      { label: "Basic",      color: "text-sky-700",    bg: "bg-sky-50",     border: "border-sky-200"  },
+  GOLD:       { label: "Gold",       color: "text-amber-700",  bg: "bg-amber-50",   border: "border-amber-200"},
+  PREMIUM:    { label: "Premium",    color: "text-violet-700", bg: "bg-violet-50",  border: "border-violet-200"},
+  ENTERPRISE: { label: "Enterprise", color: "text-emerald-700",bg: "bg-emerald-50", border: "border-emerald-200"},
+};
+
+const ALL_TIERS = [
+  { tier: "BASIC",      hr: 100,   day: 1_000  },
+  { tier: "GOLD",       hr: 300,   day: 3_000  },
+  { tier: "PREMIUM",    hr: 1_500, day: 15_000 },
+  { tier: "ENTERPRISE", hr: 10_000,day: 100_000},
+];
+
+const HTTP_ERRORS = [
+  { code: "400", title: "Bad Request",          desc: "Missing or invalid request body fields."             },
+  { code: "401", title: "Unauthorized",         desc: "API key missing, expired, or wrong header."          },
+  { code: "403", title: "Forbidden",            desc: "Plan not activated — complete setup in Billing."     },
+  { code: "422", title: "Moderation Rejected",  desc: "Image failed NSFW/content check. Not charged."       },
+  { code: "429", title: "Rate Limit Exceeded",  desc: "Too many requests for your plan. Retry after 1 min." },
+  { code: "500", title: "Internal Error",       desc: "Server-side failure — contact support."              },
+];
+
+function fmt(n: number) {
+  return n >= 1000 ? `${(n / 1000).toFixed(n % 1000 === 0 ? 0 : 1)}k` : String(n);
+}
+
+function ErrorsAndRateLimits({
+  storeId,
+  tierInfo,
+}: {
+  storeId: string | null;
+  tierInfo: { tier: string; requestsPerHour: number; requestsPerDay: number } | null;
+}) {
+  const activeTier  = tierInfo?.tier?.toUpperCase() ?? (storeId ? "BASIC" : null);
+  const meta        = activeTier ? (TIER_META[activeTier] ?? TIER_META.BASIC) : null;
+  const isUnpaid    = !activeTier || activeTier === "UNPAID";
+
+  return (
+    <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm space-y-6">
+      <div>
+        <p className="text-xs font-semibold uppercase tracking-widest text-gray-500 mb-1 flex items-center gap-1.5">
+          <AlertTriangle size={12} className="text-amber-500" />
+          Errors &amp; Rate Limits
+        </p>
+        <p className="text-sm text-gray-500">
+          All rate limits are enforced per store (API key) and reset every hour. Limits depend on your activated plan.
+        </p>
+      </div>
+
+      {/* Live plan badge */}
+      {storeId && (
+        <div className={cn(
+          "flex items-center justify-between gap-3 rounded-xl border px-4 py-3",
+          meta ? `${meta.bg} ${meta.border}` : "bg-gray-50 border-gray-200"
+        )}>
+          <div className="flex items-center gap-2">
+            <Gauge size={15} className={meta?.color ?? "text-gray-500"} />
+            <div>
+              <p className={cn("text-sm font-bold", meta?.color ?? "text-gray-700")}>
+                {isUnpaid ? "Plan not activated" : `${meta!.label} Plan — Active`}
+              </p>
+              {!isUnpaid && tierInfo && (
+                <p className="text-xs text-gray-500 mt-0.5">
+                  {fmt(tierInfo.requestsPerHour)} req / hr &nbsp;·&nbsp; {fmt(tierInfo.requestsPerDay)} req / day
+                </p>
+              )}
+              {isUnpaid && (
+                <p className="text-xs text-gray-500 mt-0.5">Activate a plan in Billing to unlock API access.</p>
+              )}
+            </div>
+          </div>
+          {(isUnpaid || activeTier === "BASIC" || activeTier === "GOLD") && (
+            <Link
+              href="/dashboard/billing"
+              className="flex shrink-0 items-center gap-1 rounded-lg bg-white border border-gray-200 px-3 py-1.5 text-xs font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+            >
+              Upgrade <ArrowUpRight size={11} />
+            </Link>
+          )}
+        </div>
+      )}
+
+      {/* Plan comparison table */}
+      <div>
+        <p className="text-xs font-semibold text-gray-500 mb-2">Rate limits by plan</p>
+        <div className="overflow-hidden rounded-xl border border-gray-200">
+          <table className="min-w-full text-sm">
+            <thead>
+              <tr className="bg-gray-50 border-b border-gray-200 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                <th className="px-4 py-2.5">Plan</th>
+                <th className="px-4 py-2.5 text-right">Req / hr</th>
+                <th className="px-4 py-2.5 text-right">Req / day</th>
+                <th className="px-4 py-2.5 text-right">429 resets in</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100">
+              {ALL_TIERS.map((t) => {
+                const m = TIER_META[t.tier];
+                const isActive = activeTier === t.tier && !isUnpaid;
+                return (
+                  <tr key={t.tier} className={cn("transition-colors", isActive ? `${m.bg}` : "hover:bg-gray-50")}>
+                    <td className="px-4 py-2.5">
+                      <span className={cn("inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold border", m.bg, m.color, m.border)}>
+                        {isActive && <span className="h-1.5 w-1.5 rounded-full bg-current animate-pulse" />}
+                        {m.label}
+                        {isActive && <span className="text-[10px] opacity-70">● your plan</span>}
+                      </span>
+                    </td>
+                    <td className={cn("px-4 py-2.5 text-right font-mono font-semibold", isActive ? m.color : "text-gray-700")}>
+                      {fmt(t.hr)}
+                    </td>
+                    <td className={cn("px-4 py-2.5 text-right font-mono font-semibold", isActive ? m.color : "text-gray-700")}>
+                      {fmt(t.day)}
+                    </td>
+                    <td className="px-4 py-2.5 text-right text-xs text-gray-500">
+                      1 min
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+        <p className="mt-2 text-xs text-gray-400">
+          Limits apply per store API key. Exceeding them returns <code className="rounded bg-red-50 px-1 text-red-600">HTTP 429</code> with a <code className="rounded bg-gray-100 px-1 text-gray-700">Retry-After</code> header.
+        </p>
+      </div>
+
+      {/* Error code reference */}
+      <div>
+        <p className="text-xs font-semibold text-gray-500 mb-2">HTTP error reference</p>
+        <div className="overflow-hidden rounded-xl border border-gray-200">
+          <table className="min-w-full text-sm">
+            <thead>
+              <tr className="bg-gray-50 border-b border-gray-200 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                <th className="px-4 py-2.5 w-16">Code</th>
+                <th className="px-4 py-2.5">Meaning</th>
+                <th className="px-4 py-2.5 hidden sm:table-cell">When it happens</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100">
+              {HTTP_ERRORS.map((e) => (
+                <tr key={e.code} className="hover:bg-gray-50 transition-colors">
+                  <td className="px-4 py-2.5">
+                    <span className={cn(
+                      "rounded-md px-2 py-0.5 font-mono text-xs font-bold",
+                      e.code === "429" ? "bg-red-100 text-red-700" :
+                      e.code === "422" ? "bg-amber-100 text-amber-700" :
+                      e.code === "500" ? "bg-gray-200 text-gray-700" :
+                      "bg-orange-100 text-orange-700"
+                    )}>
+                      {e.code}
+                    </span>
+                  </td>
+                  <td className="px-4 py-2.5 font-medium text-gray-800 text-xs">{e.title}</td>
+                  <td className="px-4 py-2.5 text-xs text-gray-500 hidden sm:table-cell">{e.desc}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 }

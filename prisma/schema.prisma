@@ -151,3 +151,10 @@ model StoreTier {
 
   store Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
 }
+
+// Global Key-Value configuration (Dynamic Pricing, Setup Costs, Currency)
+model PlatformSetting {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+}

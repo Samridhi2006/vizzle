@@ -22,13 +22,17 @@ function StatCard({ label, value, icon: Icon }: { label: string; value: number |
 
 export default function AdminPage() {
   const router  = useRouter();
-  const isAdmin = useAuthStore((s) => s.isAdmin);
-  const logout  = useAuthStore((s) => s.clearSession);
+  const isAdmin   = useAuthStore((s) => s.isAdmin);
+  const hydrated   = useAuthStore((s) => s._hydrated);
+  const logout     = useAuthStore((s) => s.clearSession);
 
-  // Redirect non-admins immediately
   useEffect(() => {
-    if (isAdmin === false) router.replace("/login");
-  }, [isAdmin, router]);
+    // Wait for Zustand to finish reading localStorage before redirecting.
+    // Without this guard, isAdmin is always `false` on first render
+    // and the page immediately redirects to /login (the black-screen bug).
+    if (!hydrated) return;
+    if (!isAdmin) router.replace("/login");
+  }, [hydrated, isAdmin, router]);
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["admin-overview"],
@@ -36,11 +40,19 @@ export default function AdminPage() {
     enabled:  !!isAdmin,
   });
 
+  // Show a neutral loading state while hydration is pending.
+  if (!hydrated) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gray-50">
+        <div className="h-6 w-6 animate-spin rounded-full border-2 border-sky-500 border-t-transparent" />
+      </div>
+    );
+  }
+
   if (!isAdmin) return null;
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Top bar */}
       <header className="border-b border-gray-200 bg-white px-6 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -69,7 +81,6 @@ export default function AdminPage() {
           <p className="mt-1 text-sm text-gray-500">Read-only view of all registered brands and their usage.</p>
         </div>
 
-        {/* Summary cards */}
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
           <StatCard label="Total Brands"   value={isLoading ? "—" : (data?.totals.users    ?? 0)} icon={Users}    />
           <StatCard label="Total Stores"   value={isLoading ? "—" : (data?.totals.stores   ?? 0)} icon={Store}    />
@@ -77,7 +88,6 @@ export default function AdminPage() {
           <StatCard label="Total Try-ons"  value={isLoading ? "—" : (data?.totals.usage    ?? 0)} icon={BarChart2} />
         </div>
 
-        {/* Brands table */}
         <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
           <div className="border-b border-gray-100 px-6 py-4">
             <h2 className="font-semibold text-gray-900">Brands</h2>
@@ -123,34 +133,37 @@ export default function AdminPage() {
                       </td>
                     </tr>
                   ) : (
-                    (data?.users ?? []).map((u, idx) => (
-                      <tr key={u.id} className="hover:bg-gray-50 transition-colors">
-                        <td className="px-6 py-3 text-gray-400">{idx + 1}</td>
-                        <td className="px-6 py-3 font-medium text-gray-900">{u.name}</td>
-                        <td className="px-6 py-3 text-gray-600">{u.email}</td>
-                        <td className="px-6 py-3 text-gray-500 whitespace-nowrap">
-                          {new Date(u.joinedAt).toLocaleDateString("en-GB", {
-                            day: "2-digit", month: "short", year: "numeric",
-                          })}
-                        </td>
-                        <td className="px-6 py-3 text-gray-700">{u.stores}</td>
-                        <td className="px-6 py-3 text-gray-600 max-w-[200px]">
-                          {u.storeNames.length === 0 ? (
-                            <span className="text-gray-400">—</span>
-                          ) : (
-                            <div className="flex flex-wrap gap-1">
-                              {u.storeNames.map((name) => (
-                                <span key={name} className="rounded-full bg-sky-50 px-2 py-0.5 text-xs text-sky-700">
-                                  {name}
-                                </span>
-                              ))}
-                            </div>
-                          )}
-                        </td>
-                        <td className="px-6 py-3 text-right font-semibold text-gray-900">{u.products}</td>
-                        <td className="px-6 py-3 text-right font-semibold text-gray-900">{u.usage}</td>
-                      </tr>
-                    ))
+                    (data?.users ?? []).map((u, idx) => {
+                      const names = u.storeNames ?? [];
+                      return (
+                        <tr key={u.id} className="hover:bg-gray-50 transition-colors">
+                          <td className="px-6 py-3 text-gray-400">{idx + 1}</td>
+                          <td className="px-6 py-3 font-medium text-gray-900">{u.name}</td>
+                          <td className="px-6 py-3 text-gray-600">{u.email}</td>
+                          <td className="px-6 py-3 text-gray-500 whitespace-nowrap">
+                            {new Date(u.joinedAt).toLocaleDateString("en-GB", {
+                              day: "2-digit", month: "short", year: "numeric",
+                            })}
+                          </td>
+                          <td className="px-6 py-3 text-gray-700">{u.stores}</td>
+                          <td className="px-6 py-3 text-gray-600 max-w-[200px]">
+                            {names.length === 0 ? (
+                              <span className="text-gray-400">—</span>
+                            ) : (
+                              <div className="flex flex-wrap gap-1">
+                                {names.map((name) => (
+                                  <span key={name} className="rounded-full bg-sky-50 px-2 py-0.5 text-xs text-sky-700">
+                                    {name}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+                          </td>
+                          <td className="px-6 py-3 text-right font-semibold text-gray-900">{u.products}</td>
+                          <td className="px-6 py-3 text-right font-semibold text-gray-900">{u.usage}</td>
+                        </tr>
+                      );
+                    })
                   )}
                 </tbody>
               </table>

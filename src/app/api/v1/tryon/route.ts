@@ -22,6 +22,7 @@ import { moderateImageUrl } from "@/lib/server/cloudinary";
 import {
   deductCredit,
   addCredit,
+  getCostForType,
   COST_IMAGE,
 } from "@/server/services/credits.service";
 
@@ -60,7 +61,8 @@ export async function POST(request: NextRequest) {
 
     // ── Deduct credits ────────────────────────────────────────────────────────
     // Deducted AFTER moderation so rejected images are always free.
-    await deductCredit(store.id, COST_IMAGE, "USAGE_IMAGE", "Virtual try-on");
+    const costImage = await getCostForType("USAGE_IMAGE");
+    await deductCredit(store.id, costImage, "USAGE_IMAGE", "Virtual try-on");
 
     let result;
     try {
@@ -74,7 +76,7 @@ export async function POST(request: NextRequest) {
       });
     } catch (mlError) {
       // Refund if ML fails to start
-      await addCredit(store.id, COST_IMAGE, "REFUND", {
+      await addCredit(store.id, costImage, "REFUND", {
         description: "Refund — try-on failed to start",
       }).catch(() => {});
       throw mlError;

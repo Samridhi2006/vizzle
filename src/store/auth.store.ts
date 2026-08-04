@@ -8,6 +8,7 @@ interface AuthState {
   token: string | null;
   user: AuthUser | null;
   isAdmin: boolean;
+  _hydrated: boolean;
   setSession: (session: {
     token: string;
     user?: AuthUser | null;
@@ -22,6 +23,7 @@ export const useAuthStore = create<AuthState>()(
       token: null,
       user: null,
       isAdmin: false,
+      _hydrated: false,
       setSession: ({ token, user, isAdmin }) => {
         localStorage.setItem("vizzle_token", token);
         set({ token, user: user ?? null, isAdmin: Boolean(isAdmin) });
@@ -34,6 +36,9 @@ export const useAuthStore = create<AuthState>()(
     {
       name: "vizzle-auth",
       storage: createJSONStorage(() => localStorage),
+      onRehydrateStorage: () => (state) => {
+        if (state) state._hydrated = true;
+      },
     }
   )
 );

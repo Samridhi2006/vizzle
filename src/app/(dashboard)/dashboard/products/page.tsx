@@ -498,7 +498,7 @@ export default function ProductsPage() {
                 </p>
               </div>
               <span className="hidden w-24 text-right text-sm font-medium text-gray-800 sm:block">
-                ${product.cost.toFixed(2)}
+                ₹{product.cost.toFixed(2)}
               </span>
               <div className="hidden w-28 justify-end md:flex">
                 {product.category ? (
@@ -590,7 +590,7 @@ export default function ProductsPage() {
               <Input label="Product ID (SKU)" placeholder="sku-001" {...urlForm.register("product_id", { required: true })} />
               <Input label="Name" placeholder="Blue Shirt" {...urlForm.register("name", { required: true })} />
               <Input label="Brand" placeholder="Acme" {...urlForm.register("brand", { required: true })} />
-              <Input label="Cost ($)" type="number" step="0.01" placeholder="29.99" {...urlForm.register("cost", { required: true, valueAsNumber: true })} />
+              <Input label="Cost (₹)" type="number" step="0.01" placeholder="299.00" {...urlForm.register("cost", { required: true, valueAsNumber: true })} />
             </div>
             <Button className="w-full" type="submit" loading={createProduct.isPending}>
               Save Product
@@ -650,7 +650,7 @@ export default function ProductsPage() {
               <Input label="Product ID (SKU)" placeholder="sku-001" {...fileForm.register("product_id", { required: true })} />
               <Input label="Name" placeholder="Blue Shirt" {...fileForm.register("name", { required: true })} />
               <Input label="Brand" placeholder="Acme" {...fileForm.register("brand", { required: true })} />
-              <Input label="Cost ($)" type="number" step="0.01" placeholder="29.99" {...fileForm.register("cost", { required: true, valueAsNumber: true })} />
+              <Input label="Cost (₹)" type="number" step="0.01" placeholder="299.00" {...fileForm.register("cost", { required: true, valueAsNumber: true })} />
             </div>
             <Button className="w-full" type="submit">
               Upload Product
@@ -712,7 +712,7 @@ export default function ProductsPage() {
                 {...editForm.register("brand", { required: true })}
               />
               <Input
-                label="Cost ($)"
+                label="Cost (₹)"
                 type="number"
                 step="0.01"
                 placeholder="29.99"
