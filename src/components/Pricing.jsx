@@ -66,12 +66,6 @@ function Pricing() {
                     <strong className="text-[#235D71]">1,000 req/day</strong>
                   </div>
                 </div>
-
-                <ul className="space-y-2 text-xs text-gray-600 mb-6">
-                  <li className="flex items-center gap-2"><Check size={14} className="text-[#1D8DB2]" /> Shopify / WooCommerce Widget</li>
-                  <li className="flex items-center gap-2"><Check size={14} className="text-[#1D8DB2]" /> Store Dashboard Access</li>
-                  <li className="flex items-center gap-2"><Check size={14} className="text-[#1D8DB2]" /> Automated AI Moderation</li>
-                </ul>
               </div>
 
               <a
@@ -107,12 +101,6 @@ function Pricing() {
                     <strong className="text-[#1D8DB2]">3,000 req/day</strong>
                   </div>
                 </div>
-
-                <ul className="space-y-2 text-xs text-gray-600 mb-6">
-                  <li className="flex items-center gap-2"><Check size={14} className="text-[#1D8DB2]" /> Everything in Basic</li>
-                  <li className="flex items-center gap-2"><Check size={14} className="text-[#1D8DB2]" /> 3x Higher Rate Limits</li>
-                  <li className="flex items-center gap-2"><Check size={14} className="text-[#1D8DB2]" /> Priority Store Onboarding</li>
-                </ul>
               </div>
 
               <a
@@ -145,12 +133,6 @@ function Pricing() {
                     <strong className="text-purple-700">15,000 req/day</strong>
                   </div>
                 </div>
-
-                <ul className="space-y-2 text-xs text-gray-600 mb-6">
-                  <li className="flex items-center gap-2"><Check size={14} className="text-purple-600" /> High-volume flash sales support</li>
-                  <li className="flex items-center gap-2"><Check size={14} className="text-purple-600" /> Priority ML GPU Pipeline</li>
-                  <li className="flex items-center gap-2"><Check size={14} className="text-purple-600" /> WhatsApp Integration Support</li>
-                </ul>
               </div>
 
               <a
@@ -183,12 +165,6 @@ function Pricing() {
                     <strong className="text-blue-300">Custom</strong>
                   </div>
                 </div>
-
-                <ul className="space-y-2 text-xs text-gray-300 mb-6">
-                  <li className="flex items-center gap-2"><Check size={14} className="text-blue-400" /> Dedicated GPU instances</li>
-                  <li className="flex items-center gap-2"><Check size={14} className="text-blue-400" /> Custom ML Fine-tuning</li>
-                  <li className="flex items-center gap-2"><Check size={14} className="text-blue-400" /> Dedicated Account Manager</li>
-                </ul>
               </div>
 
               <Link
@@ -204,15 +180,13 @@ function Pricing() {
 
         {/* SECTION 2: API COST (Recurring Pay As You Go) */}
         <div className="mb-20">
-          <div className="text-center mb-8">
-            <span className="text-xs font-bold uppercase tracking-widest text-gray-500 bg-white px-3 py-1 rounded-full border border-gray-200 shadow-sm">
-              Step 2: Recharge Wallet & Generate
+          <div className="text-center mb-10">
+            <span className="text-xs font-bold uppercase tracking-widest text-[#1D8DB2] bg-blue-100/80 px-3 py-1 rounded-full border border-blue-200 shadow-sm inline-block mb-3">
+              Step 2: Recharge Wallet &amp; Usage Credits
             </span>
-            <h2 className="text-3xl font-extrabold text-[#235D71] mt-3">
-              API COST <span className="text-[#1D8DB2]">(Recurring Pay-As-You-Go)</span>
-            </h2>
+            <h2 className="text-3xl font-extrabold text-[#235D71]">Pay-As-You-Go Credit Top-Ups</h2>
             <p className="text-sm text-gray-500 mt-1">
-              Virtual Try-On (Image): <strong>₹2.50 / call</strong> · AI Video Generation: <strong>₹5.00 / call</strong>
+              Wallet credits never expire. Use your balance for Virtual Try-On Images or AI Fashion Videos.
             </p>
           </div>
 
@@ -224,8 +198,8 @@ function Pricing() {
                   <tr className="border-b border-gray-200 bg-gray-50/80 text-xs font-bold uppercase tracking-wider text-gray-500">
                     <th className="py-3.5 px-6">Top-Up Amount</th>
                     <th className="py-3.5 px-6">Wallet Credit Received</th>
-                    <th className="py-3.5 px-6">Image API Cost</th>
-                    <th className="py-3.5 px-6">Video API Cost</th>
+                    <th className="py-3.5 px-6">Max Try-On Images</th>
+                    <th className="py-3.5 px-6">Max AI Videos</th>
                     <th className="py-3.5 px-6 text-right">Bonus Credit</th>
                   </tr>
                 </thead>
@@ -235,8 +209,8 @@ function Pricing() {
                   <tr className="hover:bg-blue-50/30 transition-colors">
                     <td className="py-4 px-6 font-extrabold text-gray-900">₹100</td>
                     <td className="py-4 px-6 font-bold text-[#1D8DB2]">₹100</td>
-                    <td className="py-4 px-6 text-gray-600">₹2.5</td>
-                    <td className="py-4 px-6 text-gray-600">₹5</td>
+                    <td className="py-4 px-6 text-[#235D71] font-bold">40 images</td>
+                    <td className="py-4 px-6 text-purple-700 font-bold">20 videos</td>
                     <td className="py-4 px-6 text-right text-gray-400 font-normal">Standard</td>
                   </tr>
 
@@ -246,8 +220,8 @@ function Pricing() {
                     <td className="py-4 px-6 font-bold text-[#1D8DB2]">
                       ₹550 <span className="text-xs font-semibold text-emerald-600 ml-1">(+₹50 extra)</span>
                     </td>
-                    <td className="py-4 px-6 text-gray-600">₹2.5</td>
-                    <td className="py-4 px-6 text-gray-600">₹5</td>
+                    <td className="py-4 px-6 text-[#235D71] font-bold">220 images</td>
+                    <td className="py-4 px-6 text-purple-700 font-bold">110 videos</td>
                     <td className="py-4 px-6 text-right">
                       <span className="inline-block px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold">+10% Bonus</span>
                     </td>
@@ -259,8 +233,8 @@ function Pricing() {
                     <td className="py-4 px-6 font-bold text-[#1D8DB2]">
                       ₹1,100 <span className="text-xs font-semibold text-emerald-600 ml-1">(+₹100 extra)</span>
                     </td>
-                    <td className="py-4 px-6 text-gray-600">₹2.5</td>
-                    <td className="py-4 px-6 text-gray-600">₹5</td>
+                    <td className="py-4 px-6 text-[#235D71] font-bold">440 images</td>
+                    <td className="py-4 px-6 text-purple-700 font-bold">220 videos</td>
                     <td className="py-4 px-6 text-right">
                       <span className="inline-block px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold">+10% Bonus</span>
                     </td>
@@ -272,8 +246,8 @@ function Pricing() {
                     <td className="py-4 px-6 font-extrabold text-[#1D8DB2]">
                       ₹2,300 <span className="text-xs font-bold text-emerald-600 ml-1">(+₹300 extra)</span>
                     </td>
-                    <td className="py-4 px-6 text-gray-700 font-semibold">₹2.5</td>
-                    <td className="py-4 px-6 text-gray-700 font-semibold">₹5</td>
+                    <td className="py-4 px-6 text-[#235D71] font-bold">920 images</td>
+                    <td className="py-4 px-6 text-purple-700 font-bold">460 videos</td>
                     <td className="py-4 px-6 text-right">
                       <span className="inline-block px-2.5 py-0.5 rounded-full bg-emerald-500 text-white text-xs font-bold shadow-sm">+15% Bonus</span>
                     </td>
@@ -285,8 +259,8 @@ function Pricing() {
                     <td className="py-4 px-6 font-extrabold text-[#1D8DB2]">
                       ₹6,000 <span className="text-xs font-bold text-emerald-600 ml-1">(+₹1,000 extra)</span>
                     </td>
-                    <td className="py-4 px-6 text-gray-700 font-semibold">₹2.5</td>
-                    <td className="py-4 px-6 text-gray-700 font-semibold">₹5</td>
+                    <td className="py-4 px-6 text-[#235D71] font-bold">2,400 images</td>
+                    <td className="py-4 px-6 text-purple-700 font-bold">1,200 videos</td>
                     <td className="py-4 px-6 text-right">
                       <span className="inline-block px-2.5 py-0.5 rounded-full bg-amber-500 text-white text-xs font-bold shadow-sm">+20% Bonus</span>
                     </td>
@@ -314,10 +288,10 @@ function Pricing() {
         <div className="bg-white rounded-3xl p-8 sm:p-12 border border-gray-200/80 shadow-xl mb-20 max-w-4xl mx-auto">
           <div className="text-center mb-8">
             <h2 className="text-2xl sm:text-3xl font-extrabold text-[#235D71] mb-2">
-              💡 Calculate Your Estimated Monthly Usage
+              💡 Estimate Your Monthly Usage Volume
             </h2>
             <p className="text-sm text-gray-500">
-              Drag the sliders below to calculate API costs for your store traffic.
+              Drag the sliders below to estimate your store&apos;s monthly try-on and video generation capacity.
             </p>
           </div>
 
@@ -325,8 +299,8 @@ function Pricing() {
             {/* Try-On Slider */}
             <div>
               <div className="flex justify-between items-center mb-2">
-                <label className="font-bold text-sm text-gray-700">Virtual Try-Ons (Image @ ₹2.5)</label>
-                <span className="font-extrabold text-[#1D8DB2] text-base">{tryOnCount} / mo</span>
+                <label className="font-bold text-sm text-gray-700">Virtual Try-On Images</label>
+                <span className="font-extrabold text-[#1D8DB2] text-base">{tryOnCount} images / mo</span>
               </div>
               <input
                 type="range"
@@ -337,14 +311,13 @@ function Pricing() {
                 onChange={(e) => setTryOnCount(Number(e.target.value))}
                 className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#1D8DB2]"
               />
-              <span className="text-xs text-gray-400 mt-1 block">Cost: ₹{(tryOnCount * 2.5).toFixed(2)}</span>
             </div>
 
             {/* Video Slider */}
             <div>
               <div className="flex justify-between items-center mb-2">
-                <label className="font-bold text-sm text-gray-700">AI Video Generations (@ ₹5.0)</label>
-                <span className="font-extrabold text-[#1D8DB2] text-base">{videoCount} / mo</span>
+                <label className="font-bold text-sm text-gray-700">AI Fashion Videos</label>
+                <span className="font-extrabold text-purple-700 text-base">{videoCount} videos / mo</span>
               </div>
               <input
                 type="range"
@@ -353,16 +326,15 @@ function Pricing() {
                 step="10"
                 value={videoCount}
                 onChange={(e) => setVideoCount(Number(e.target.value))}
-                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#1D8DB2]"
+                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-purple-600"
               />
-              <span className="text-xs text-gray-400 mt-1 block">Cost: ₹{(videoCount * 5.0).toFixed(2)}</span>
             </div>
           </div>
 
           <div className="bg-[#F9F3FA] rounded-2xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4 border border-purple-100">
             <div>
-              <span className="text-xs font-bold uppercase tracking-wider text-gray-500">Estimated Total Monthly API Cost</span>
-              <div className="text-3xl font-extrabold text-[#235D71]">₹{calculatedCost.toLocaleString()} <span className="text-xs font-medium text-gray-500">/ month</span></div>
+              <span className="text-xs font-bold uppercase tracking-wider text-gray-500">Total Monthly Generations</span>
+              <div className="text-3xl font-extrabold text-[#235D71]">{(tryOnCount + videoCount).toLocaleString()} <span className="text-xs font-medium text-gray-500">generations / month</span></div>
             </div>
             <a
               href="https://dashboard.vizzle.in"
@@ -372,43 +344,6 @@ function Pricing() {
             >
               Get Started Now
             </a>
-          </div>
-        </div>
-
-        {/* FAQ Section */}
-        <div className="max-w-3xl mx-auto">
-          <h2 className="text-2xl font-bold text-center text-[#235D71] mb-8 flex items-center justify-center gap-2">
-            <HelpCircle size={24} className="text-[#1D8DB2]" /> Frequently Asked Questions
-          </h2>
-
-          <div className="space-y-4">
-            <div className="bg-white p-6 rounded-2xl border border-gray-200/80 shadow-sm">
-              <h4 className="font-bold text-gray-800 mb-2">What is the One-Time Setup Cost?</h4>
-              <p className="text-sm text-gray-600 leading-relaxed">
-                The setup cost is a required one-time fee to activate your store and assign dedicated rate-limits (100 req/hr for Basic up to 1,500 req/hr for Premium). Once activated, you recharge your store wallet with prepaid API credits.
-              </p>
-            </div>
-
-            <div className="bg-white p-6 rounded-2xl border border-gray-200/80 shadow-sm">
-              <h4 className="font-bold text-gray-800 mb-2">How do credit top-up bonuses work?</h4>
-              <p className="text-sm text-gray-600 leading-relaxed">
-                When you recharge ₹500 or more, you receive bonus credits in your store wallet! For example, recharging ₹1,000 gives you ₹1,100 credit (+10% bonus), and recharging ₹5,000 gives you ₹6,000 credit (+20% bonus).
-              </p>
-            </div>
-
-            <div className="bg-white p-6 rounded-2xl border border-gray-200/80 shadow-sm">
-              <h4 className="font-bold text-gray-800 mb-2">What happens if an AI request fails?</h4>
-              <p className="text-sm text-gray-600 leading-relaxed">
-                If an ML job fails to start or gets rejected by automated AI safety moderation, you are <strong>never charged</strong>. Credits are automatically refunded back to your store wallet.
-              </p>
-            </div>
-
-            <div className="bg-white p-6 rounded-2xl border border-gray-200/80 shadow-sm">
-              <h4 className="font-bold text-gray-800 mb-2">Are photo uploads free?</h4>
-              <p className="text-sm text-gray-600 leading-relaxed">
-                Yes! Uploading customer photos via <code>POST /api/v1/upload</code> and storing temporary images on our Cloudinary CDN is completely <strong>free of charge</strong>.
-              </p>
-            </div>
           </div>
         </div>
 
