@@ -32,7 +32,7 @@ const nextConfig: NextConfig = {
             key: "Content-Security-Policy",
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.vizzle.io https://apis.google.com https://checkout.razorpay.com",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.vizzle.io https://apis.google.com https://checkout.razorpay.com https://cdn.razorpay.com",
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: blob: https://res.cloudinary.com https://cdn.shopify.com https://*.shopify.com https://vizzle-backend-vvc6.onrender.com https://*.googleusercontent.com",
               "font-src 'self'",
