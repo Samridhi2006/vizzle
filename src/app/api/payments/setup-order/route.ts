@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { withJwt } from "@/server/middleware/withJwt";
 import { handleApiError } from "@/server/http";
-import { createRazorpayOrder } from "@/server/services/razorpay.service";
+import { createRazorpayOrder, KEY_ID } from "@/server/services/razorpay.service";
 
 const SETUP_PRICES: Record<string, { tier: string; amountPaid: number; requestsPerHour: number; requestsPerDay: number }> = {
   BASIC:   { tier: "BASIC",   amountPaid: 2000,  requestsPerHour: 100,  requestsPerDay: 1000  },
@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
       order_id: order.id,
       amount: order.amount,
       currency: order.currency,
-      key_id: process.env.RAZORPAY_KEY_ID,
+      key_id: KEY_ID,
       tier: pkg.tier,
       amount_paid: pkg.amountPaid,
     });

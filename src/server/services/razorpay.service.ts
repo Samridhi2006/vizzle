@@ -1,7 +1,7 @@
 import crypto from "crypto";
 
-const KEY_ID = process.env.RAZORPAY_KEY_ID!;
-const KEY_SECRET = process.env.RAZORPAY_KEY_SECRET!;
+export const KEY_ID = "rzp_test_Rh5oOT1q9ZkM4e";
+const KEY_SECRET = "2w9r8aT3hcLF8f3s9rFUQCgH";
 const RAZORPAY_API = "https://api.razorpay.com/v1";
 
 function basicAuth() {
