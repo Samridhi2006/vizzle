@@ -194,14 +194,14 @@ Call \`POST /api/v1/upload\` with the shopper photo, then \`POST /api/v1/tryon\`
 curl -X POST https://dashboard.vizzle.in/api/v1/upload \\
   -H "x-api-key: vzk_YOUR_KEY" \\
   -F "photo=@shopper.jpg"
-# → { "url": "https://res.cloudinary.com/..." }
+# → { "url": "https://cdn.vizzle.in/vizzle/..." }
 
 # 2. Run try-on → get result image URL (waits 30–90 s)
 curl -X POST https://dashboard.vizzle.in/api/v1/tryon \\
   -H "x-api-key: vzk_YOUR_KEY" \\
   -H "Content-Type: application/json" \\
   -d '{"product_id":"PRODUCT_SKU","user_photo_url":"<url from step 1>"}'
-# → { "output_url": "https://replicate.delivery/...", "prediction_id": "abc123" }
+# → { "output_url": "https://cdn.vizzle.in/vizzle/...", "prediction_id": "abc123" }
 \`\`\`
 
 ---
@@ -259,7 +259,7 @@ async function tryon(file) {
 Set the returned URL on an image element in your UI:
 
 \`\`\`html
-<img src="https://replicate.delivery/..." alt="Virtual try-on result" />
+<img src="https://cdn.vizzle.in/vizzle/..." alt="Virtual try-on result" />
 \`\`\`
 
 ---

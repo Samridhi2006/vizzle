@@ -69,10 +69,20 @@ const EP = {
 <tr><td>429</td><td>Rate limit exceeded — back off and retry</td></tr>
 <tr><td>500</td><td>Internal server error — contact support</td></tr>
 </tbody></table>
-<h4>Rate limits</h4><ul>
-<li><strong>Try-On:</strong> 60 requests / minute per store</li>
-<li><strong>Video:</strong> 20 requests / minute per store</li>
-<li><strong>Upload:</strong> 100 requests / minute per store</li></ul>`,
+<h4>Rate limits (Tier-based)</h4>
+<p>Rate limits are determined by your store&apos;s activated <strong>One-Time Setup Plan</strong>:</p>
+<table><thead><tr><th>Setup Tier</th><th>Hourly Limit</th><th>Daily Limit</th></tr></thead><tbody>
+<tr><td><strong>Basic</strong></td><td>100 req / hour</td><td>1,000 req / day</td></tr>
+<tr><td><strong>Gold</strong></td><td>300 req / hour</td><td>3,000 req / day</td></tr>
+<tr><td><strong>Premium</strong></td><td>1,500 req / hour</td><td>15,000 req / day</td></tr>
+<tr><td><strong>Enterprise</strong></td><td>Custom SLA</td><td>Custom SLA</td></tr>
+</tbody></table>
+<p style="margin-top: 10px; font-size: 0.85rem; color: #64748b;">Every response includes standard quota tracking headers:</p>
+<ul>
+<li><code>X-RateLimit-Limit</code> — Total requests allowed in your current hourly window</li>
+<li><code>X-RateLimit-Remaining</code> — Remaining requests available before reset</li>
+<li><code>X-RateLimit-Reset</code> — Unix timestamp (seconds) when the rate limit window resets</li>
+</ul>`,
     code: {
       curl: `# 402 Insufficient Credits:\n{\n  "error": "Insufficient credits. Balance: Rs0. Required: Rs2.50"\n}\n\n# 422 AI Moderation rejection:\n{\n  "error": "Image rejected: content policy violation"\n}`,
       python: `from vizzle import VizzleClient, VizzleError, InsufficientCreditsError\n\nclient = VizzleClient(api_key="vzk_YOUR_KEY")\ntry:\n    result = client.tryon("prod_123", "https://...")\nexcept InsufficientCreditsError:\n    print("Top up credits in the Dashboard")\nexcept VizzleError as e:\n    print(f"API error: {e}")`,
@@ -134,13 +144,13 @@ const EP = {
     params: [
       { name: 'prediction_id', type: 'string (path)', required: true, desc: 'The prediction_id returned by POST /api/v1/tryon' },
     ],
-    responseSchema: `// Status: starting | processing | succeeded | failed\n{\n  "status": "succeeded",\n  "output_url": "https://replicate.delivery/.../output.jpg",\n  "error": null,\n  "model_used": "cuuupid/idm-vton"\n}`,
+    responseSchema: `// Status: starting | processing | succeeded | failed\n{\n  "status": "succeeded",\n  "output_url": "https://cdn.vizzle.in/vizzle/output.jpg",\n  "error": null,\n  "model_used": "vizzle-vton-v1"\n}`,
     errorResponses: [
       { code: '401', desc: 'Invalid or missing API key' },
       { code: '404', desc: 'prediction_id not found' },
     ],
     code: {
-      curl: `curl https://your-domain.com/api/v1/tryon/status/gm4rbfxrf9rn... \\\n  -H "x-api-key: vzk_9114d52b..."\n\n# Succeeded:\n{\n  "status": "succeeded",\n  "output_url": "https://replicate.delivery/.../output.jpg"\n}`,
+      curl: `curl https://your-domain.com/api/v1/tryon/status/gm4rbfxrf9rn... \\\n  -H "x-api-key: vzk_9114d52b..."\n\n# Succeeded:\n{\n  "status": "succeeded",\n  "output_url": "https://cdn.vizzle.in/vizzle/output.jpg"\n}`,
       python: `import time\nfrom vizzle import VizzleClient\n\nclient = VizzleClient(api_key="vzk_...", base_url="https://your-domain.com")\n\nwhile True:\n    s = client.get_tryon_status("gm4rbfxrf9rn...")\n    if s.status in ("succeeded", "failed"):\n        break\n    time.sleep(4)\n\nprint("Output URL:", s.output_url)`,
       javascript: `async function pollTryOn(predictionId, apiKey) {\n  while (true) {\n    const res = await fetch(\`/api/v1/tryon/status/\${predictionId}\`,\n      { headers: { "x-api-key": apiKey } });\n    const data = await res.json();\n    if (data.status === "succeeded") return data.output_url;\n    if (data.status === "failed") throw new Error(data.error);\n    await new Promise(r => setTimeout(r, 4000));\n  }\n}\nconst url = await pollTryOn("gm4rbfxrf9rn...", "vzk_...");`,
     },
@@ -163,9 +173,9 @@ const EP = {
       { code: '402', desc: 'Insufficient credits (costs Rs 5.00)' },
     ],
     code: {
-      curl: `curl -X POST https://your-domain.com/api/v1/generate-video \\\n  -H "x-api-key: vzk_9114d52b..." \\\n  -H "Content-Type: application/json" \\\n  -H "Origin: https://your-store.com" \\\n  -d '{\n    "image_url": "https://replicate.delivery/.../output.jpg",\n    "motion_type": "subtle_walk",\n    "duration": 4,\n    "fps": 24\n  }'`,
-      python: `from vizzle import VizzleClient\n\nclient = VizzleClient(api_key="vzk_...", base_url="https://your-domain.com")\n\nvideo_job = client.generate_video(\n    image_url="https://replicate.delivery/.../output.jpg",\n    motion_type="subtle_walk",\n    duration=4,\n)\nvideo = video_job.wait()\nprint("Video URL:", video.output_url)`,
-      javascript: `const res = await fetch("https://your-domain.com/api/v1/generate-video", {\n  method: "POST",\n  headers: {\n    "x-api-key": "vzk_...",\n    "Content-Type": "application/json",\n    "Origin": "https://your-store.com",\n  },\n  body: JSON.stringify({\n    image_url: "https://replicate.delivery/.../output.jpg",\n    motion_type: "pose_showcase",\n    duration: 5,\n    fps: 24,\n  }),\n});\nconst { prediction_id } = await res.json();`,
+      curl: `curl -X POST https://your-domain.com/api/v1/generate-video \\\n  -H "x-api-key: vzk_9114d52b..." \\\n  -H "Content-Type: application/json" \\\n  -H "Origin: https://your-store.com" \\\n  -d '{\n    "image_url": "https://cdn.vizzle.in/vizzle/output.jpg",\n    "motion_type": "subtle_walk",\n    "duration": 4,\n    "fps": 24\n  }'`,
+      python: `from vizzle import VizzleClient\n\nclient = VizzleClient(api_key="vzk_...", base_url="https://your-domain.com")\n\nvideo_job = client.generate_video(\n    image_url="https://cdn.vizzle.in/vizzle/output.jpg",\n    motion_type="subtle_walk",\n    duration=4,\n)\nvideo = video_job.wait()\nprint("Video URL:", video.output_url)`,
+      javascript: `const res = await fetch("https://your-domain.com/api/v1/generate-video", {\n  method: "POST",\n  headers: {\n    "x-api-key": "vzk_...",\n    "Content-Type": "application/json",\n    "Origin": "https://your-store.com",\n  },\n  body: JSON.stringify({\n    image_url: "https://cdn.vizzle.in/vizzle/output.jpg",\n    motion_type: "pose_showcase",\n    duration: 5,\n    fps: 24,\n  }),\n});\nconst { prediction_id } = await res.json();`,
     },
   },
 
@@ -176,7 +186,7 @@ const EP = {
     params: [
       { name: 'prediction_id', type: 'string (path)', required: true, desc: 'The prediction_id returned by POST /api/v1/generate-video' },
     ],
-    responseSchema: `// Succeeded:\n{\n  "status": "succeeded",\n  "output_url": "https://replicate.delivery/.../output.mp4",\n  "error": null\n}\n// Still processing:\n{\n  "status": "processing",\n  "output_url": null,\n  "error": null\n}`,
+    responseSchema: `// Succeeded:\n{\n  "status": "succeeded",\n  "output_url": "https://cdn.vizzle.in/vizzle/output.mp4",\n  "error": null\n}\n// Still processing:\n{\n  "status": "processing",\n  "output_url": null,\n  "error": null\n}`,
     errorResponses: [
       { code: '401', desc: 'Invalid or missing API key' },
       { code: '404', desc: 'prediction_id not found' },
@@ -195,7 +205,7 @@ const EP = {
     params: [
       { name: 'photo', type: 'File (multipart)', required: true, desc: 'Photo to upload. Accepted: JPEG, PNG, WebP. Max: 10 MB.' },
     ],
-    responseSchema: `{\n  "url": "https://res.cloudinary.com/yourcloud/image/upload/vizzle/tryon-temp/..."\n}`,
+    responseSchema: `{\n  "url": "https://cdn.vizzle.in/vizzle/tryon-temp/..."\n}`,
     errorResponses: [
       { code: '400', desc: 'Missing photo field or unsupported file type' },
       { code: '401', desc: 'Invalid or missing API key' },
