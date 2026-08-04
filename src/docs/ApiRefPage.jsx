@@ -43,12 +43,12 @@ const EP = {
 <li>Rotate keys immediately if compromised (Dashboard → API Keys → Revoke)</li>
 <li>Each key is scoped to a single store; create separate keys per store</li></ul>`,
     code: {
-      curl: `curl -X POST https://your-domain.com/api/v1/tryon \\
+      curl: `curl -X POST https://dashboard.vizzle.in/api/v1/tryon \\
   -H "x-api-key: vzk_YOUR_KEY" \\
   -H "Content-Type: application/json" \\
   -d '{"product_id":"prod_123","user_photo_url":"https://..."}'`,
       python: `import vizzle\n\nclient = vizzle.VizzleClient(api_key="vzk_YOUR_KEY")\n# All requests are automatically authenticated`,
-      javascript: `const headers = {\n  "x-api-key": "vzk_YOUR_KEY",\n  "Content-Type": "application/json",\n};\n\nconst res = await fetch("https://your-domain.com/api/v1/tryon", {\n  method: "POST",\n  headers,\n  body: JSON.stringify({ product_id: "prod_123", user_photo_url: "https://..." }),\n});`,
+      javascript: `const headers = {\n  "x-api-key": "vzk_YOUR_KEY",\n  "Content-Type": "application/json",\n};\n\nconst res = await fetch("https://dashboard.vizzle.in/api/v1/tryon", {\n  method: "POST",\n  headers,\n  body: JSON.stringify({ product_id: "prod_123", user_photo_url: "https://..." }),\n});`,
     },
   },
 
@@ -109,7 +109,7 @@ const EP = {
 <h4>Top up</h4><p>Buy credits in the Dashboard under <strong>Billing</strong> using Razorpay (UPI, cards, net banking).</p>`,
     code: {
       curl: `# Check current balance (Dashboard API)\ncurl "https://your-app.vercel.app/api/credits?store_id=STORE_ID" \\\n  -H "Authorization: Bearer JWT_TOKEN"\n\n# Response:\n{\n  "balance": 47.5,\n  "tier": { "tier": "BASIC", "requestsPerHour": 100 },\n  "transactions": [...]\n}`,
-      python: `from vizzle import VizzleClient\n\nclient = VizzleClient(api_key="vzk_YOUR_KEY", base_url="https://your-domain.com")\n# Credits are tracked automatically per request`,
+      python: `from vizzle import VizzleClient\n\nclient = VizzleClient(api_key="vzk_YOUR_KEY", base_url="https://dashboard.vizzle.in")\n# Credits are tracked automatically per request`,
       javascript: `const res = await fetch(\`/api/credits?store_id=\${storeId}\`, {\n  headers: { Authorization: \`Bearer \${jwtToken}\` },\n});\nconst { balance } = await res.json();\nconsole.log("Current balance: Rs", balance);`,
     },
   },
@@ -131,9 +131,9 @@ const EP = {
       { code: '422', desc: 'Photo rejected by AI content moderation' },
     ],
     code: {
-      curl: `curl -X POST https://your-domain.com/api/v1/tryon \\\n  -H "x-api-key: vzk_9114d52b..." \\\n  -H "Content-Type: application/json" \\\n  -H "Origin: https://your-store.com" \\\n  -d '{\n    "product_id": "SHIRT-001",\n    "user_photo_url": "https://cdn.yourstore.com/user-photo.jpg"\n  }'`,
-      python: `from vizzle import VizzleClient\n\nclient = VizzleClient(api_key="vzk_9114d52b...", base_url="https://your-domain.com")\n\njob = client.tryon(\n    product_id="SHIRT-001",\n    user_photo_url="https://cdn.yourstore.com/user-photo.jpg"\n)\nprint("Job started:", job.prediction_id)\n\n# Auto-poll until done:\nresult = job.wait()\nprint("Output URL:", result.output_url)`,
-      javascript: `const response = await fetch("https://your-domain.com/api/v1/tryon", {\n  method: "POST",\n  headers: {\n    "x-api-key": "vzk_9114d52b...",\n    "Content-Type": "application/json",\n    "Origin": "https://your-store.com",\n  },\n  body: JSON.stringify({\n    product_id: "SHIRT-001",\n    user_photo_url: "https://cdn.yourstore.com/user-photo.jpg",\n  }),\n});\nconst { prediction_id, status } = await response.json();\nconsole.log("Started:", prediction_id, status);`,
+      curl: `curl -X POST https://dashboard.vizzle.in/api/v1/tryon \\\n  -H "x-api-key: vzk_9114d52b..." \\\n  -H "Content-Type: application/json" \\\n  -H "Origin: https://your-store.com" \\\n  -d '{\n    "product_id": "SHIRT-001",\n    "user_photo_url": "https://cdn.yourstore.com/user-photo.jpg"\n  }'`,
+      python: `from vizzle import VizzleClient\n\nclient = VizzleClient(api_key="vzk_9114d52b...", base_url="https://dashboard.vizzle.in")\n\njob = client.tryon(\n    product_id="SHIRT-001",\n    user_photo_url="https://cdn.yourstore.com/user-photo.jpg"\n)\nprint("Job started:", job.prediction_id)\n\n# Auto-poll until done:\nresult = job.wait()\nprint("Output URL:", result.output_url)`,
+      javascript: `const response = await fetch("https://dashboard.vizzle.in/api/v1/tryon", {\n  method: "POST",\n  headers: {\n    "x-api-key": "vzk_9114d52b...",\n    "Content-Type": "application/json",\n    "Origin": "https://your-store.com",\n  },\n  body: JSON.stringify({\n    product_id: "SHIRT-001",\n    user_photo_url: "https://cdn.yourstore.com/user-photo.jpg",\n  }),\n});\nconst { prediction_id, status } = await response.json();\nconsole.log("Started:", prediction_id, status);`,
     },
   },
 
@@ -150,8 +150,8 @@ const EP = {
       { code: '404', desc: 'prediction_id not found' },
     ],
     code: {
-      curl: `curl https://your-domain.com/api/v1/tryon/status/gm4rbfxrf9rn... \\\n  -H "x-api-key: vzk_9114d52b..."\n\n# Succeeded:\n{\n  "status": "succeeded",\n  "output_url": "https://cdn.vizzle.in/vizzle/output.jpg"\n}`,
-      python: `import time\nfrom vizzle import VizzleClient\n\nclient = VizzleClient(api_key="vzk_...", base_url="https://your-domain.com")\n\nwhile True:\n    s = client.get_tryon_status("gm4rbfxrf9rn...")\n    if s.status in ("succeeded", "failed"):\n        break\n    time.sleep(4)\n\nprint("Output URL:", s.output_url)`,
+      curl: `curl https://dashboard.vizzle.in/api/v1/tryon/status/gm4rbfxrf9rn... \\\n  -H "x-api-key: vzk_9114d52b..."\n\n# Succeeded:\n{\n  "status": "succeeded",\n  "output_url": "https://cdn.vizzle.in/vizzle/output.jpg"\n}`,
+      python: `import time\nfrom vizzle import VizzleClient\n\nclient = VizzleClient(api_key="vzk_...", base_url="https://dashboard.vizzle.in")\n\nwhile True:\n    s = client.get_tryon_status("gm4rbfxrf9rn...")\n    if s.status in ("succeeded", "failed"):\n        break\n    time.sleep(4)\n\nprint("Output URL:", s.output_url)`,
       javascript: `async function pollTryOn(predictionId, apiKey) {\n  while (true) {\n    const res = await fetch(\`/api/v1/tryon/status/\${predictionId}\`,\n      { headers: { "x-api-key": apiKey } });\n    const data = await res.json();\n    if (data.status === "succeeded") return data.output_url;\n    if (data.status === "failed") throw new Error(data.error);\n    await new Promise(r => setTimeout(r, 4000));\n  }\n}\nconst url = await pollTryOn("gm4rbfxrf9rn...", "vzk_...");`,
     },
   },
@@ -173,9 +173,9 @@ const EP = {
       { code: '402', desc: 'Insufficient credits (costs Rs 5.00)' },
     ],
     code: {
-      curl: `curl -X POST https://your-domain.com/api/v1/generate-video \\\n  -H "x-api-key: vzk_9114d52b..." \\\n  -H "Content-Type: application/json" \\\n  -H "Origin: https://your-store.com" \\\n  -d '{\n    "image_url": "https://cdn.vizzle.in/vizzle/output.jpg",\n    "motion_type": "subtle_walk",\n    "duration": 4,\n    "fps": 24\n  }'`,
-      python: `from vizzle import VizzleClient\n\nclient = VizzleClient(api_key="vzk_...", base_url="https://your-domain.com")\n\nvideo_job = client.generate_video(\n    image_url="https://cdn.vizzle.in/vizzle/output.jpg",\n    motion_type="subtle_walk",\n    duration=4,\n)\nvideo = video_job.wait()\nprint("Video URL:", video.output_url)`,
-      javascript: `const res = await fetch("https://your-domain.com/api/v1/generate-video", {\n  method: "POST",\n  headers: {\n    "x-api-key": "vzk_...",\n    "Content-Type": "application/json",\n    "Origin": "https://your-store.com",\n  },\n  body: JSON.stringify({\n    image_url: "https://cdn.vizzle.in/vizzle/output.jpg",\n    motion_type: "pose_showcase",\n    duration: 5,\n    fps: 24,\n  }),\n});\nconst { prediction_id } = await res.json();`,
+      curl: `curl -X POST https://dashboard.vizzle.in/api/v1/generate-video \\\n  -H "x-api-key: vzk_9114d52b..." \\\n  -H "Content-Type: application/json" \\\n  -H "Origin: https://your-store.com" \\\n  -d '{\n    "image_url": "https://cdn.vizzle.in/vizzle/output.jpg",\n    "motion_type": "subtle_walk",\n    "duration": 4,\n    "fps": 24\n  }'`,
+      python: `from vizzle import VizzleClient\n\nclient = VizzleClient(api_key="vzk_...", base_url="https://dashboard.vizzle.in")\n\nvideo_job = client.generate_video(\n    image_url="https://cdn.vizzle.in/vizzle/output.jpg",\n    motion_type="subtle_walk",\n    duration=4,\n)\nvideo = video_job.wait()\nprint("Video URL:", video.output_url)`,
+      javascript: `const res = await fetch("https://dashboard.vizzle.in/api/v1/generate-video", {\n  method: "POST",\n  headers: {\n    "x-api-key": "vzk_...",\n    "Content-Type": "application/json",\n    "Origin": "https://your-store.com",\n  },\n  body: JSON.stringify({\n    image_url: "https://cdn.vizzle.in/vizzle/output.jpg",\n    motion_type: "pose_showcase",\n    duration: 5,\n    fps: 24,\n  }),\n});\nconst { prediction_id } = await res.json();`,
     },
   },
 
@@ -192,8 +192,8 @@ const EP = {
       { code: '404', desc: 'prediction_id not found' },
     ],
     code: {
-      curl: `curl https://your-domain.com/api/v1/generate-video/status/1a1b0d7669rmr... \\\n  -H "x-api-key: vzk_9114d52b..."`,
-      python: `import time\nfrom vizzle import VizzleClient\n\nclient = VizzleClient(api_key="vzk_...", base_url="https://your-domain.com")\n\nfor _ in range(30):\n    s = client.get_video_status("1a1b0d7669rmr...")\n    if s.status == "succeeded":\n        print("Video ready:", s.output_url)\n        break\n    elif s.status == "failed":\n        raise RuntimeError(s.error)\n    time.sleep(10)`,
+      curl: `curl https://dashboard.vizzle.in/api/v1/generate-video/status/1a1b0d7669rmr... \\\n  -H "x-api-key: vzk_9114d52b..."`,
+      python: `import time\nfrom vizzle import VizzleClient\n\nclient = VizzleClient(api_key="vzk_...", base_url="https://dashboard.vizzle.in")\n\nfor _ in range(30):\n    s = client.get_video_status("1a1b0d7669rmr...")\n    if s.status == "succeeded":\n        print("Video ready:", s.output_url)\n        break\n    elif s.status == "failed":\n        raise RuntimeError(s.error)\n    time.sleep(10)`,
       javascript: `async function pollVideo(predictionId, apiKey) {\n  while (true) {\n    const res = await fetch(\n      \`/api/v1/generate-video/status/\${predictionId}\`,\n      { headers: { "x-api-key": apiKey } }\n    );\n    const data = await res.json();\n    if (data.status === "succeeded") return data.output_url;\n    if (data.status === "failed") throw new Error(data.error);\n    await new Promise(r => setTimeout(r, 8000));\n  }\n}`,
     },
   },
@@ -212,8 +212,8 @@ const EP = {
       { code: '413', desc: 'Photo exceeds 10 MB limit' },
     ],
     code: {
-      curl: `curl -X POST https://your-domain.com/api/v1/upload \\\n  -H "x-api-key: vzk_9114d52b..." \\\n  -H "Origin: https://your-store.com" \\\n  -F "photo=@/path/to/user-photo.jpg"`,
-      python: `from vizzle import VizzleClient\n\nclient = VizzleClient(api_key="vzk_...", base_url="https://your-domain.com")\n\nwith open("user-photo.jpg", "rb") as f:\n    url = client.upload_photo(f)\n\nprint("Uploaded to:", url)\njob = client.tryon("SHIRT-001", user_photo_url=url)`,
+      curl: `curl -X POST https://dashboard.vizzle.in/api/v1/upload \\\n  -H "x-api-key: vzk_9114d52b..." \\\n  -H "Origin: https://your-store.com" \\\n  -F "photo=@/path/to/user-photo.jpg"`,
+      python: `from vizzle import VizzleClient\n\nclient = VizzleClient(api_key="vzk_...", base_url="https://dashboard.vizzle.in")\n\nwith open("user-photo.jpg", "rb") as f:\n    url = client.upload_photo(f)\n\nprint("Uploaded to:", url)\njob = client.tryon("SHIRT-001", user_photo_url=url)`,
       javascript: `async function uploadAndTryOn(file, productId, apiKey) {\n  const form = new FormData();\n  form.append("photo", file);\n\n  const { url } = await fetch("/api/v1/upload", {\n    method: "POST",\n    headers: { "x-api-key": apiKey },\n    body: form,\n  }).then(r => r.json());\n\n  return fetch("/api/v1/tryon", {\n    method: "POST",\n    headers: { "x-api-key": apiKey, "Content-Type": "application/json" },\n    body: JSON.stringify({ product_id: productId, user_photo_url: url }),\n  }).then(r => r.json()); // { prediction_id, status }\n}`,
     },
   },
