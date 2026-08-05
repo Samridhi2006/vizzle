@@ -19,6 +19,18 @@ import { TryonMode } from "@/types";
 const OUTPUT_TTL_MS = 60 * 60 * 1000; // 1 hour
 
 /**
+ * True if `value` is an absolute http(s) URL rather than a merchant's own product id/SKU.
+ */
+function isImageUrl(value: string): boolean {
+  try {
+    const parsed = new URL(value);
+    return parsed.protocol === "http:" || parsed.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
+/**
  * Mirror an external ML output URL to our Cloudinary temp folder.
  * Returns our own stable URL. Tracks the asset for hourly cleanup.
  */
@@ -105,14 +117,18 @@ export async function startImageTryOn(input: {
   useVision?: boolean;
   params?: Record<string, unknown>;
 }) {
-  const product = await resolveProductImageByStoreAndSku({
-    storeId: input.storeId,
-    productId: input.productId,
-  });
+  const garmentImageUrl = isImageUrl(input.productId)
+    ? input.productId
+    : (
+        await resolveProductImageByStoreAndSku({
+          storeId: input.storeId,
+          productId: input.productId,
+        })
+      ).imageUrl;
 
   const mlPayload = {
     human_img: input.userPhotoUrl,
-    garm_img: product.imageUrl,
+    garm_img: garmentImageUrl,
     garment_type: input.garmentType ?? "auto_detect",
     use_vision: input.useVision ?? true,
     // IDM-VTON defaults matching the reference app
