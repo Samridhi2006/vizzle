@@ -1,0 +1,791 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Vizzle Widget API",
+    "version": "1.0.0",
+    "description": "The public widget-facing API: upload a shopper's photo, run a virtual try-on, and animate the result into a video. All endpoints require a store API key.\n\n### Typical flow\n1. `POST /api/v1/upload` — shopper picks a photo, upload it and get back a temporary URL.\n2. `POST /api/v1/tryon` — start a try-on job with that photo URL + a product ID (or a direct garment image URL). Returns a `prediction_id` immediately.\n3. `GET /api/v1/tryon/status/{id}` — poll until `status` is `succeeded` or `failed`.\n4. (Optional) `POST /api/v1/generate-video` — animate the try-on result image into a short video clip. Returns a `prediction_id` immediately.\n5. (Optional) `GET /api/v1/generate-video/status/{id}` — poll until done.\n\n### Authentication\nEvery request must include the `x-api-key` header with your store's API key (format `vzk_...`), from **Dashboard → Stores**.\n\n### CORS / Origin\nWidget calls from a browser must originate from the domain registered for the store (**Dashboard → Stores → Edit**). Server-to-server calls (Postman, curl, backend jobs) that send **no `Origin` header** are always allowed.\n\n### Credits\n`POST /api/v1/tryon` and `POST /api/v1/generate-video` deduct credits from the store's wallet before processing, and refund automatically if the ML job fails to start. A `402` response means either insufficient balance or that the store hasn't activated a paid setup tier yet. `POST /api/v1/upload` is free.\n\n### Rate limiting\nRequests are rate-limited per store per hour based on the store's setup tier. Exceeding it returns `429` with `retryAfter` (seconds) in `details`.\n\n### Errors\nAll error responses share the shape `{ \"error\": string, \"details\"?: any }`, except the moderation-rejection response on `POST /tryon`, which additionally includes a `code` field.",
+    "contact": {
+      "name": "Vizzle Support"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://www.vizzle.in/api/proxy",
+      "description": "Live docs playground (proxied — avoids browser CORS)"
+    },
+    {
+      "url": "https://dashboard.vizzle.in",
+      "description": "Production (direct — use for server-to-server integration, not from a browser on another origin)"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Virtual Try-On",
+      "description": "Start an async garment try-on job and poll it to completion."
+    },
+    {
+      "name": "Video Generation",
+      "description": "Animate a still image (typically a try-on result) into a short video clip."
+    },
+    {
+      "name": "Asset Upload",
+      "description": "Upload a shopper's photo and get back a temporary URL to use in a try-on request."
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/api/v1/tryon": {
+      "post": {
+        "tags": [
+          "Virtual Try-On"
+        ],
+        "operationId": "startTryOn",
+        "summary": "Start Try-On",
+        "description": "Starts a virtual try-on job and returns immediately with a `prediction_id` (HTTP 202). Poll `GET /api/v1/tryon/status/{id}` until the job finishes.\n\n**Moderation:** `user_photo_url` is checked for NSFW/inappropriate content before anything else. Rejected images return `422` and are never charged.\n\n**Credits:** the image try-on cost (default ₹2.50, configurable by the platform admin) is deducted right after moderation passes and before the ML job starts. It is automatically refunded if the ML job fails to start.\n\n**`product_id` accepts two formats, auto-detected — no extra field needed:**\n- A product ID/SKU registered via `Dashboard → Products` or the Products API.\n- A direct `https://` URL pointing straight at a garment image, bypassing product registration entirely.\n\nThe server tries to parse `product_id` as an absolute URL first; if that succeeds, it's used directly as the garment image. Otherwise it's looked up as a product ID belonging to your store.",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StartTryOnRequest"
+              },
+              "examples": {
+                "byProductId": {
+                  "summary": "Using a registered product ID",
+                  "value": {
+                    "product_id": "SKU-BLUE-SHIRT-001",
+                    "user_photo_url": "https://cdn.vizzle.in/vizzle/tryon-temp/abc123/photo.jpg",
+                    "garment_type": "upper_body",
+                    "use_vision": true
+                  }
+                },
+                "byImageUrl": {
+                  "summary": "Using a direct garment image URL (no product registration needed)",
+                  "value": {
+                    "product_id": "https://cdn.example.com/products/blue-shirt.jpg",
+                    "user_photo_url": "https://cdn.vizzle.in/vizzle/tryon-temp/abc123/photo.jpg"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Try-on job started.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StartJobResponse"
+                },
+                "example": {
+                  "prediction_id": "pred_a1b2c3d4",
+                  "status": "starting"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/components/responses/PaymentRequired"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/ProductNotFound"
+          },
+          "422": {
+            "description": "The uploaded photo was rejected by content moderation. No credit was charged.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModerationError"
+                },
+                "example": {
+                  "error": "Image rejected by content moderation. Please upload an appropriate photo (no explicit or misleading content).",
+                  "code": "MODERATION_REJECTED"
+                }
+              }
+            }
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          },
+          "502": {
+            "$ref": "#/components/responses/MlBackendError"
+          }
+        }
+      }
+    },
+    "/api/v1/tryon/status/{id}": {
+      "get": {
+        "tags": [
+          "Virtual Try-On"
+        ],
+        "operationId": "pollTryOnStatus",
+        "summary": "Poll Try-On Status",
+        "description": "Polls the status of a job started via `POST /api/v1/tryon`. Returns instantly (< 3s). When `status` is `succeeded`, `output_url` points to a stable, permanently-hosted copy of the result (mirrored to Vizzle's CDN — it will never expire and has no CORS restrictions), not the raw ML backend URL.",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The `prediction_id` returned by `POST /api/v1/tryon`.",
+            "schema": {
+              "type": "string"
+            },
+            "example": "pred_a1b2c3d4"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current job status.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TryOnStatus"
+                },
+                "examples": {
+                  "processing": {
+                    "summary": "Still processing",
+                    "value": {
+                      "status": "processing",
+                      "output_url": null,
+                      "error": null,
+                      "model_used": null
+                    }
+                  },
+                  "succeeded": {
+                    "summary": "Done",
+                    "value": {
+                      "status": "succeeded",
+                      "output_url": "https://cdn.vizzle.in/vizzle/tryon-output/abc123.jpg",
+                      "error": null,
+                      "model_used": "idm-vton"
+                    }
+                  },
+                  "failed": {
+                    "summary": "Failed",
+                    "value": {
+                      "status": "failed",
+                      "output_url": null,
+                      "error": "ML model returned status: failed",
+                      "model_used": null
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/api/v1/generate-video": {
+      "post": {
+        "tags": [
+          "Video Generation"
+        ],
+        "operationId": "startVideo",
+        "summary": "Start Video",
+        "description": "Animates a still image (typically a try-on result from `GET /api/v1/tryon/status/{id}`) into a short MP4 video clip. Async — returns immediately with a `prediction_id` (HTTP 202). Poll `GET /api/v1/generate-video/status/{id}` until it finishes.\n\n**Credits:** the video cost (default ₹5.00, configurable by the platform admin) is deducted before the ML job starts and refunded automatically if it fails to start.",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StartVideoRequest"
+              },
+              "example": {
+                "image_url": "https://cdn.vizzle.in/vizzle/tryon-output/abc123.jpg",
+                "motion_type": "subtle_walk",
+                "duration": 3,
+                "fps": 24
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Video generation job started.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StartJobResponse"
+                },
+                "example": {
+                  "prediction_id": "pred_q7r8s9t0",
+                  "status": "starting"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/components/responses/PaymentRequired"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          },
+          "502": {
+            "$ref": "#/components/responses/MlBackendError"
+          }
+        }
+      }
+    },
+    "/api/v1/generate-video/status/{id}": {
+      "get": {
+        "tags": [
+          "Video Generation"
+        ],
+        "operationId": "pollVideoStatus",
+        "summary": "Poll Video Status",
+        "description": "Polls the status of a job started via `POST /api/v1/generate-video`. Note this is a raw passthrough of the ML backend's own response: the result field is `output` (string or array of strings), not `video_url`, and it is not mirrored to Vizzle's CDN.",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The `prediction_id` returned by `POST /api/v1/generate-video`.",
+            "schema": {
+              "type": "string"
+            },
+            "example": "pred_q7r8s9t0"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current job status (raw ML backend passthrough).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RawMlStatus"
+                },
+                "examples": {
+                  "processing": {
+                    "summary": "Still processing",
+                    "value": {
+                      "id": "pred_q7r8s9t0",
+                      "status": "processing",
+                      "output": null,
+                      "error": null,
+                      "model_used": null
+                    }
+                  },
+                  "succeeded": {
+                    "summary": "Done",
+                    "value": {
+                      "id": "pred_q7r8s9t0",
+                      "status": "succeeded",
+                      "output": "https://vizzle-backend-vvc6.onrender.com/outputs/q7r8s9t0.mp4",
+                      "error": null,
+                      "model_used": "video-gen"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/api/v1/upload": {
+      "post": {
+        "tags": [
+          "Asset Upload"
+        ],
+        "operationId": "uploadPhoto",
+        "summary": "Upload Photo",
+        "description": "Widget step 1: the shopper picks a photo, and your storefront script sends it here. The file is uploaded to a temporary Cloudinary folder and a public URL is returned — pass that URL as `user_photo_url` to `POST /api/v1/tryon`.\n\nTemporary assets are auto-deleted after 1 hour. This endpoint is free (no credit deducted).",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/UploadPhotoRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Photo uploaded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadPhotoResponse"
+                },
+                "example": {
+                  "url": "https://cdn.vizzle.in/vizzle/tryon-temp/abc123/photo.jpg"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Missing `photo` field, or an unsupported file type.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "missingField": {
+                    "value": {
+                      "error": "Missing 'photo' field in form data"
+                    }
+                  },
+                  "unsupportedType": {
+                    "value": {
+                      "error": "Unsupported type: image/gif. Use JPEG, PNG or WebP."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "413": {
+            "description": "Photo exceeds the 10 MB limit.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Photo exceeds 10 MB limit"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-api-key",
+        "description": "Store API key, format `vzk_<64 hex chars>`. Generate/rotate it from Dashboard → Stores."
+      }
+    },
+    "schemas": {
+      "TryonParams": {
+        "type": "object",
+        "description": "Free-form ML tuning parameters merged with the model's defaults (e.g. `{ \"category\": \"upper_body\", \"steps\": 20 }`).",
+        "additionalProperties": true,
+        "example": {
+          "category": "upper_body",
+          "steps": 20
+        }
+      },
+      "StartTryOnRequest": {
+        "type": "object",
+        "required": [
+          "product_id",
+          "user_photo_url"
+        ],
+        "properties": {
+          "product_id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "EITHER a product ID/SKU registered to your store, OR a direct `https://` URL to a garment image. Auto-detected server-side — no extra field or flag needed."
+          },
+          "user_photo_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Publicly reachable URL of the shopper's photo — typically the `url` returned by `POST /api/v1/upload`."
+          },
+          "garment_type": {
+            "type": "string",
+            "description": "Garment category hint for the ML model.",
+            "default": "auto_detect",
+            "example": "upper_body"
+          },
+          "use_vision": {
+            "type": "boolean",
+            "default": true,
+            "description": "Whether the ML model should use its vision-based auto-detection step."
+          },
+          "params": {
+            "$ref": "#/components/schemas/TryonParams"
+          }
+        }
+      },
+      "StartJobResponse": {
+        "type": "object",
+        "properties": {
+          "prediction_id": {
+            "type": "string",
+            "description": "Job ID to pass to the matching status endpoint."
+          },
+          "status": {
+            "type": "string",
+            "example": "starting"
+          }
+        }
+      },
+      "TryOnStatus": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "starting",
+              "processing",
+              "succeeded",
+              "failed",
+              "canceled"
+            ]
+          },
+          "output_url": {
+            "type": "string",
+            "nullable": true,
+            "description": "Set only when status is `succeeded`. A stable Vizzle CDN URL (mirrored from the ML backend), not the raw ML output."
+          },
+          "error": {
+            "type": "string",
+            "nullable": true
+          },
+          "model_used": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "RawMlStatus": {
+        "type": "object",
+        "description": "Unmapped passthrough of the ML backend's own status response.",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "starting",
+              "processing",
+              "succeeded",
+              "failed",
+              "canceled"
+            ]
+          },
+          "output": {
+            "nullable": true,
+            "description": "Result URL when succeeded. May be a string or an array of strings (first element is the result).",
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            ]
+          },
+          "error": {
+            "type": "string",
+            "nullable": true
+          },
+          "model_used": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "StartVideoRequest": {
+        "type": "object",
+        "required": [
+          "image_url"
+        ],
+        "properties": {
+          "image_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Publicly reachable URL of the still image to animate — typically a try-on result's `output_url`."
+          },
+          "motion_type": {
+            "type": "string",
+            "enum": [
+              "subtle_walk",
+              "pose_showcase",
+              "gentle_turn"
+            ],
+            "default": "subtle_walk"
+          },
+          "duration": {
+            "type": "number",
+            "minimum": 2,
+            "maximum": 10,
+            "default": 3,
+            "description": "Clip length in seconds."
+          },
+          "fps": {
+            "type": "integer",
+            "enum": [
+              24
+            ],
+            "default": 24,
+            "description": "Only 24 fps is currently supported by the video model."
+          }
+        }
+      },
+      "UploadPhotoRequest": {
+        "type": "object",
+        "required": [
+          "photo"
+        ],
+        "properties": {
+          "photo": {
+            "type": "string",
+            "format": "binary",
+            "description": "The shopper's photo — JPEG, PNG, or WebP, max 10 MB."
+          }
+        }
+      },
+      "UploadPhotoResponse": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "Temporary public URL of the uploaded photo (expires after 1 hour). Pass this as `user_photo_url` to POST /api/v1/tryon."
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "required": [
+          "error"
+        ],
+        "properties": {
+          "error": {
+            "type": "string"
+          },
+          "details": {
+            "description": "Present on validation (400) and rate-limit (429) errors."
+          }
+        }
+      },
+      "ModerationError": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Error"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "enum": [
+                  "MODERATION_REJECTED"
+                ]
+              }
+            }
+          }
+        ]
+      }
+    },
+    "responses": {
+      "ValidationError": {
+        "description": "Request body failed validation.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "error": "Validation failed",
+              "details": {
+                "fieldErrors": {
+                  "user_photo_url": [
+                    "Invalid url"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "Unauthorized": {
+        "description": "Missing or invalid `x-api-key` header.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "error": "Missing or invalid API key"
+            }
+          }
+        }
+      },
+      "Forbidden": {
+        "description": "Request origin is not allowed for this store, or the store could not be resolved.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "error": "Origin not allowed"
+            }
+          }
+        }
+      },
+      "PaymentRequired": {
+        "description": "Insufficient wallet balance, or the store has not activated a paid setup tier yet.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "examples": {
+              "insufficientCredits": {
+                "value": {
+                  "error": "Insufficient credits. Balance: ₹0.00, Required: ₹2.50"
+                }
+              },
+              "unpaidTier": {
+                "value": {
+                  "error": "One-time store setup plan required. Please select and pay for a setup plan (Basic ₹2,000, Gold ₹5,000, Premium ₹15,000) under Billing in your Vizzle Dashboard to activate API access."
+                }
+              }
+            }
+          }
+        }
+      },
+      "ProductNotFound": {
+        "description": "`product_id` did not match any product registered to this store.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "error": "Product not found"
+            }
+          }
+        }
+      },
+      "RateLimited": {
+        "description": "Store's per-hour request limit (based on its setup tier) was exceeded.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "error": "Rate limit exceeded",
+              "details": {
+                "retryAfter": 1800
+              }
+            }
+          }
+        }
+      },
+      "MlBackendError": {
+        "description": "The ML backend failed to produce a result.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "error": "ML model returned status: failed — timeout"
+            }
+          }
+        }
+      },
+      "ServerError": {
+        "description": "Unexpected server error.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "error": "Unexpected server error"
+            }
+          }
+        }
+      }
+    }
+  }
+}
