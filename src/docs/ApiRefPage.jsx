@@ -266,6 +266,160 @@ function CodePanel({ code }) {
   );
 }
 
+// ─── Try it out (live execution via same-origin proxy) ────────────────────────
+
+const PROXY_BASE = '/api/proxy';
+const API_KEY_STORAGE_KEY = 'vizzle_docs_api_key';
+
+function buildRequestPath(ep, values) {
+  let path = ep.endpoint;
+  for (const p of ep.params ?? []) {
+    if (p.type.includes('(path)')) {
+      path = path.replace(`{${p.name}}`, encodeURIComponent(values[p.name] ?? ''));
+    }
+  }
+  return path;
+}
+
+function TryItPanel({ ep }) {
+  const [expanded, setExpanded] = useState(false);
+  const [apiKey, setApiKey] = useState(() => {
+    try { return localStorage.getItem(API_KEY_STORAGE_KEY) || ''; } catch { return ''; }
+  });
+  const [values, setValues] = useState({});
+  const [file, setFile] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState(null);
+
+  useEffect(() => {
+    try { localStorage.setItem(API_KEY_STORAGE_KEY, apiKey); } catch { /* ignore */ }
+  }, [apiKey]);
+
+  const isFileUpload = ep.params?.some(p => p.type.includes('multipart'));
+  const pathParams = (ep.params ?? []).filter(p => p.type.includes('(path)'));
+  const bodyParams = (ep.params ?? []).filter(p => !p.type.includes('(path)') && !p.type.includes('multipart'));
+
+  async function send() {
+    if (!apiKey.trim()) {
+      setResult({ error: 'Enter your x-api-key above first.' });
+      return;
+    }
+    setLoading(true);
+    setResult(null);
+    try {
+      const path = buildRequestPath(ep, values);
+      const url = `${PROXY_BASE}${path}`;
+      const headers = { 'x-api-key': apiKey.trim() };
+      let body;
+
+      if (ep.method === 'GET') {
+        // no body
+      } else if (isFileUpload) {
+        if (!file) throw new Error('Choose a photo file first.');
+        const form = new FormData();
+        form.append('photo', file);
+        body = form; // browser sets multipart content-type + boundary
+      } else {
+        headers['Content-Type'] = 'application/json';
+        const payload = {};
+        for (const p of bodyParams) {
+          const raw = values[p.name];
+          if (raw === undefined || raw === '') continue;
+          payload[p.name] = p.type === 'number' ? Number(raw) : raw;
+        }
+        body = JSON.stringify(payload);
+      }
+
+      const res = await fetch(url, { method: ep.method, headers, body });
+      const text = await res.text();
+      let parsed;
+      try { parsed = JSON.parse(text); } catch { parsed = text; }
+      setResult({ status: res.status, body: parsed });
+    } catch (err) {
+      setResult({ error: err.message || String(err) });
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div className="ar-tryit">
+      <button className="ar-tryit-toggle" onClick={() => setExpanded(v => !v)}>
+        {expanded ? '▾' : '▸'} Try it out
+      </button>
+      {expanded && (
+        <div className="ar-tryit-body">
+          <label className="ar-tryit-label">x-api-key</label>
+          <input
+            className="ar-tryit-input"
+            type="text"
+            placeholder="vzk_..."
+            value={apiKey}
+            onChange={e => setApiKey(e.target.value)}
+          />
+
+          {pathParams.map(p => (
+            <div key={p.name}>
+              <label className="ar-tryit-label">{p.name}</label>
+              <input
+                className="ar-tryit-input"
+                type="text"
+                placeholder={p.desc}
+                value={values[p.name] ?? ''}
+                onChange={e => setValues(v => ({ ...v, [p.name]: e.target.value }))}
+              />
+            </div>
+          ))}
+
+          {isFileUpload && (
+            <div>
+              <label className="ar-tryit-label">photo</label>
+              <input
+                className="ar-tryit-file"
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                onChange={e => setFile(e.target.files?.[0] ?? null)}
+              />
+            </div>
+          )}
+
+          {bodyParams.map(p => (
+            <div key={p.name}>
+              <label className="ar-tryit-label">
+                {p.name}{p.required && <span className="ar-req">required</span>}
+              </label>
+              <input
+                className="ar-tryit-input"
+                type="text"
+                placeholder={p.desc}
+                value={values[p.name] ?? ''}
+                onChange={e => setValues(v => ({ ...v, [p.name]: e.target.value }))}
+              />
+            </div>
+          ))}
+
+          <button className="ar-tryit-send" onClick={send} disabled={loading}>
+            {loading ? 'Sending…' : `Send ${ep.method} request`}
+          </button>
+
+          {result && (
+            <div className={`ar-tryit-result ${result.error ? 'err' : (result.status < 400 ? 'ok' : 'err')}`}>
+              {result.error ? (
+                <p>{result.error}</p>
+              ) : (
+                <>
+                  <div className="ar-tryit-status">Status: {result.status}</div>
+                  <pre>{typeof result.body === 'string' ? result.body : JSON.stringify(result.body, null, 2)}</pre>
+                </>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function ParamRow({ p }) {
   return (
     <tr>
@@ -338,7 +492,10 @@ function Doc({ ep }) {
           )}
         </div>
 
-        <div className="ar-split-r"><CodePanel code={ep.code} /></div>
+        <div className="ar-split-r">
+          {ep.type === 'endpoint' && <TryItPanel ep={ep} />}
+          <CodePanel code={ep.code} />
+        </div>
       </div>
     </article>
   );
@@ -366,6 +523,9 @@ export default function ApiRefPage() {
             <span className="ar-sb-logo">⚡ Vizzle</span>
             <span className="ar-sb-ver">API v1</span>
           </div>
+          <a className="ar-sb-spec-link" href="/docs/api-spec" target="_blank" rel="noopener noreferrer">
+            Swagger / ReDoc / OpenAPI ↗
+          </a>
           <nav className="ar-sb-nav">
             {API_GROUPS.map(g => (
               <div key={g.id} className="ar-nav-grp">
