@@ -9,19 +9,47 @@ import Button from "@/components/ui/Button";
 import { apiFetch } from "@/lib/client/fetcher";
 import { useAuthStore } from "@/store/auth.store";
 import { useUIStore } from "@/store/ui.store";
-import { BarChart2, LayoutDashboard, ShoppingBag, Store, CreditCard, Shield, Plus, Copy, Check, X, Key, Sparkles, Settings, Save } from "lucide-react";
+import {
+  BarChart2, LayoutDashboard, ShoppingBag, Store, CreditCard, Shield, Plus, Copy, Check, X, Key,
+  Sparkles, Settings, Save, ChevronDown, ChevronUp, Pencil, Trash2, PauseCircle, PlayCircle,
+  KeyRound, History, Layers,
+} from "lucide-react";
 import Spinner from "@/components/ui/Spinner";
+import { formatDate } from "@/lib/client/utils";
 
 type AdminStoreInfo = {
   id: string;
   storeName: string;
   domain: string;
-  tier: "UNPAID" | "BASIC" | "GOLD" | "PREMIUM" | "ENTERPRISE";
+  tier: string;
   reqsPerHr: number;
   reqsPerDay: number;
   balance: number;
   usage: number;
   products: number;
+  suspended: boolean;
+};
+
+type TierDefinition = {
+  name: string;
+  requestsPerHour: number;
+  requestsPerDay: number;
+  priceLabel?: string;
+};
+
+type ApiKeyInfo = {
+  id: string;
+  key_prefix: string;
+  is_active: boolean;
+  created_at: string;
+};
+
+type CreditTx = {
+  id: string;
+  type: string;
+  amount: number;
+  description: string | null;
+  createdAt: string;
 };
 
 type AdminUserInfo = {
@@ -71,6 +99,92 @@ const TIER_PRESETS: Record<string, { hr: number; day: number }> = {
   ENTERPRISE: { hr: 10000, day: 100000 },
 };
 
+const TX_COLORS: Record<string, string> = {
+  PURCHASE:    "text-emerald-600",
+  REFUND:      "text-emerald-500",
+  USAGE_IMAGE: "text-red-500",
+  USAGE_VIDEO: "text-red-500",
+};
+
+const TX_LABELS: Record<string, string> = {
+  PURCHASE:    "💳 Purchase",
+  REFUND:      "↩ Refund",
+  USAGE_IMAGE: "🖼 Image Try-on",
+  USAGE_VIDEO: "🎬 Video",
+};
+
+function AdminTransactionHistory({ transactions }: { transactions: CreditTx[] }) {
+  if (transactions.length === 0) {
+    return <p className="py-6 text-center text-xs text-gray-400">No transactions yet</p>;
+  }
+  return (
+    <div className="overflow-x-auto">
+      <table className="w-full text-xs">
+        <thead>
+          <tr className="border-b border-gray-100 text-left font-bold uppercase tracking-widest text-gray-400">
+            <th className="pb-2">Type</th>
+            <th className="pb-2">Description</th>
+            <th className="pb-2 text-right">Amount</th>
+            <th className="pb-2 text-right">Date</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-gray-50">
+          {transactions.map((tx) => (
+            <tr key={tx.id} className="hover:bg-gray-50 transition-colors">
+              <td className="py-2 font-semibold text-gray-700">{TX_LABELS[tx.type] ?? tx.type}</td>
+              <td className="py-2 text-gray-500 max-w-[200px] truncate">{tx.description ?? "—"}</td>
+              <td className={`py-2 text-right font-bold tabular-nums ${TX_COLORS[tx.type] ?? "text-gray-700"}`}>
+                {tx.amount > 0 ? "+" : ""}₹{Math.abs(tx.amount).toFixed(2)}
+              </td>
+              <td className="py-2 text-right text-gray-400 whitespace-nowrap">{formatDate(tx.createdAt)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function AdminApiKeysList({
+  keys,
+  onToggle,
+  togglingId,
+}: {
+  keys: ApiKeyInfo[];
+  onToggle: (keyId: string, isActive: boolean) => void;
+  togglingId: string | null;
+}) {
+  if (keys.length === 0) {
+    return <p className="py-6 text-center text-xs text-gray-400">No API keys issued yet</p>;
+  }
+  return (
+    <div className="space-y-1.5">
+      {keys.map((k) => (
+        <div key={k.id} className="flex items-center justify-between bg-white rounded-lg border border-gray-200 px-3 py-2 text-xs">
+          <div className="flex items-center gap-2">
+            <KeyRound size={13} className="text-gray-400" />
+            <span className="font-mono font-semibold text-gray-700">{k.key_prefix}…</span>
+            <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${k.is_active ? "bg-emerald-100 text-emerald-700" : "bg-gray-100 text-gray-500"}`}>
+              {k.is_active ? "Active" : "Revoked"}
+            </span>
+            <span className="text-gray-400">{formatDate(k.created_at)}</span>
+          </div>
+          <button
+            type="button"
+            disabled={togglingId === k.id}
+            onClick={() => onToggle(k.id, !k.is_active)}
+            className={`rounded-md px-2 py-1 text-[11px] font-bold transition-colors disabled:opacity-50 ${
+              k.is_active ? "bg-red-100 hover:bg-red-200 text-red-700" : "bg-emerald-100 hover:bg-emerald-200 text-emerald-700"
+            }`}
+          >
+            {k.is_active ? "Revoke" : "Reactivate"}
+          </button>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function AdminPage() {
   const router = useRouter();
   const isAdmin = useAuthStore((state) => state.isAdmin);
@@ -79,6 +193,26 @@ export default function AdminPage() {
   const queryClient = useQueryClient();
 
   const [updatingStoreId, setUpdatingStoreId] = useState<string | null>(null);
+  const [topupAmounts, setTopupAmounts] = useState<Record<string, string>>({});
+  const [topupStoreId, setTopupStoreId] = useState<string | null>(null);
+
+  // Custom rate-limit override drafts, keyed by store id
+  const [limitDrafts, setLimitDrafts] = useState<Record<string, { hr: string; day: string }>>({});
+  const [savingLimitsId, setSavingLimitsId] = useState<string | null>(null);
+
+  // Expanded "Manage" panel per store (rename, delete, keys, tx history)
+  const [expandedStoreId, setExpandedStoreId] = useState<string | null>(null);
+  const [editDrafts, setEditDrafts] = useState<Record<string, { name: string; domain: string }>>({});
+  const [savingEditId, setSavingEditId] = useState<string | null>(null);
+  const [deletingStoreId, setDeletingStoreId] = useState<string | null>(null);
+  const [accessStoreId, setAccessStoreId] = useState<string | null>(null);
+  const [togglingKeyId, setTogglingKeyId] = useState<string | null>(null);
+
+  // Tier management form state
+  const [tierFormName, setTierFormName] = useState("");
+  const [tierFormHr, setTierFormHr] = useState(100);
+  const [tierFormDay, setTierFormDay] = useState(1000);
+  const [tierFormPrice, setTierFormPrice] = useState("");
 
   // Dynamic Pricing state
   const [imgCost, setImgCost] = useState<number>(2.5);
@@ -130,6 +264,25 @@ export default function AdminPage() {
     enabled: isAdmin,
   });
 
+  const { data: tiersData } = useQuery({
+    queryKey: ["admin-tiers"],
+    queryFn: () => apiFetch<{ tiers: Record<string, TierDefinition> }>("/admin/tiers"),
+    enabled: isAdmin,
+  });
+  const tierList = Object.values(tiersData?.tiers ?? {});
+
+  const { data: keysData, isLoading: keysLoading } = useQuery({
+    queryKey: ["admin-keys", expandedStoreId],
+    queryFn: () => apiFetch<{ keys: ApiKeyInfo[] }>(`/admin/stores/${expandedStoreId}/keys`),
+    enabled: isAdmin && !!expandedStoreId,
+  });
+
+  const { data: txData, isLoading: txLoading } = useQuery({
+    queryKey: ["admin-transactions", expandedStoreId],
+    queryFn: () => apiFetch<{ transactions: CreditTx[] }>(`/admin/credit-transactions?store_id=${expandedStoreId}`),
+    enabled: isAdmin && !!expandedStoreId,
+  });
+
   useEffect(() => {
     if (pricingData?.pricing) {
       setImgCost(pricingData.pricing.creditCostImage ?? 2.5);
@@ -157,7 +310,7 @@ export default function AdminPage() {
   });
 
   const updateTierMutation = useMutation({
-    mutationFn: (data: { store_id: string; tier: string }) =>
+    mutationFn: (data: { store_id: string; tier: string; requests_per_hour?: number; requests_per_day?: number }) =>
       apiFetch("/admin/store-tier", {
         method: "POST",
         body: JSON.stringify(data),
@@ -166,10 +319,126 @@ export default function AdminPage() {
       addToast({ tone: "success", title: res.message || "Store tier updated successfully" });
       queryClient.invalidateQueries({ queryKey: ["admin-overview"] });
       setUpdatingStoreId(null);
+      setSavingLimitsId(null);
     },
     onError: (err: any) => {
       addToast({ tone: "error", title: err.message || "Failed to update tier" });
       setUpdatingStoreId(null);
+      setSavingLimitsId(null);
+    },
+  });
+
+  const saveTierDefMutation = useMutation({
+    mutationFn: (data: { name: string; requests_per_hour: number; requests_per_day: number; price_label?: string }) =>
+      apiFetch("/admin/tiers", {
+        method: "POST",
+        body: JSON.stringify(data),
+      }),
+    onSuccess: (res: any) => {
+      addToast({ tone: "success", title: res.message || "Tier saved" });
+      queryClient.invalidateQueries({ queryKey: ["admin-tiers"] });
+      setTierFormName("");
+      setTierFormPrice("");
+      setTierFormHr(100);
+      setTierFormDay(1000);
+    },
+    onError: (err: any) => {
+      addToast({ tone: "error", title: err.message || "Failed to save tier" });
+    },
+  });
+
+  const deleteTierDefMutation = useMutation({
+    mutationFn: (name: string) => apiFetch(`/admin/tiers?name=${encodeURIComponent(name)}`, { method: "DELETE" }),
+    onSuccess: (res: any) => {
+      addToast({ tone: "success", title: res.message || "Tier removed" });
+      queryClient.invalidateQueries({ queryKey: ["admin-tiers"] });
+    },
+    onError: (err: any) => {
+      addToast({ tone: "error", title: err.message || "Failed to remove tier" });
+    },
+  });
+
+  const updateStoreInfoMutation = useMutation({
+    mutationFn: (data: { storeId: string; store_name: string; domain: string }) =>
+      apiFetch(`/admin/stores/${data.storeId}`, {
+        method: "PATCH",
+        body: JSON.stringify({ store_name: data.store_name, domain: data.domain }),
+      }),
+    onSuccess: () => {
+      addToast({ tone: "success", title: "Store details updated" });
+      queryClient.invalidateQueries({ queryKey: ["admin-overview"] });
+      setSavingEditId(null);
+    },
+    onError: (err: any) => {
+      addToast({ tone: "error", title: err.message || "Failed to update store" });
+      setSavingEditId(null);
+    },
+  });
+
+  const deleteStoreMutation = useMutation({
+    mutationFn: (storeId: string) => apiFetch(`/admin/stores/${storeId}`, { method: "DELETE" }),
+    onSuccess: () => {
+      addToast({ tone: "success", title: "Store deleted" });
+      queryClient.invalidateQueries({ queryKey: ["admin-overview"] });
+      setDeletingStoreId(null);
+      setExpandedStoreId(null);
+    },
+    onError: (err: any) => {
+      addToast({ tone: "error", title: err.message || "Failed to delete store" });
+      setDeletingStoreId(null);
+    },
+  });
+
+  const accessMutation = useMutation({
+    mutationFn: (data: { storeId: string; action: "SUSPEND" | "RESUME" }) =>
+      apiFetch(`/admin/stores/${data.storeId}/access`, {
+        method: "POST",
+        body: JSON.stringify({ action: data.action }),
+      }),
+    onSuccess: (res: any) => {
+      addToast({ tone: "success", title: res.message || "Access updated" });
+      queryClient.invalidateQueries({ queryKey: ["admin-overview"] });
+      setAccessStoreId(null);
+    },
+    onError: (err: any) => {
+      addToast({ tone: "error", title: err.message || "Failed to update store access" });
+      setAccessStoreId(null);
+    },
+  });
+
+  const keyToggleMutation = useMutation({
+    mutationFn: (data: { storeId: string; key_id: string; is_active: boolean }) =>
+      apiFetch(`/admin/stores/${data.storeId}/keys`, {
+        method: "PATCH",
+        body: JSON.stringify({ key_id: data.key_id, is_active: data.is_active }),
+      }),
+    onSuccess: (res: any) => {
+      addToast({ tone: "success", title: res.message || "API key updated" });
+      queryClient.invalidateQueries({ queryKey: ["admin-keys", expandedStoreId] });
+      queryClient.invalidateQueries({ queryKey: ["admin-overview"] });
+      setTogglingKeyId(null);
+    },
+    onError: (err: any) => {
+      addToast({ tone: "error", title: err.message || "Failed to update API key" });
+      setTogglingKeyId(null);
+    },
+  });
+
+  const topupMutation = useMutation({
+    mutationFn: (data: { store_id: string; amount: number; direction: "ADD" | "DEDUCT" }) =>
+      apiFetch("/admin/credit-topup", {
+        method: "POST",
+        body: JSON.stringify(data),
+      }),
+    onSuccess: (res: any, variables) => {
+      addToast({ tone: "success", title: res.message || "Store balance updated" });
+      queryClient.invalidateQueries({ queryKey: ["admin-overview"] });
+      setTopupAmounts((prev) => ({ ...prev, [variables.store_id]: "" }));
+      setTopupStoreId(null);
+    },
+    onError: (err: any) => {
+      addToast({ tone: "error", title: err.message || "Failed to update balance" });
+      setTopupStoreId(null);
     },
   });
 
@@ -213,6 +482,94 @@ export default function AdminPage() {
     updateTierMutation.mutate({ store_id: storeId, tier });
   }
 
+  function handleTopup(storeId: string, direction: "ADD" | "DEDUCT") {
+    const raw = topupAmounts[storeId];
+    const amount = Number(raw);
+    if (!raw || !Number.isFinite(amount) || amount <= 0) {
+      addToast({ tone: "error", title: "Enter a valid amount greater than 0" });
+      return;
+    }
+    setTopupStoreId(storeId);
+    topupMutation.mutate({ store_id: storeId, amount, direction });
+  }
+
+  function handleSaveLimits(storeId: string, tier: string) {
+    const draft = limitDrafts[storeId];
+    const hr = Number(draft?.hr);
+    const day = Number(draft?.day);
+    if (!Number.isFinite(hr) || hr < 0 || !Number.isFinite(day) || day < 0) {
+      addToast({ tone: "error", title: "Enter valid non-negative rate limits" });
+      return;
+    }
+    setSavingLimitsId(storeId);
+    updateTierMutation.mutate({ store_id: storeId, tier, requests_per_hour: hr, requests_per_day: day });
+  }
+
+  function handleSaveTierDef(e: React.FormEvent) {
+    e.preventDefault();
+    const name = tierFormName.trim().toUpperCase();
+    if (!/^[A-Z0-9_]+$/.test(name)) {
+      addToast({ tone: "error", title: "Tier name must be uppercase letters, numbers, or underscores" });
+      return;
+    }
+    saveTierDefMutation.mutate({
+      name,
+      requests_per_hour: Number(tierFormHr),
+      requests_per_day: Number(tierFormDay),
+      price_label: tierFormPrice.trim() || undefined,
+    });
+  }
+
+  function handleEditTierDef(t: TierDefinition) {
+    setTierFormName(t.name);
+    setTierFormHr(t.requestsPerHour);
+    setTierFormDay(t.requestsPerDay);
+    setTierFormPrice(t.priceLabel ?? "");
+  }
+
+  function handleDeleteTierDef(name: string) {
+    if (!confirm(`Remove tier "${name}"? Stores already on this tier keep their current limits.`)) return;
+    deleteTierDefMutation.mutate(name);
+  }
+
+  function toggleExpandStore(storeId: string, current: AdminStoreInfo) {
+    if (expandedStoreId === storeId) {
+      setExpandedStoreId(null);
+      return;
+    }
+    setExpandedStoreId(storeId);
+    setEditDrafts((prev) => ({
+      ...prev,
+      [storeId]: prev[storeId] ?? { name: current.storeName, domain: current.domain },
+    }));
+  }
+
+  function handleSaveStoreEdit(storeId: string) {
+    const draft = editDrafts[storeId];
+    if (!draft || !draft.name.trim() || !draft.domain.trim()) {
+      addToast({ tone: "error", title: "Store name and domain are required" });
+      return;
+    }
+    setSavingEditId(storeId);
+    updateStoreInfoMutation.mutate({ storeId, store_name: draft.name, domain: draft.domain });
+  }
+
+  function handleDeleteStore(storeId: string, storeName: string) {
+    if (!confirm(`Permanently delete "${storeName}"? This removes its products, try-on logs, API keys, and wallet. This cannot be undone.`)) return;
+    setDeletingStoreId(storeId);
+    deleteStoreMutation.mutate(storeId);
+  }
+
+  function handleToggleAccess(storeId: string, suspended: boolean) {
+    setAccessStoreId(storeId);
+    accessMutation.mutate({ storeId, action: suspended ? "RESUME" : "SUSPEND" });
+  }
+
+  function handleToggleKey(storeId: string, keyId: string, isActive: boolean) {
+    setTogglingKeyId(keyId);
+    keyToggleMutation.mutate({ storeId, key_id: keyId, is_active: isActive });
+  }
+
   function handleTierPresetSelect(preset: "BASIC" | "GOLD" | "PREMIUM" | "ENTERPRISE") {
     setDemoTier(preset);
     const config = TIER_PRESETS[preset];
@@ -252,7 +609,7 @@ export default function AdminPage() {
   if (!isAdmin) return null;
 
   return (
-    <div className="max-w-6xl space-y-6">
+    <div className="max-w-7xl space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl font-extrabold text-gray-900">Admin Platform Dashboard</h2>
@@ -399,6 +756,104 @@ export default function AdminPage() {
         </div>
       </form>
 
+      {/* 🏷️ TIER MANAGEMENT CARD — add / edit / remove tiers */}
+      <div className="rounded-2xl border border-brand-200 bg-white p-6 shadow-sm space-y-4">
+        <div className="flex items-center gap-2 text-brand-900 font-bold text-base border-b border-gray-100 pb-3">
+          <Layers size={18} className="text-brand-600" />
+          <span>Setup Tier Management</span>
+        </div>
+
+        <form onSubmit={handleSaveTierDef} className="grid grid-cols-1 sm:grid-cols-5 gap-3 items-end">
+          <div className="sm:col-span-1">
+            <label className="block text-[11px] font-bold text-gray-600 mb-1">Tier Name</label>
+            <input
+              type="text"
+              required
+              placeholder="e.g. STARTER"
+              value={tierFormName}
+              onChange={(e) => setTierFormName(e.target.value)}
+              className="w-full rounded-lg border border-gray-200 px-2.5 py-1.5 text-xs font-bold uppercase text-gray-800 focus:border-brand-500 focus:outline-none"
+            />
+          </div>
+          <div>
+            <label className="block text-[11px] font-bold text-gray-600 mb-1">Req / Hour</label>
+            <input
+              type="number"
+              required
+              min={0}
+              value={tierFormHr}
+              onChange={(e) => setTierFormHr(Number(e.target.value))}
+              className="w-full rounded-lg border border-gray-200 px-2.5 py-1.5 text-xs font-bold text-gray-800 focus:border-brand-500 focus:outline-none"
+            />
+          </div>
+          <div>
+            <label className="block text-[11px] font-bold text-gray-600 mb-1">Req / Day</label>
+            <input
+              type="number"
+              required
+              min={0}
+              value={tierFormDay}
+              onChange={(e) => setTierFormDay(Number(e.target.value))}
+              className="w-full rounded-lg border border-gray-200 px-2.5 py-1.5 text-xs font-bold text-gray-800 focus:border-brand-500 focus:outline-none"
+            />
+          </div>
+          <div>
+            <label className="block text-[11px] font-bold text-gray-600 mb-1">Price Label</label>
+            <input
+              type="text"
+              placeholder="e.g. ₹2000 setup"
+              value={tierFormPrice}
+              onChange={(e) => setTierFormPrice(e.target.value)}
+              className="w-full rounded-lg border border-gray-200 px-2.5 py-1.5 text-xs font-semibold text-gray-800 focus:border-brand-500 focus:outline-none"
+            />
+          </div>
+          <button
+            type="submit"
+            disabled={saveTierDefMutation.isPending}
+            className="flex items-center justify-center gap-1.5 rounded-lg bg-brand-600 hover:bg-brand-700 text-white px-3 py-1.5 text-xs font-bold transition-colors disabled:opacity-50"
+          >
+            {saveTierDefMutation.isPending ? <Spinner size={13} /> : <Plus size={14} />}
+            Save Tier
+          </button>
+        </form>
+
+        <div className="flex flex-wrap gap-2 pt-1">
+          {tierList.length === 0 ? (
+            <span className="text-xs text-gray-400 italic">No tiers configured</span>
+          ) : (
+            tierList.map((t) => (
+              <div
+                key={t.name}
+                className={`flex items-center gap-2 rounded-xl border px-3 py-2 text-xs ${TIER_BADGES[t.name] ?? "bg-gray-50 border-gray-200 text-gray-700"}`}
+              >
+                <div>
+                  <div className="font-extrabold">{t.name}</div>
+                  <div className="font-normal opacity-80">
+                    {t.requestsPerHour} req/hr · {t.requestsPerDay} req/day{t.priceLabel ? ` · ${t.priceLabel}` : ""}
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  title="Edit tier"
+                  onClick={() => handleEditTierDef(t)}
+                  className="rounded-md p-1 hover:bg-black/5 transition-colors"
+                >
+                  <Pencil size={12} />
+                </button>
+                <button
+                  type="button"
+                  title="Remove tier"
+                  onClick={() => handleDeleteTierDef(t.name)}
+                  className="rounded-md p-1 hover:bg-black/5 transition-colors"
+                >
+                  <Trash2 size={12} />
+                </button>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+
       {/* Brand & Store breakdown table */}
       <Card padding={false}>
         <div className="border-b border-gray-100 px-5 py-4 flex items-center justify-between">
@@ -442,22 +897,62 @@ export default function AdminPage() {
                     {storeList.length === 0 ? (
                       <span className="text-xs text-gray-400 italic">No storefronts created yet</span>
                     ) : (
-                      storeList.map((s) => (
-                        <div key={s.id} className="bg-white p-3 rounded-lg border border-gray-200/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+                      storeList.map((s) => {
+                        const isExpanded = expandedStoreId === s.id;
+                        const limitDraft = limitDrafts[s.id] ?? { hr: String(s.reqsPerHr), day: String(s.reqsPerDay) };
+                        const editDraft = editDrafts[s.id] ?? { name: s.storeName, domain: s.domain };
+                        return (
+                        <div key={s.id} className="bg-white rounded-lg border border-gray-200/80 text-xs">
+                          <div className="p-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                           <div>
                             <div className="font-bold text-gray-800 flex items-center gap-2">
                               <Store size={14} className="text-brand-600" /> {s.storeName}
                               <span className="text-gray-400 font-normal">({s.domain})</span>
+                              {s.suspended && (
+                                <span className="bg-red-100 text-red-700 rounded-full px-2 py-0.5 text-[10px] font-bold">Suspended</span>
+                              )}
                             </div>
                             <div className="text-gray-500 mt-0.5">
                               Usage: <strong>{s.usage} try-ons</strong> · Products: <strong>{s.products}</strong> · Limits: <strong>{s.reqsPerHr} req/hr</strong>
                             </div>
                           </div>
 
-                          <div className="flex items-center gap-4">
+                          <div className="flex flex-wrap items-center gap-4">
                             <div>
                               <span className="text-[10px] uppercase font-bold text-gray-400 block">Balance</span>
                               <span className="font-extrabold text-emerald-600">{currency}{s.balance.toFixed(2)}</span>
+                              <div className="flex items-center gap-1 mt-1">
+                                <input
+                                  type="number"
+                                  min={0}
+                                  step="0.01"
+                                  placeholder="Amount"
+                                  value={topupAmounts[s.id] ?? ""}
+                                  onChange={(e) =>
+                                    setTopupAmounts((prev) => ({ ...prev, [s.id]: e.target.value }))
+                                  }
+                                  disabled={topupStoreId === s.id}
+                                  className="w-20 rounded-md border border-gray-200 px-1.5 py-1 text-[11px] font-semibold text-gray-800 focus:border-brand-500 focus:outline-none"
+                                />
+                                <button
+                                  type="button"
+                                  title="Add credit"
+                                  disabled={topupStoreId === s.id}
+                                  onClick={() => handleTopup(s.id, "ADD")}
+                                  className="rounded-md bg-emerald-100 hover:bg-emerald-200 text-emerald-800 px-1.5 py-1 text-[11px] font-bold transition-colors disabled:opacity-50"
+                                >
+                                  +
+                                </button>
+                                <button
+                                  type="button"
+                                  title="Deduct credit"
+                                  disabled={topupStoreId === s.id}
+                                  onClick={() => handleTopup(s.id, "DEDUCT")}
+                                  className="rounded-md bg-red-100 hover:bg-red-200 text-red-800 px-1.5 py-1 text-[11px] font-bold transition-colors disabled:opacity-50"
+                                >
+                                  −
+                                </button>
+                              </div>
                             </div>
 
                             {/* Tier Selector */}
@@ -469,16 +964,152 @@ export default function AdminPage() {
                                 onChange={(e) => handleTierChange(s.id, e.target.value)}
                                 className={`rounded-lg border px-2 py-1 text-xs font-bold transition-colors cursor-pointer ${TIER_BADGES[s.tier] ?? ""}`}
                               >
-                                <option value="UNPAID">UNPAID (0 req/hr)</option>
-                                <option value="BASIC">BASIC ({currency}{basicCost} / 100 hr)</option>
-                                <option value="GOLD">GOLD ({currency}{goldCost} / 300 hr)</option>
-                                <option value="PREMIUM">PREMIUM ({currency}{premiumCost} / 1.5k hr)</option>
-                                <option value="ENTERPRISE">ENTERPRISE (Custom)</option>
+                                {!tierList.some((t) => t.name === s.tier) && (
+                                  <option value={s.tier}>{s.tier} (current)</option>
+                                )}
+                                {tierList.map((t) => (
+                                  <option key={t.name} value={t.name}>
+                                    {t.name} ({t.requestsPerHour} req/hr{t.priceLabel ? ` · ${t.priceLabel}` : ""})
+                                  </option>
+                                ))}
                               </select>
                             </div>
+
+                            {/* Custom rate limit override */}
+                            <div>
+                              <span className="text-[10px] uppercase font-bold text-gray-400 block">Custom Limits</span>
+                              <div className="flex items-center gap-1">
+                                <input
+                                  type="number"
+                                  min={0}
+                                  title="Requests per hour"
+                                  value={limitDraft.hr}
+                                  onChange={(e) =>
+                                    setLimitDrafts((prev) => ({ ...prev, [s.id]: { ...limitDraft, hr: e.target.value } }))
+                                  }
+                                  disabled={savingLimitsId === s.id}
+                                  className="w-16 rounded-md border border-gray-200 px-1.5 py-1 text-[11px] font-semibold text-gray-800 focus:border-brand-500 focus:outline-none"
+                                />
+                                <span className="text-gray-300">/</span>
+                                <input
+                                  type="number"
+                                  min={0}
+                                  title="Requests per day"
+                                  value={limitDraft.day}
+                                  onChange={(e) =>
+                                    setLimitDrafts((prev) => ({ ...prev, [s.id]: { ...limitDraft, day: e.target.value } }))
+                                  }
+                                  disabled={savingLimitsId === s.id}
+                                  className="w-16 rounded-md border border-gray-200 px-1.5 py-1 text-[11px] font-semibold text-gray-800 focus:border-brand-500 focus:outline-none"
+                                />
+                                <button
+                                  type="button"
+                                  title="Save custom limits"
+                                  disabled={savingLimitsId === s.id}
+                                  onClick={() => handleSaveLimits(s.id, s.tier)}
+                                  className="rounded-md bg-brand-100 hover:bg-brand-200 text-brand-800 px-1.5 py-1 text-[11px] font-bold transition-colors disabled:opacity-50"
+                                >
+                                  <Save size={11} />
+                                </button>
+                              </div>
+                            </div>
+
+                            {/* Suspend / Resume */}
+                            <button
+                              type="button"
+                              title={s.suspended ? "Resume store access" : "Suspend store access"}
+                              disabled={accessStoreId === s.id}
+                              onClick={() => handleToggleAccess(s.id, s.suspended)}
+                              className={`flex items-center gap-1 rounded-lg px-2 py-1.5 text-[11px] font-bold transition-colors disabled:opacity-50 ${
+                                s.suspended ? "bg-emerald-100 hover:bg-emerald-200 text-emerald-800" : "bg-amber-100 hover:bg-amber-200 text-amber-800"
+                              }`}
+                            >
+                              {s.suspended ? <PlayCircle size={13} /> : <PauseCircle size={13} />}
+                              {s.suspended ? "Resume" : "Suspend"}
+                            </button>
+
+                            {/* Manage toggle */}
+                            <button
+                              type="button"
+                              onClick={() => toggleExpandStore(s.id, s)}
+                              className="flex items-center gap-1 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 px-2 py-1.5 text-[11px] font-bold transition-colors"
+                            >
+                              Manage {isExpanded ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
+                            </button>
                           </div>
+                          </div>
+
+                          {isExpanded && (
+                            <div className="border-t border-gray-100 p-3 space-y-4 bg-gray-50/50">
+                              {/* Rename store */}
+                              <div>
+                                <span className="text-[10px] uppercase font-bold text-gray-400 block mb-1">Rename / Change Domain</span>
+                                <div className="flex flex-wrap items-center gap-2">
+                                  <input
+                                    type="text"
+                                    value={editDraft.name}
+                                    onChange={(e) => setEditDrafts((prev) => ({ ...prev, [s.id]: { ...editDraft, name: e.target.value } }))}
+                                    className="rounded-lg border border-gray-200 px-2.5 py-1.5 text-xs font-semibold text-gray-800 focus:border-brand-500 focus:outline-none"
+                                  />
+                                  <input
+                                    type="text"
+                                    value={editDraft.domain}
+                                    onChange={(e) => setEditDrafts((prev) => ({ ...prev, [s.id]: { ...editDraft, domain: e.target.value } }))}
+                                    className="rounded-lg border border-gray-200 px-2.5 py-1.5 text-xs font-semibold text-gray-800 focus:border-brand-500 focus:outline-none"
+                                  />
+                                  <button
+                                    type="button"
+                                    disabled={savingEditId === s.id}
+                                    onClick={() => handleSaveStoreEdit(s.id)}
+                                    className="flex items-center gap-1 rounded-lg bg-brand-600 hover:bg-brand-700 text-white px-2.5 py-1.5 text-[11px] font-bold transition-colors disabled:opacity-50"
+                                  >
+                                    {savingEditId === s.id ? <Spinner size={11} /> : <Pencil size={11} />}
+                                    Save
+                                  </button>
+                                  <button
+                                    type="button"
+                                    disabled={deletingStoreId === s.id}
+                                    onClick={() => handleDeleteStore(s.id, s.storeName)}
+                                    className="flex items-center gap-1 rounded-lg bg-red-100 hover:bg-red-200 text-red-800 px-2.5 py-1.5 text-[11px] font-bold transition-colors disabled:opacity-50"
+                                  >
+                                    {deletingStoreId === s.id ? <Spinner size={11} /> : <Trash2 size={11} />}
+                                    Delete Store
+                                  </button>
+                                </div>
+                              </div>
+
+                              {/* API keys */}
+                              <div>
+                                <span className="text-[10px] uppercase font-bold text-gray-400 flex items-center gap-1 mb-1">
+                                  <KeyRound size={11} /> API Keys
+                                </span>
+                                {keysLoading ? (
+                                  <p className="py-4 text-center text-xs text-gray-400">Loading keys...</p>
+                                ) : (
+                                  <AdminApiKeysList
+                                    keys={keysData?.keys ?? []}
+                                    onToggle={(keyId, isActive) => handleToggleKey(s.id, keyId, isActive)}
+                                    togglingId={togglingKeyId}
+                                  />
+                                )}
+                              </div>
+
+                              {/* Transaction history */}
+                              <div>
+                                <span className="text-[10px] uppercase font-bold text-gray-400 flex items-center gap-1 mb-1">
+                                  <History size={11} /> Credit Transaction History
+                                </span>
+                                {txLoading ? (
+                                  <p className="py-4 text-center text-xs text-gray-400">Loading transactions...</p>
+                                ) : (
+                                  <AdminTransactionHistory transactions={txData?.transactions ?? []} />
+                                )}
+                              </div>
+                            </div>
+                          )}
                         </div>
-                      ))
+                        );
+                      })
                     )}
                   </div>
                 </div>

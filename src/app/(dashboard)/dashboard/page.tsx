@@ -79,7 +79,7 @@ export default function DashboardPage() {
   const dash = isLoading ? "—" : undefined;
 
   return (
-    <div className="max-w-5xl space-y-5">
+    <div className="max-w-7xl space-y-5">
 
       {/* ── Page title ──────────────────────────────────────────── */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">

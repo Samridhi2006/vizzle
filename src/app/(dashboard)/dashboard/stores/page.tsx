@@ -190,7 +190,7 @@ export default function StoresPage() {
   }
 
   return (
-    <div className="max-w-5xl space-y-6">
+    <div className="max-w-7xl space-y-6">
 
       {/* ── Page header ─────────────────────────────────────── */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">

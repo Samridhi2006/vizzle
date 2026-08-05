@@ -4,18 +4,16 @@ import { withJwt } from "@/server/middleware/withJwt";
 import { assertDashboardCors } from "@/server/cors";
 import { corsHeaders, handleApiError } from "@/server/http";
 import { isAdminEmail } from "@/server/admin";
+import { ApiError } from "@/server/errors";
 import { prisma } from "@/lib/server/prisma";
-
-const TIER_CONFIGS: Record<string, { requestsPerHour: number; requestsPerDay: number }> = {
-  BASIC:      { requestsPerHour: 100,  requestsPerDay: 1000 },
-  GOLD:       { requestsPerHour: 300,  requestsPerDay: 3000 },
-  PREMIUM:    { requestsPerHour: 1500, requestsPerDay: 15000 },
-  ENTERPRISE: { requestsPerHour: 10000, requestsPerDay: 100000 },
-};
+import { getTierDefinitions } from "@/server/services/tiers.service";
 
 const updateTierSchema = z.object({
   store_id: z.string().min(1),
-  tier: z.enum(["BASIC", "GOLD", "PREMIUM", "ENTERPRISE"]),
+  tier: z.string().min(1),
+  // Optional custom overrides — when omitted, the tier's own preset limits are used.
+  requests_per_hour: z.number().int().min(0).optional(),
+  requests_per_day: z.number().int().min(0).optional(),
 });
 
 export async function POST(request: NextRequest) {
@@ -31,20 +29,31 @@ export async function POST(request: NextRequest) {
     }
 
     const body = updateTierSchema.parse(await request.json());
-    const config = TIER_CONFIGS[body.tier];
+    const definitions = await getTierDefinitions();
+    const preset = definitions[body.tier];
+
+    if (!preset) {
+      throw new ApiError(
+        400,
+        `Unknown tier "${body.tier}". Valid tiers: ${Object.keys(definitions).join(", ")}`
+      );
+    }
+
+    const requestsPerHour = body.requests_per_hour ?? preset.requestsPerHour;
+    const requestsPerDay = body.requests_per_day ?? preset.requestsPerDay;
 
     const storeTier = await prisma.storeTier.upsert({
       where: { storeId: body.store_id },
       create: {
         storeId: body.store_id,
         tier: body.tier,
-        requestsPerHour: config.requestsPerHour,
-        requestsPerDay: config.requestsPerDay,
+        requestsPerHour,
+        requestsPerDay,
       },
       update: {
         tier: body.tier,
-        requestsPerHour: config.requestsPerHour,
-        requestsPerDay: config.requestsPerDay,
+        requestsPerHour,
+        requestsPerDay,
       },
     });
 

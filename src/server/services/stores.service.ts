@@ -242,3 +242,75 @@ export async function deleteStoreById(userId: string, storeId: string) {
   await getStoreById(userId, storeId);
   await prisma.store.delete({ where: { id: storeId } });
 }
+
+// ── Admin-scoped store management (no ownership check — admin acts on any store) ──────
+
+export async function adminUpdateStore(input: {
+  storeId: string;
+  storeName: string;
+  domain: string;
+}) {
+  const existing = await prisma.store.findUnique({ where: { id: input.storeId } });
+  if (!existing) throw new ApiError(404, "Store not found");
+
+  const store = await prisma.store.update({
+    where: { id: input.storeId },
+    data: {
+      storeName: input.storeName.trim(),
+      domain: normalizeDomain(input.domain),
+    },
+  });
+
+  return {
+    store_id: store.id,
+    store_name: store.storeName,
+    domain: store.domain,
+  };
+}
+
+export async function adminDeleteStore(storeId: string) {
+  const existing = await prisma.store.findUnique({ where: { id: storeId } });
+  if (!existing) throw new ApiError(404, "Store not found");
+  await prisma.store.delete({ where: { id: storeId } });
+}
+
+export async function listApiKeysForStore(storeId: string) {
+  return prisma.apiKey.findMany({
+    where: { storeId },
+    orderBy: { createdAt: "desc" },
+    select: { id: true, keyPrefix: true, isActive: true, createdAt: true },
+  });
+}
+
+export async function setApiKeyActive(storeId: string, keyId: string, isActive: boolean) {
+  const key = await prisma.apiKey.findUnique({ where: { id: keyId } });
+  if (!key) throw new ApiError(404, "API key not found");
+  if (key.storeId !== storeId) throw new ApiError(404, "API key does not belong to this store");
+  return prisma.apiKey.update({ where: { id: keyId }, data: { isActive } });
+}
+
+/**
+ * Suspend a store's API access by deactivating all of its currently active keys.
+ */
+export async function suspendStore(storeId: string) {
+  const existing = await prisma.store.findUnique({ where: { id: storeId } });
+  if (!existing) throw new ApiError(404, "Store not found");
+  await prisma.apiKey.updateMany({
+    where: { storeId, isActive: true },
+    data: { isActive: false },
+  });
+}
+
+/**
+ * Resume a suspended store by reactivating its most recently issued key.
+ */
+export async function resumeStore(storeId: string) {
+  const existing = await prisma.store.findUnique({ where: { id: storeId } });
+  if (!existing) throw new ApiError(404, "Store not found");
+  const latest = await prisma.apiKey.findFirst({
+    where: { storeId },
+    orderBy: { createdAt: "desc" },
+  });
+  if (!latest) throw new ApiError(404, "No API key found for this store to resume");
+  await prisma.apiKey.update({ where: { id: latest.id }, data: { isActive: true } });
+}

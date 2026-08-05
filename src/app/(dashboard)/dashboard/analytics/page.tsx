@@ -32,7 +32,7 @@ export default function AnalyticsPage() {
   const topProducts = useMemo(() => (data?.by_product ?? []).slice(0, 5).map((p, i) => ({ name: p.name ?? "Unknown", value: p.tryon_count, fill: colors[i] })), [data]);
 
   return (
-    <div className="max-w-6xl space-y-6">
+    <div className="max-w-7xl space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="text-xl font-bold text-gray-900">Analytics</h2>

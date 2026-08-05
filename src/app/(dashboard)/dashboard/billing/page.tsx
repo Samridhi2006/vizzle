@@ -487,7 +487,7 @@ export default function BillingPage() {
   const isUnpaid = currentTier === "UNPAID" || (data?.tier.requestsPerHour ?? 0) === 0;
 
   return (
-    <div className="max-w-5xl space-y-5">
+    <div className="max-w-7xl space-y-5">
       {/* Title */}
       <div className="flex items-center justify-between">
         <div>

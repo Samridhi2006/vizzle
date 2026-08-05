@@ -30,6 +30,7 @@ export async function GET(request: NextRequest) {
             include: {
               creditWallet: true,
               storeTier: true,
+              apiKeys: { select: { isActive: true } },
               _count: {
                 select: { tryonLogs: true, products: true },
               },
@@ -66,6 +67,7 @@ export async function GET(request: NextRequest) {
             balance:     s.creditWallet?.balance ?? 0,
             usage:       s._count.tryonLogs,
             products:    s._count.products,
+            suspended:   s.apiKeys.length > 0 && s.apiKeys.every((k) => !k.isActive),
           })),
           products:     u.stores.reduce((sum, s) => sum + s._count.products, 0),
           usage:        u.stores.reduce((sum, s) => sum + s._count.tryonLogs, 0),
