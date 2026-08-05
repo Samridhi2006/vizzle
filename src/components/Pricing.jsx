@@ -184,9 +184,9 @@ function Pricing() {
             <span className="text-xs font-bold uppercase tracking-widest text-[#1D8DB2] bg-blue-100/80 px-3 py-1 rounded-full border border-blue-200 shadow-sm inline-block mb-3">
               Step 2: Recharge Wallet &amp; Usage Credits
             </span>
-            <h2 className="text-3xl font-extrabold text-[#235D71]">Pay-As-You-Go Credit Top-Ups</h2>
+            <h2 className="text-3xl font-extrabold text-[#235D71]">API COST (Recurring Pay-As-You-Go)</h2>
             <p className="text-sm text-gray-500 mt-1">
-              Wallet credits never expire. Use your balance for Virtual Try-On Images or AI Fashion Videos.
+              Virtual Try-On Images and AI Video
             </p>
           </div>
 
