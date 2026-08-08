@@ -117,22 +117,25 @@ export async function startImageTryOn(input: {
   useVision?: boolean;
   params?: Record<string, unknown>;
 }) {
-  const garmentImageUrl = isImageUrl(input.productId)
-    ? input.productId
-    : (
-        await resolveProductImageByStoreAndSku({
-          storeId: input.storeId,
-          productId: input.productId,
-        })
-      ).imageUrl;
+  const product = isImageUrl(input.productId)
+    ? null
+    : await resolveProductImageByStoreAndSku({
+        storeId: input.storeId,
+        productId: input.productId,
+      });
+  const garmentImageUrl = product ? product.imageUrl : input.productId;
 
   const mlPayload = {
     human_img: input.userPhotoUrl,
     garm_img: garmentImageUrl,
     garment_type: input.garmentType ?? "auto_detect",
+    // Real product name/category (when known) — far more useful for garment
+    // detection than the opaque uploaded garment image URL.
+    garment_hint: product ? `${product.name} ${product.category ?? ""}`.trim() : undefined,
+    gender_hint: product?.category ?? undefined,
     use_vision: input.useVision ?? true,
     // IDM-VTON defaults matching the reference app
-    params: { category: "upper_body", steps: 20, ...(input.params ?? {}) },
+    params: { category: "upper_body", crop: true, steps: 20, ...(input.params ?? {}) },
   };
 
   console.log("[tryon] starting ML:", JSON.stringify(mlPayload));
@@ -169,8 +172,10 @@ export async function executeImageTryOn(input: {
     human_img: input.userPhotoUrl,
     garm_img: product.imageUrl,
     garment_type: input.garmentType ?? "auto_detect",
+    garment_hint: `${product.name} ${product.category ?? ""}`.trim(),
+    gender_hint: product.category ?? undefined,
     use_vision: input.useVision ?? true,
-    params: { category: "upper_body", steps: 20, ...(input.params ?? {}) },
+    params: { category: "upper_body", crop: true, steps: 20, ...(input.params ?? {}) },
   };
 
   try {
