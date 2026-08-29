@@ -1,0 +1,726 @@
+/* eslint-disable react/prop-types */
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Sparkles, ArrowRight } from 'lucide-react';
+
+// ─── Constants ────────────────────────────────────────────────────────────────
+const SLIDE_DURATION = 6000;
+
+const SLIDE3_THUMBS = [
+  { src: '/vz_thumb_burgundy_top.jpg', label: 'Burgundy Top'  },
+  { src: '/vz_thumb_beige_suit.jpg',   label: 'Beige Suit'    },
+  { src: '/vz_thumb_lilac_saree.jpg',  label: 'Lilac Saree'   },
+  { src: '/vz_thumb_black_shirt.jpg',  label: 'Black Shirt'   },
+  { src: '/vz_thumb_dress.jpg',        label: 'Evening Dress'  },
+];
+
+// ─── Slide data ───────────────────────────────────────────────────────────────
+// ⚠️  heroBg MUST be tuned to each model's studio background colour so that
+//     mix-blend-multiply makes the photo rectangle invisible.
+// Shared gradient span style — backgroundImage (NOT background shorthand),
+// display:inline, and color:transparent are ALL required for clip-to-text
+const gradientSpan = (colors) => ({
+  backgroundImage: `linear-gradient(90deg, ${colors})`,
+  WebkitBackgroundClip: 'text',
+  WebkitTextFillColor: 'transparent',
+  backgroundClip: 'text',
+  color: 'transparent',
+  display: 'inline',
+});
+
+const SLIDES = [
+  {
+    id: 0,
+    badge: 'MODERN CATALOGUE CREATION, POWERED BY AI',
+    badgeColor: '#0e7490',
+    badgeBg: 'rgba(236,254,255,0.85)',
+    badgeBorder: 'rgba(8,145,178,0.30)',
+    ctaBg: 'linear-gradient(135deg, #0891b2 0%, #0d9488 100%)',
+    ctaShadow: 'rgba(8,145,178,0.28)',
+    headingJSX: (
+      <>
+        AI Catalogue Creation for{' '}
+        <span style={gradientSpan('#0891b2, #4f46e5')}>Fashion Brands</span>
+      </>
+    ),
+    subtext: 'Revolutionize your fashion business with AI-powered virtual try-on, advanced draping software and automated product catalogue creation.',
+    heroBg: '#e4e8ed',
+  },
+  {
+    id: 1,
+    badge: 'AI VIRTUAL TRY-ON',
+    badgeColor: '#c2410c',
+    badgeBg: 'rgba(254, 237, 232, 0.95)',
+    badgeBorder: 'rgba(251, 146, 60, 0.35)',
+    ctaBg: 'linear-gradient(90deg, #f43f5e 0%, #fb923c 100%)',
+    ctaShadow: 'rgba(244, 63, 94, 0.35)',
+    headingJSX: (
+      <>
+        Try Before You Buy with{' '}
+        <span style={gradientSpan('#0891b2, #4f46e5')}>Vizzle</span>
+      </>
+    ),
+    subtext: 'Visualize outfits on your own appearance, compare different styles, and make smarter purchase decisions with a seamless AI-powered virtual try-on experience.',
+    heroBg: 'linear-gradient(135deg, #faece6 0%, #fbf3ee 45%, #fdf8f5 100%)',
+  },
+  {
+    id: 2,
+    badge: 'MODERN CATALOGUE CREATION, POWERED BY AI',
+    badgeColor: '#854d0e',
+    badgeBg: 'rgba(254, 252, 232, 0.9)',
+    badgeBorder: 'rgba(202, 138, 4, 0.30)',
+    ctaBg: 'linear-gradient(135deg, #0891b2 0%, #0d9488 100%)',
+    ctaShadow: 'rgba(8,145,178,0.28)',
+    headingJSX: (
+      <>
+        AI Catalogue Creation for{' '}
+        <span style={gradientSpan('#0891b2, #4f46e5')}>Fashion Brands</span>
+      </>
+    ),
+    subtext: 'Revolutionize your fashion business with AI-powered virtual try-on, advanced draping software and automated product catalogue creation.',
+    heroBg: '#ede5d8',
+  },
+];
+
+// ─── Framer variants (right column only) ─────────────────────────────────────
+const showcaseVariants = {
+  enter:  (dir) => ({ opacity: 0, x: dir > 0 ?  24 : -24 }),
+  center: {         opacity: 1, x: 0, transition: { duration: 0.48, ease: [0.4, 0, 0.2, 1] } },
+  exit:   (dir) => ({ opacity: 0, x: dir > 0 ? -24 :  24, transition: { duration: 0.32, ease: [0.4, 0, 0.2, 1] } }),
+};
+
+// ─── Floating tilted "Create Catalogue" card ─────────────────────────────────
+function FloatingCard({ src, alt, rotation, delay, extraStyle = {} }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 18, scale: 0.93 }}
+      animate={{ opacity: 1, y: 0,  scale: 1     }}
+      transition={{ delay, duration: 0.52, ease: [0.25, 0.46, 0.45, 0.94] }}
+      style={{
+        position: 'absolute',
+        width: '130px',
+        borderRadius: '14px',
+        overflow: 'hidden',
+        background: '#fff',
+        boxShadow: '0 14px 44px rgba(0,0,0,0.20)',
+        transform: `rotate(${rotation}deg)`,
+        zIndex: 20,
+        ...extraStyle,
+      }}
+    >
+      <img
+        src={src}
+        alt={alt}
+        style={{ width: '100%', height: '86px', objectFit: 'cover', display: 'block' }}
+      />
+      <div style={{
+        background: '#111',
+        color: '#fff',
+        fontSize: '10px',
+        fontWeight: 700,
+        padding: '6px 10px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '4px',
+        letterSpacing: '0.03em',
+      }}>
+        Create Catalogue 🪄
+      </div>
+    </motion.div>
+  );
+}
+
+// ─── SLIDE 1 ─── Male model + 2 floating cards ───────────────────────────────
+//
+//  KEY FIX: Hero bg is set to #eef1f5 which exactly matches the cool
+//  grey studio background of vz_model_hoodie.jpg.
+//  mix-blend-multiply makes the photo background = hero bg → zero border.
+//  model is absolutely positioned to fill the full height from bottom.
+//
+function Slide1() {
+  return (
+    <div style={{ position: 'absolute', inset: 0, overflow: 'hidden' }}>
+
+      {/* Model — pinned bottom-center, mix-blend-multiply erases rectangular edges */}
+      <div style={{
+        position: 'absolute',
+        bottom: 0,
+        left: '50%',
+        transform: 'translateX(-50%)',
+        height: '100%',
+        display: 'flex',
+        alignItems: 'flex-end',
+      }}>
+        <img
+          src="/vz_model_hoodie.jpg"
+          alt="Male model in dark green hoodie"
+          style={{
+            height: '100%',
+            width: 'auto',
+            maxWidth: '420px',
+            objectFit: 'cover',
+            objectPosition: 'top center',
+            display: 'block',
+            // mix-blend-multiply: where the photo bg (#eef1f5) meets the hero bg (#eef1f5) → identical → invisible
+            mixBlendMode: 'multiply',
+            // soft bottom fade so feet blend smoothly into hero
+            maskImage: 'linear-gradient(to bottom, black 88%, transparent 100%)',
+            WebkitMaskImage: 'linear-gradient(to bottom, black 88%, transparent 100%)',
+          }}
+        />
+      </div>
+
+      {/* Card bottom-left — coral border ring */}
+      <FloatingCard
+        src="/vz_flatlay_hoodie.jpg"
+        alt="Green hoodie flatlay"
+        rotation={-5}
+        delay={0.25}
+        extraStyle={{ bottom: '52px', left: '8px', border: '2.5px solid #fb7185' }}
+      />
+
+      {/* Card top-right — neutral ring */}
+      <FloatingCard
+        src="/vz_thumb_sunglasses.jpg"
+        alt="Sunglasses"
+        rotation={4}
+        delay={0.42}
+        extraStyle={{ top: '20px', right: '4px', border: '2px solid rgba(255,255,255,0.7)' }}
+      />
+    </div>
+  );
+}
+
+// ─── SLIDE 2 ─── Virtual Try-On 3-column flow ─────────────────────────────────
+function Slide2() {
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        inset: 0,
+        overflow: 'hidden',
+        userSelect: 'none',
+      }}
+    >
+      {/* 1. Base Model — left 42%, full height */}
+      <img
+        src="/vz_tryon_base.png"
+        alt="Base Model"
+        style={{
+          position: 'absolute',
+          left: 0,
+          top: 0,
+          height: '100%',
+          width: '42%',
+          objectFit: 'contain',
+          objectPosition: 'bottom left',
+        }}
+      />
+
+      {/* 3. Result Model — right 42%, full height */}
+      <img
+        src="/vz_tryon_result.png"
+        alt="Dressed Model Result"
+        style={{
+          position: 'absolute',
+          right: 0,
+          top: 0,
+          height: '100%',
+          width: '42%',
+          objectFit: 'contain',
+          objectPosition: 'bottom right',
+        }}
+      />
+
+      {/* 2. Garment — centered overlay */}
+      <img
+        src="/vz_tryon_garment.png"
+        alt="Garment Flatlay"
+        style={{
+          position: 'absolute',
+          left: '50%',
+          top: '50%',
+          transform: 'translate(-50%, -40%)',
+          height: '72%',
+          width: 'auto',
+          objectFit: 'contain',
+          zIndex: 5,
+        }}
+      />
+
+      {/* '+' badge */}
+      <div style={{
+        position: 'absolute',
+        left: '29%',
+        top: '50%',
+        transform: 'translateY(-50%)',
+        zIndex: 10,
+        width: '32px',
+        height: '32px',
+        borderRadius: '50%',
+        background: 'rgba(255,255,255,0.95)',
+        border: '1px solid rgba(0,0,0,0.10)',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontWeight: 800,
+        fontSize: '18px',
+        color: '#1e293b',
+      }}>+</div>
+
+      {/* '→' badge */}
+      <div style={{
+        position: 'absolute',
+        right: '26%',
+        top: '50%',
+        transform: 'translateY(-50%)',
+        zIndex: 10,
+        width: '32px',
+        height: '32px',
+        borderRadius: '50%',
+        background: 'rgba(255,255,255,0.95)',
+        border: '1px solid rgba(251,146,60,0.35)',
+        boxShadow: '0 2px 8px rgba(251,146,60,0.25)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+          <path
+            d="M5 18C5 13.2 8.2 9.2 13.8 9V4.5L22 11.5L13.8 18.5V14C9.5 14 6.8 16 5 18Z"
+            fill="#f97316"
+          />
+        </svg>
+      </div>
+    </div>
+  );
+}
+
+
+// ─── SLIDE 3 ─── Female model + 5-thumb product selector ─────────────────────
+//
+//  KEY FIX:  Hero bg = #ede5d8.  Female model jpg has a warm terracotta bg.
+//  mix-blend-multiply on the model photo makes the rectangle vanish completely.
+//  The image fills from the very top down to the thumbnail strip.
+//
+function Slide3({ activeThumb, setActiveThumb }) {
+  const STRIP_H = 112; // px — thumbnail strip height
+
+  return (
+    <div style={{ position: 'absolute', inset: 0, overflow: 'hidden' }}>
+
+      {/* Model — fills all space above the strip, left-center biased */}
+      <div style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: `${STRIP_H}px`,
+        display: 'flex',
+        alignItems: 'flex-end',
+        justifyContent: 'center',
+      }}>
+        <img
+          src="/vz_female_beige_suit.jpg"
+          alt="Female model in beige cropped blazer set"
+          style={{
+            height: '100%',
+            width: 'auto',
+            maxWidth: '380px',
+            objectFit: 'cover',
+            objectPosition: 'top center',
+            display: 'block',
+            // Hero bg = #ede5d8 ≈ model studio bg → border vanishes
+            mixBlendMode: 'multiply',
+            maskImage: 'linear-gradient(to bottom, black 88%, transparent 100%)',
+            WebkitMaskImage: 'linear-gradient(to bottom, black 88%, transparent 100%)',
+          }}
+        />
+      </div>
+
+      {/* Thumbnail strip — pinned to bottom */}
+      <div style={{
+        position: 'absolute',
+        bottom: 0, left: 0, right: 0,
+        height: `${STRIP_H}px`,
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px',
+        padding: '0 10px 10px',
+        overflowX: 'auto',
+        msOverflowStyle: 'none',
+        scrollbarWidth: 'none',
+      }}>
+        {SLIDE3_THUMBS.map((t, i) => {
+          const isActive = activeThumb === i;
+          return (
+            <button
+              key={t.label}
+              onClick={() => setActiveThumb(i)}
+              aria-label={t.label}
+              style={{
+                flexShrink: 0,
+                position: 'relative',
+                width:  isActive ? '100px' : '84px',
+                height: isActive ? '100px' : '84px',
+                borderRadius: '10px',
+                overflow: 'hidden',
+                background: '#fff',
+                border:      isActive ? '2.5px solid #ca8a04' : '2px solid rgba(255,255,255,0.55)',
+                boxShadow:   isActive
+                  ? '0 4px 20px rgba(202,138,4,0.25)'
+                  : '0 2px 8px rgba(0,0,0,0.10)',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                opacity: isActive ? 1 : 0.80,
+              }}
+            >
+              <img
+                src={t.src}
+                alt={t.label}
+                style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+              />
+              {isActive && (
+                <div style={{
+                  position: 'absolute', bottom: 0, left: 0, right: 0,
+                  background: '#111',
+                  color: '#fff',
+                  fontSize: '9px',
+                  fontWeight: 700,
+                  padding: '5px 4px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '3px',
+                  letterSpacing: '0.02em',
+                }}>
+                  Create Catalogue 🪄
+                </div>
+              )}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ─── Progress indicator lines ─────────────────────────────────────────────────
+function ProgressLines({ current, total, progress, onSelect }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '24px' }}>
+      {Array.from({ length: total }).map((_, i) => (
+        <button
+          key={i}
+          id={`vizzle-indicator-${i}`}
+          aria-label={`Go to slide ${i + 1}`}
+          onClick={() => onSelect(i)}
+          style={{
+            position: 'relative',
+            height: '3px',
+            width: i === current ? '52px' : '28px',
+            borderRadius: '99px',
+            background: 'rgba(0,0,0,0.14)',
+            border: 'none',
+            padding: 0,
+            cursor: 'pointer',
+            overflow: 'hidden',
+            transition: 'width 0.3s ease',
+          }}
+        >
+          {i === current && (
+            <motion.div
+              style={{
+                position: 'absolute', top: 0, left: 0, bottom: 0,
+                background: '#1e293b',
+                borderRadius: '99px',
+              }}
+              initial={{ width: '0%' }}
+              animate={{ width: `${progress}%` }}
+              transition={{ duration: 0.08, ease: 'linear' }}
+            />
+          )}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+// ─── Navbar ───────────────────────────────────────────────────────────────────
+function VizzleNavbar() {
+  return (
+    <nav style={{
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      padding: '0 48px',
+      height: '64px',
+      background: '#fff',
+      borderBottom: '1px solid #f1f5f9',
+      fontFamily: "'Plus Jakarta Sans', Inter, sans-serif",
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <img
+          src="/logo.png"
+          alt="Vizzle"
+          style={{ height: '40px', width: 'auto' }}
+          onError={(e) => { e.target.style.display = 'none'; }}
+        />
+        <div>
+          <div style={{ fontSize: '17px', fontWeight: 900, color: '#0f172a', letterSpacing: '-0.02em', lineHeight: 1.2 }}>
+            Vizzle
+          </div>
+          <div style={{ fontSize: '9.5px', fontWeight: 600, color: '#94a3b8', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+            Visualize Your Style
+          </div>
+        </div>
+      </div>
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: '28px' }}>
+        {['Catalogue Showcase', 'Virtual Try-On', 'Pricing', 'Blogs', 'Contact'].map((l) => (
+          <a key={l} href="#" style={{ fontSize: '13.5px', fontWeight: 500, color: '#475569', textDecoration: 'none', whiteSpace: 'nowrap' }}>
+            {l}
+          </a>
+        ))}
+      </div>
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+        <a href="#" style={{ fontSize: '13px', fontWeight: 600, color: '#334155', textDecoration: 'none', whiteSpace: 'nowrap' }}>
+          Try Free Catalogue Creation Now
+        </a>
+        <a
+          href="https://dashboard.vizzle.in"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            padding: '9px 20px', borderRadius: '999px',
+            background: '#0f172a', color: '#fff',
+            fontSize: '13px', fontWeight: 600, textDecoration: 'none', whiteSpace: 'nowrap',
+          }}
+        >
+          Sign In
+        </a>
+      </div>
+    </nav>
+  );
+}
+
+// ─── Root Component ───────────────────────────────────────────────────────────
+function VizzleHeroSection({ setIsFormOpen }) {
+  const [current,     setCurrent]     = useState(0);
+  const [direction,   setDirection]   = useState(1);
+  const [progress,    setProgress]    = useState(0);
+  const [activeThumb, setActiveThumb] = useState(1);
+  const timerRef = useRef(null);
+  const rafRef   = useRef(null);
+  const t0       = useRef(null);
+
+  const goToSlide = useCallback((next) => {
+    setDirection(next > current ? 1 : -1);
+    setCurrent(next);
+    setProgress(0);
+    t0.current = performance.now();
+  }, [current]);
+
+  const advance = useCallback(() => {
+    goToSlide((current + 1) % SLIDES.length);
+  }, [current, goToSlide]);
+
+  useEffect(() => {
+    setProgress(0);
+    t0.current = performance.now();
+    const tick = (now) => {
+      const pct = Math.min(((now - t0.current) / SLIDE_DURATION) * 100, 100);
+      setProgress(pct);
+      if (pct < 100) rafRef.current = requestAnimationFrame(tick);
+    };
+    rafRef.current = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafRef.current);
+  }, [current]);
+
+  useEffect(() => {
+    timerRef.current = setInterval(advance, SLIDE_DURATION);
+    return () => clearInterval(timerRef.current);
+  }, [advance]);
+
+  const handleIndicator = (i) => {
+    clearInterval(timerRef.current);
+    goToSlide(i);
+    timerRef.current = setInterval(advance, SLIDE_DURATION);
+  };
+
+  const slide = SLIDES[current];
+
+  return (
+    <div style={{ fontFamily: "'Plus Jakarta Sans', Inter, sans-serif" }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
+        #vz-hero * { box-sizing: border-box; }
+        #vz-hero button { background: none; border: none; padding: 0; cursor: pointer; }
+        #vz-hero a:hover { opacity: 0.78; }
+      `}</style>
+
+      <VizzleNavbar />
+
+      {/*
+        ═══════════════════════════════════════════════════════════════════
+        HERO LAYOUT — static 12-col grid.
+        Left (5 cols): text only, never animates.
+        Right (7 cols): AnimatePresence, x-slide only.
+
+        Background is a single flat colour per slide, tuned to the model's
+        studio backdrop so mix-blend-multiply eliminates photo rectangles.
+        ═══════════════════════════════════════════════════════════════════
+      */}
+      <div
+        id="vz-hero"
+        style={{
+          margin: '10px 12px 0',
+          borderRadius: '24px',
+          overflow: 'hidden',
+          display: 'grid',
+          gridTemplateColumns: '5fr 7fr',
+          gridTemplateRows: '620px',
+          height: '620px',
+          background: slide.heroBg,
+          transition: 'background 0.75s ease',
+          fontFamily: "'Plus Jakarta Sans', Inter, sans-serif",
+        }}
+      >
+        {/* ══════════════════════════════════════════════════════
+            LEFT — static, never moves
+        ══════════════════════════════════════════════════════ */}
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          padding: '40px 40px 44px 52px',
+          position: 'relative',
+          zIndex: 10,
+          height: '620px',
+          overflow: 'hidden',
+        }}>
+          {/* Badge */}
+          <div style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '7px',
+            padding: '6px 14px',
+            borderRadius: '999px',
+            border: `1px solid ${slide.badgeBorder || 'rgba(8,145,178,0.30)'}`,
+            background: slide.badgeBg || 'rgba(236,254,255,0.85)',
+            backdropFilter: 'blur(10px)',
+            fontSize: '10.5px',
+            fontWeight: 700,
+            color: slide.badgeColor || '#0e7490',
+            letterSpacing: '0.06em',
+            textTransform: 'uppercase',
+            alignSelf: 'flex-start',
+            marginBottom: '20px',
+            boxShadow: '0 1px 6px rgba(0,0,0,0.06)',
+            transition: 'all 0.5s ease',
+          }}>
+            <Sparkles size={11} style={{ color: slide.badgeColor || '#0891b2', flexShrink: 0 }} />
+            {slide.badge}
+          </div>
+
+          {/* H1 — instant text swap, gradient accent on key words */}
+          <h1 style={{
+            fontSize: 'clamp(1.65rem, 3.1vw, 2.6rem)',
+            fontWeight: 900,
+            color: '#0f172a',
+            lineHeight: 1.15,
+            letterSpacing: '-0.025em',
+            margin: '0 0 16px',
+          }}>
+            {slide.headingJSX}
+          </h1>
+
+          {/* Body */}
+          <p style={{
+            fontSize: 'clamp(0.83rem, 1.1vw, 0.96rem)',
+            color: '#64748b',
+            lineHeight: 1.7,
+            margin: '0 0 28px',
+            maxWidth: '380px',
+          }}>
+            {slide.subtext}
+          </p>
+
+          {/* CTA Button */}
+          <button
+            id="vizzle-hero-cta"
+            onClick={() => setIsFormOpen && setIsFormOpen(true)}
+            style={{
+              alignSelf: 'flex-start',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '13px 28px',
+              borderRadius: '999px',
+              background: slide.ctaBg || 'linear-gradient(135deg, #0891b2 0%, #0d9488 100%)',
+              color: '#fff',
+              fontSize: '13.5px',
+              fontWeight: 700,
+              border: 'none',
+              cursor: 'pointer',
+              boxShadow: `0 6px 24px ${slide.ctaShadow || 'rgba(8,145,178,0.28)'}`,
+              transition: 'transform 0.18s ease, box-shadow 0.18s ease, background 0.5s ease',
+              letterSpacing: '0.01em',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow = `0 10px 30px ${slide.ctaShadow || 'rgba(8,145,178,0.42)'}`;
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = `0 6px 24px ${slide.ctaShadow || 'rgba(8,145,178,0.28)'}`;
+            }}
+          >
+            Book A Free Demo
+            <ArrowRight size={15} style={{ flexShrink: 0 }} />
+          </button>
+
+          {/* Slide indicators */}
+          <ProgressLines
+            current={current}
+            total={SLIDES.length}
+            progress={progress}
+            onSelect={handleIndicator}
+          />
+        </div>
+
+        {/* ══════════════════════════════════════════════════════
+            RIGHT — AnimatePresence, x-slide
+        ══════════════════════════════════════════════════════ */}
+        <div style={{ position: 'relative', overflow: 'hidden', height: '620px' }}>
+          <AnimatePresence mode="wait" custom={direction}>
+            <motion.div
+              key={`showcase-${current}`}
+              custom={direction}
+              variants={showcaseVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              style={{ position: 'absolute', inset: 0 }}
+            >
+              {current === 0 && <Slide1 />}
+              {current === 1 && <Slide2 />}
+              {current === 2 && (
+                <Slide3
+                  activeThumb={activeThumb}
+                  setActiveThumb={setActiveThumb}
+                />
+              )}
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
+export default VizzleHeroSection;

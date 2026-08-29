@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import About from "./components/About";
 import Footer from "./components/Footer";
-import Homesection from "./components/Homesection";
+import VizzleHero from "./components/VizzleHero";
 import Navbar from "./components/Navbar";
 import VizzlePage from "./components/VizzlePage";
 import VizzlePage2 from "./components/VizzlePage2";
@@ -21,13 +21,7 @@ function AppLayout() {
 
   return (
     <div>
-      <Navbar launchingRef={launchingRef} setIsFormOpen={setIsFormOpen} />
-      <Homesection
-        launchingRef={launchingRef}
-        VizzlePageRef={VizzlePageRef}
-        aboutRef={aboutRef}
-        setIsFormOpen={setIsFormOpen}
-      />
+      <VizzleHero setIsFormOpen={setIsFormOpen} />
 
       <div ref={stepsRef}>
         <Steps />
