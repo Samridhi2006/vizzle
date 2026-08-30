@@ -8,6 +8,7 @@ import VizzlePage2 from "./components/VizzlePage2";
 import Text from "./components/Text";
 import Steps from "./components/Steps";
 import Platforms from "./components/Platforms";
+import CataloguePlatform from "./components/CataloguePlatform";
 
 
 function AppLayout() {
@@ -22,6 +23,8 @@ function AppLayout() {
   return (
     <div>
       <VizzleHero setIsFormOpen={setIsFormOpen} />
+
+      <CataloguePlatform />
 
       <div ref={stepsRef}>
         <Steps />
