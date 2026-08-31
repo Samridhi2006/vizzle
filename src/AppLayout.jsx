@@ -9,6 +9,9 @@ import VizzlePage2 from "./components/VizzlePage2";
 import BrandIdentitySection from "./components/BrandIdentitySection";
 import AIModelLineup from "./components/AIModelLineup";
 import VirtualTryOnSection from "./components/VirtualTryOnSection";
+import CatalogueShowcaseGrid from "./components/CatalogueShowcaseGrid";
+import ResultsShowcaseGallery from "./components/ResultsShowcaseGallery";
+import BlogInsightsSection from "./components/BlogInsightsSection";
 import Text from "./components/Text";
 import Steps from "./components/Steps";
 import Platforms from "./components/Platforms";
@@ -60,6 +63,18 @@ function AppLayout() {
 
       <div>
         <VirtualTryOnSection />
+      </div>
+
+      <div>
+        <CatalogueShowcaseGrid />
+      </div>
+
+      <div>
+        <ResultsShowcaseGallery />
+      </div>
+
+      <div>
+        <BlogInsightsSection />
       </div>
 
       <div ref={aboutRef}>

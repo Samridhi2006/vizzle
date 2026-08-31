@@ -8,37 +8,40 @@ const STEPS = [
     icon: Upload,
     label: 'Step 1',
     title: 'Upload Your Garment',
-    image: '/step1_jumpsuit_flatlay.jpg',
-    alt: 'Champagne beige silk jumpsuit flatlay',
+    image: '/step1_flatlay_emerald_suit.jpg',
+    alt: 'Emerald green satin blazer & trousers flatlay on white background',
+    objectPosition: 'center',
   },
   {
     id: 2,
     icon: UserCheck,
     label: 'Step 2',
     title: 'AI Dresses the Model',
-    image: '/step2_model_base.jpg',
-    alt: 'Female model in white tee and black trousers',
+    image: '/step2_base_model_emerald.jpg',
+    alt: 'South Asian female model in white tee and dark jeans — base look',
+    objectPosition: 'top',
   },
   {
     id: 3,
     icon: DownloadCloud,
     label: 'Step 3',
     title: 'Download and Go Live',
-    image: '/step3_model_final.jpg',
-    alt: 'Model wearing AI-draped champagne jumpsuit',
+    image: '/step3_final_draped_emerald.jpg',
+    alt: 'Model wearing AI-draped emerald green satin blazer and wide-leg trousers',
+    objectPosition: 'top',
   },
 ];
 
-// ─── Arrow Connector Badge ────────────────────────────────────────────────────
+// ─── Arrow connector between cards ───────────────────────────────────────────
 function ArrowBadge() {
   return (
     <div style={{
       position: 'absolute',
-      top: '50%',
-      right: '-20px',
+      top: '42%',
+      right: '-18px',
       transform: 'translateY(-50%)',
-      width: '36px',
-      height: '36px',
+      width: '34px',
+      height: '34px',
       borderRadius: '50%',
       background: '#fff',
       border: '1px solid #E2E8F0',
@@ -49,7 +52,7 @@ function ArrowBadge() {
       zIndex: 10,
       flexShrink: 0,
     }}>
-      <ChevronRight size={16} color="#2563EB" strokeWidth={2.5} />
+      <ChevronRight size={15} color="#2563EB" strokeWidth={2.5} />
     </div>
   );
 }
@@ -65,7 +68,7 @@ function StepCard({ step, index, isLast }) {
       transition={{ duration: 0.5, delay: index * 0.12 }}
       style={{ position: 'relative', flex: 1 }}
     >
-      {/* Step header row */}
+      {/* Step header */}
       <div style={{
         display: 'flex',
         alignItems: 'center',
@@ -83,7 +86,7 @@ function StepCard({ step, index, isLast }) {
           justifyContent: 'center',
           flexShrink: 0,
         }}>
-          <Icon size={17} color="#fff" strokeWidth={2} />
+          <Icon size={16} color="#fff" strokeWidth={2} />
         </div>
 
         {/* Step label + title */}
@@ -111,31 +114,35 @@ function StepCard({ step, index, isLast }) {
         </div>
       </div>
 
-      {/* Image card */}
+      {/* Image card — padding-top trick for reliable 4:5 aspect ratio */}
       <div style={{
         position: 'relative',
-        borderRadius: '16px',
+        paddingTop: '125%', /* 4:5 = 5/4 = 125% */
+        borderRadius: '20px',
         overflow: 'hidden',
         background: '#F8FAFC',
         border: '1px solid #E2E8F0',
-        aspectRatio: '3/4',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
+        boxShadow: '0 2px 12px rgba(0,0,0,0.05)',
       }}>
         <img
           src={step.image}
           alt={step.alt}
           style={{
+            position: 'absolute',
+            inset: 0,
             width: '100%',
             height: '100%',
             objectFit: 'cover',
-            mixBlendMode: 'multiply',
+            objectPosition: step.objectPosition,
             display: 'block',
+            mixBlendMode: 'multiply',
+            /* Soft bottom fade mask */
+            WebkitMaskImage: 'linear-gradient(to bottom, black 88%, transparent 100%)',
+            maskImage: 'linear-gradient(to bottom, black 88%, transparent 100%)',
           }}
         />
 
-        {/* Arrow badge connector (not on last card) */}
+        {/* Arrow connector (not on last card) */}
         {!isLast && <ArrowBadge />}
       </div>
     </motion.div>
@@ -155,7 +162,7 @@ export default function CatalogueSteps() {
     >
       <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
 
-        {/* ── Header ─────────────────────────────────────────────────────────── */}
+        {/* ── Header ─────────────────────────────────────────────────── */}
         <div style={{ textAlign: 'center', marginBottom: '40px' }}>
           <motion.h2
             initial={{ opacity: 0, y: 14 }}
@@ -189,11 +196,11 @@ export default function CatalogueSteps() {
           </motion.p>
         </div>
 
-        {/* ── 3-Step Grid ────────────────────────────────────────────────────── */}
+        {/* ── 3-Step Grid ───────────────────────────────────────────── */}
         <div style={{
           display: 'flex',
           gap: '24px',
-          alignItems: 'stretch',
+          alignItems: 'flex-start',
         }}>
           {STEPS.map((step, i) => (
             <StepCard
