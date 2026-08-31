@@ -4,7 +4,11 @@ import Footer from "./components/Footer";
 import VizzleHero from "./components/VizzleHero";
 import Navbar from "./components/Navbar";
 import VizzlePage from "./components/VizzlePage";
+import CatalogueSteps from "./components/CatalogueSteps";
 import VizzlePage2 from "./components/VizzlePage2";
+import BrandIdentitySection from "./components/BrandIdentitySection";
+import AIModelLineup from "./components/AIModelLineup";
+import VirtualTryOnSection from "./components/VirtualTryOnSection";
 import Text from "./components/Text";
 import Steps from "./components/Steps";
 import Platforms from "./components/Platforms";
@@ -38,8 +42,24 @@ function AppLayout() {
         <VizzlePage />
       </div>
 
-      <div ref={VizzlePage2Ref}>
+      <div>
+        <CatalogueSteps />
+      </div>
+
+      <div>
         <VizzlePage2 />
+      </div>
+
+      <div>
+        <BrandIdentitySection />
+      </div>
+
+      <div>
+        <AIModelLineup />
+      </div>
+
+      <div>
+        <VirtualTryOnSection />
       </div>
 
       <div ref={aboutRef}>
@@ -99,3 +119,4 @@ function AppLayout() {
 }
 
 export default AppLayout;
+
