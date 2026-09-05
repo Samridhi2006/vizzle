@@ -227,9 +227,12 @@ export default function BlogInsightsSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.45, delay: 0.35 }}
-          style={{ textAlign: 'center', marginTop: '48px' }}
+          style={{ display: 'flex', justifyContent: 'center', marginTop: '48px' }}
         >
-          <button
+          <a
+            href="https://medium.com/@info_58939/try-before-you-buy-how-vizzle-solves-indias-online-fashion-return-problem-2d456c1d97d4"
+            target="_blank"
+            rel="noopener noreferrer"
             style={{
               display: 'inline-flex',
               alignItems: 'center',
@@ -246,21 +249,29 @@ export default function BlogInsightsSection() {
               boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
               transition: 'all 0.25s ease',
               letterSpacing: '-0.01em',
+              textDecoration: 'none',
             }}
             onMouseEnter={e => {
               e.currentTarget.style.borderColor = '#06B6D4';
               e.currentTarget.style.color = '#0891B2';
               e.currentTarget.style.boxShadow = '0 4px 16px rgba(8,145,178,0.15)';
+              e.currentTarget.querySelector('.arrow-icon').style.transform = 'translateX(4px)';
             }}
             onMouseLeave={e => {
               e.currentTarget.style.borderColor = '#CBD5E1';
               e.currentTarget.style.color = '#0F172A';
               e.currentTarget.style.boxShadow = '0 1px 4px rgba(0,0,0,0.04)';
+              e.currentTarget.querySelector('.arrow-icon').style.transform = 'translateX(0px)';
             }}
           >
-            View More Blogs
-            <ArrowRight size={16} strokeWidth={2.5} />
-          </button>
+            <span>View More Blogs</span>
+            <ArrowRight
+              size={16}
+              strokeWidth={2.5}
+              className="arrow-icon"
+              style={{ transition: 'transform 0.2s ease' }}
+            />
+          </a>
         </motion.div>
 
       </div>

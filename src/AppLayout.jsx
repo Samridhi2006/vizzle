@@ -1,17 +1,21 @@
 import { useRef, useState } from "react";
 import About from "./components/About";
+import AboutVizzleSection from "./components/AboutVizzleSection";
 import Footer from "./components/Footer";
 import VizzleHero from "./components/VizzleHero";
 import Navbar from "./components/Navbar";
 import VizzlePage from "./components/VizzlePage";
 import CatalogueSteps from "./components/CatalogueSteps";
 import VizzlePage2 from "./components/VizzlePage2";
+import TurnBrowsersSection from "./components/TurnBrowsersSection";
 import BrandIdentitySection from "./components/BrandIdentitySection";
 import AIModelLineup from "./components/AIModelLineup";
 import VirtualTryOnSection from "./components/VirtualTryOnSection";
 import CatalogueShowcaseGrid from "./components/CatalogueShowcaseGrid";
 import ResultsShowcaseGallery from "./components/ResultsShowcaseGallery";
 import BlogInsightsSection from "./components/BlogInsightsSection";
+import FAQSection from "./components/FAQSection";
+import LeadCaptureSection from "./components/LeadCaptureSection";
 import Text from "./components/Text";
 import Steps from "./components/Steps";
 import Platforms from "./components/Platforms";
@@ -49,9 +53,6 @@ function AppLayout() {
         <CatalogueSteps />
       </div>
 
-      <div>
-        <VizzlePage2 />
-      </div>
 
       <div>
         <BrandIdentitySection />
@@ -77,13 +78,22 @@ function AppLayout() {
         <BlogInsightsSection />
       </div>
 
+      <div>
+        <FAQSection />
+      </div>
+
       <div ref={aboutRef}>
-        <About />
+        <AboutVizzleSection />
       </div>
-      <div ref={TextRef}>
-        <Text />
+
+      <div>
+        <TurnBrowsersSection />
       </div>
-      
+
+      <div>
+        <LeadCaptureSection />
+      </div>
+
       <Footer />
 
       {/* Floating WhatsApp Button */}
