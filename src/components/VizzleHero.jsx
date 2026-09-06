@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 const SLIDE_DURATION = 6000;
@@ -479,10 +480,16 @@ function VizzleNavbar() {
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '28px' }}>
-        {['Catalogue Showcase', 'Virtual Try-On', 'Pricing', 'Blogs', 'Contact'].map((l) => (
-          <a key={l} href="#" style={{ fontSize: '13.5px', fontWeight: 500, color: '#475569', textDecoration: 'none', whiteSpace: 'nowrap' }}>
-            {l}
-          </a>
+        {[
+          { label: 'Catalogue Showcase', to: '/catalogue-showcase' },
+          { label: 'Virtual Try-On',     to: '/#virtual-tryon'     },
+          { label: 'Pricing',            to: '/pricing'            },
+          { label: 'Blogs',              to: '/#blogs'             },
+          { label: 'Contact',            to: '/contact'            },
+        ].map((l) => (
+          <Link key={l.label} to={l.to} style={{ fontSize: '13.5px', fontWeight: 500, color: '#475569', textDecoration: 'none', whiteSpace: 'nowrap' }}>
+            {l.label}
+          </Link>
         ))}
       </div>
 

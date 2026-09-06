@@ -12,6 +12,7 @@ import BrandIdentitySection from "./components/BrandIdentitySection";
 import AIModelLineup from "./components/AIModelLineup";
 import VirtualTryOnSection from "./components/VirtualTryOnSection";
 import CatalogueShowcaseGrid from "./components/CatalogueShowcaseGrid";
+import CatalogueShowcase from "./components/CatalogueShowcase";
 import ResultsShowcaseGallery from "./components/ResultsShowcaseGallery";
 import BlogInsightsSection from "./components/BlogInsightsSection";
 import FAQSection from "./components/FAQSection";
@@ -82,9 +83,6 @@ function AppLayout() {
         <FAQSection />
       </div>
 
-      <div ref={aboutRef}>
-        <AboutVizzleSection />
-      </div>
 
       <div>
         <TurnBrowsersSection />
