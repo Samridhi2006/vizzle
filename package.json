@@ -10,6 +10,7 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
+    "@imgly/background-removal-node": "^1.4.5",
     "@prisma/client": "^5.22.0",
     "@tanstack/react-query": "^5.100.9",
     "bcryptjs": "^3.0.3",
@@ -27,6 +28,7 @@
     "react-dom": "19.2.4",
     "react-hook-form": "^7.75.0",
     "recharts": "^3.8.1",
+    "sharp": "^0.35.4",
     "zod": "^4.4.3",
     "zustand": "^5.0.13"
   },
