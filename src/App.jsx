@@ -8,7 +8,8 @@ import Admin from "./components/Admin";
 import DocsPage from "./docs/DocsPage";
 import ApiRefPage from "./docs/ApiRefPage";
 import Contact from "./components/Contact";
-import Pricing from "./components/Pricing"; 
+import Pricing from "./components/Pricing";
+import CatalogueShowcasePage from "./pages/CatalogueShowcasePage"; 
 
 function App() {
   return (
@@ -37,6 +38,9 @@ function App() {
 
         {/* Contact Page */}
         <Route path="/contact" element={<Contact />} />
+
+        {/* Catalogue Showcase */}
+        <Route path="/catalogue-showcase" element={<CatalogueShowcasePage />} />
 
         {/* Pricing Page */}
         <Route path="/pricing" element={<Pricing />} />

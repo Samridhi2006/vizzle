@@ -41,6 +41,7 @@ function Navbar({ launchingRef, setIsFormOpen }) {
           </Link>
           <Link to="/pricing" className="hover:text-[#1D8DB2] transition-colors">Pricing</Link>
           <Link to="/contact" className="hover:text-[#1D8DB2] transition-colors">Contact</Link>
+          <Link to="/catalogue-showcase" className="hover:text-[#1D8DB2] transition-colors font-bold text-[#0891B2]">Catalogue Showcase</Link>
         </div>
 
         {/* Desktop Buttons */}
@@ -95,6 +96,7 @@ function Navbar({ launchingRef, setIsFormOpen }) {
             <Link to="/docs/api" className="text-[#4A91FD] font-semibold px-2" onClick={() => setIsMenuOpen(false)}>⚡ API Reference</Link>
             <Link to="/pricing" className="text-gray-700 font-semibold px-2" onClick={() => setIsMenuOpen(false)}>Pricing</Link>
             <Link to="/contact" className="text-gray-700 font-semibold px-2" onClick={() => setIsMenuOpen(false)}>Contact</Link>
+            <Link to="/catalogue-showcase" className="text-[#0891B2] font-bold px-2" onClick={() => setIsMenuOpen(false)}>🎨 Catalogue Showcase</Link>
           </div>
 
           <div className="flex flex-col gap-3 w-full mt-4 border-t border-gray-200 pt-4">
