@@ -482,7 +482,7 @@ function VizzleNavbar() {
       <div style={{ display: 'flex', alignItems: 'center', gap: '28px' }}>
         {[
           { label: 'Catalogue Showcase', to: '/catalogue-showcase' },
-          { label: 'Virtual Try-On',     to: '/#virtual-tryon'     },
+          { label: 'Virtual Try-On',     to: '/virtual-try-on'     },
           { label: 'Pricing',            to: '/pricing'            },
           { label: 'Blogs',              to: '/#blogs'             },
           { label: 'Contact',            to: '/contact'            },
