@@ -254,11 +254,14 @@ export default function Platforms() {
         </div>
 
         {/* ── 3-Card Grid ────────────────────────────────────────────────────── */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(3, 1fr)',
-          gap: '24px',
-        }}>
+        <div
+          className="vz-platforms-grid"
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(3, 1fr)',
+            gap: '24px',
+          }}
+        >
           {PLATFORMS.map((p, i) => (
             <PlatformCard key={p.id} p={p} index={i} />
           ))}
@@ -270,6 +273,7 @@ export default function Platforms() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.55, delay: 0.2 }}
+          className="vz-trust-bar"
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -284,7 +288,7 @@ export default function Platforms() {
           {TRUST.map((t, i) => {
             const Icon = t.icon;
             return (
-              <div key={i} style={{ display: 'flex', alignItems: 'center' }}>
+              <div key={i} className="vz-trust-item" style={{ display: 'flex', alignItems: 'center' }}>
                 {/* Item */}
                 <div style={{
                   display: 'flex',
@@ -317,7 +321,7 @@ export default function Platforms() {
 
                 {/* Divider (not after last) */}
                 {i < TRUST.length - 1 && (
-                  <div style={{
+                  <div className="vz-trust-divider" style={{
                     width: '1px',
                     height: '28px',
                     background: '#E2E8F0',

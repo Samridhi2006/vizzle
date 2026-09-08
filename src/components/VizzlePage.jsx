@@ -16,6 +16,7 @@ export default function VizzlePage() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.55 }}
+          className="vz-camera-card"
           style={{
             background: '#E8F2FE',
             borderRadius: '28px',

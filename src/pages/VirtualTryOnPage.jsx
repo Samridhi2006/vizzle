@@ -80,7 +80,7 @@ export default function VirtualTryOnPage() {
         </motion.div>
 
         {/* Two-column showcase */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(340px,1fr))", gap: 48, alignItems: "center", marginBottom: 80 }}>
+        <div className="vz-vto-showcase" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px,1fr))", gap: 48, alignItems: "center", marginBottom: 80 }}>
 
           {/* Left: Before/After card */}
           <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.65 }}>
@@ -169,7 +169,7 @@ export default function VirtualTryOnPage() {
           </motion.div>
 
           {/* 3-Step Cards Grid */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 20, alignItems: "start", position: "relative", maxWidth: 960, margin: "0 auto" }}>
+          <div className="vz-vto-steps-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 20, alignItems: "start", position: "relative", maxWidth: 960, margin: "0 auto" }}>
 
             {/* Step 1 */}
             <motion.div initial={{ opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0 }} style={{ position: "relative" }}>
@@ -185,7 +185,7 @@ export default function VirtualTryOnPage() {
                 </div>
               </div>
               {/* Arrow connector → Step 2 */}
-              <div style={{ position: "absolute", right: -18, top: "55%", transform: "translateY(-50%)", zIndex: 10, width: 36, height: 36, borderRadius: "50%", background: "#0F172A", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 12px rgba(0,0,0,0.2)", color: "#fff", fontSize: 16, fontWeight: 900, flexShrink: 0 }}>
+              <div className="vz-vto-step-arrow" style={{ position: "absolute", right: -18, top: "55%", transform: "translateY(-50%)", zIndex: 10, width: 36, height: 36, borderRadius: "50%", background: "#0F172A", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 12px rgba(0,0,0,0.2)", color: "#fff", fontSize: 16, fontWeight: 900, flexShrink: 0 }}>
                 ›
               </div>
             </motion.div>
@@ -204,7 +204,7 @@ export default function VirtualTryOnPage() {
                 </div>
               </div>
               {/* Arrow connector → Step 3 */}
-              <div style={{ position: "absolute", right: -18, top: "55%", transform: "translateY(-50%)", zIndex: 10, width: 36, height: 36, borderRadius: "50%", background: "#0F172A", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 12px rgba(0,0,0,0.2)", color: "#fff", fontSize: 16, fontWeight: 900, flexShrink: 0 }}>
+              <div className="vz-vto-step-arrow" style={{ position: "absolute", right: -18, top: "55%", transform: "translateY(-50%)", zIndex: 10, width: 36, height: 36, borderRadius: "50%", background: "#0F172A", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 12px rgba(0,0,0,0.2)", color: "#fff", fontSize: 16, fontWeight: 900, flexShrink: 0 }}>
                 ›
               </div>
             </motion.div>
@@ -241,7 +241,7 @@ export default function VirtualTryOnPage() {
 
       {/* ── Made for Every Fashion Business ── */}
       <section style={{ background: "#fff", borderTop: "1px solid #F1F5F9", borderBottom: "1px solid #F1F5F9", padding: "80px 24px" }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto", display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(320px,1fr))", gap: 56, alignItems: "center" }}>
+        <div className="vz-vto-omnichannel" style={{ maxWidth: 1200, margin: "0 auto", display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: 56, alignItems: "center" }}>
 
           {/* Left — Value Proposition */}
           <motion.div initial={{ opacity: 0, x: -32 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.65 }}>
@@ -321,7 +321,7 @@ export default function VirtualTryOnPage() {
             </div>
 
             {/* Floating stats pill */}
-            <div style={{ position: "absolute", bottom: -18, left: "50%", transform: "translateX(-50%)", background: "#fff", border: "1px solid #E2E8F0", borderRadius: 999, padding: "10px 24px", boxShadow: "0 8px 24px rgba(0,0,0,0.1)", display: "flex", alignItems: "center", gap: 24, whiteSpace: "nowrap" }}>
+            <div className="vz-vto-stats-pill" style={{ position: "absolute", bottom: -18, left: "50%", transform: "translateX(-50%)", background: "#fff", border: "1px solid #E2E8F0", borderRadius: 999, padding: "10px 24px", boxShadow: "0 8px 24px rgba(0,0,0,0.1)", display: "flex", alignItems: "center", gap: 24, whiteSpace: "nowrap" }}>
               {[["🌐", "Online"], ["🏪", "In-Store"], ["📱", "Mobile App"], ["🪞", "Kiosk"]].map(([icon, label]) => (
                 <div key={label} style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 11, fontWeight: 700, color: "#334155" }}>
                   <span>{icon}</span>
@@ -356,7 +356,7 @@ export default function VirtualTryOnPage() {
           </motion.div>
 
           {/* 4-Column Grid */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))", gap: 20, marginBottom: 48 }}>
+          <div className="vz-vto-demographics" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))", gap: 20, marginBottom: 48 }}>
             {[
               { label: "Women's Wear",  src: "/showcase/western_emerald_dress.jpg",    emoji: "👗", color: "#EC4899" },
               { label: "Men's Wear",    src: "/showcase/men_denim_streetwear.jpg",      emoji: "👔", color: "#3B82F6" },

@@ -158,10 +158,13 @@ export default function ResultsShowcaseGallery() {
         </motion.div>
 
         {/* ── True CSS Masonry — columns fill naturally, no bottom gaps ── */}
-        <div style={{
-          columns: 5,
-          columnGap: '14px',
-        }}>
+        <div
+          className="vz-masonry-gallery"
+          style={{
+            columns: 5,
+            columnGap: '14px',
+          }}
+        >
           {IMAGES.map((item, i) => (
             <GalleryCard key={i} item={item} index={i} />
           ))}

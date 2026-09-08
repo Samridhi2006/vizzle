@@ -35,11 +35,13 @@ const STEPS = [
 // ─── Arrow connector between cards ───────────────────────────────────────────
 function ArrowBadge() {
   return (
-    <div style={{
-      position: 'absolute',
-      top: '42%',
-      right: '-18px',
-      transform: 'translateY(-50%)',
+    <div
+      className="vz-cat-step-arrow"
+      style={{
+        position: 'absolute',
+        top: '42%',
+        right: '-18px',
+        transform: 'translateY(-50%)',
       width: '34px',
       height: '34px',
       borderRadius: '50%',
@@ -197,11 +199,14 @@ export default function CatalogueSteps() {
         </div>
 
         {/* ── 3-Step Grid ───────────────────────────────────────────── */}
-        <div style={{
-          display: 'flex',
-          gap: '24px',
-          alignItems: 'flex-start',
-        }}>
+        <div
+          className="vz-cat-steps-row"
+          style={{
+            display: 'flex',
+            gap: '24px',
+            alignItems: 'flex-start',
+          }}
+        >
           {STEPS.map((step, i) => (
             <StepCard
               key={step.id}

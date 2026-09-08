@@ -11,19 +11,22 @@ export default function VirtualTryOnSection() {
         fontFamily: "'Plus Jakarta Sans', Inter, sans-serif",
       }}
     >
-      <div style={{
-        maxWidth: '1200px',
-        margin: '0 auto',
-        background: '#FAF9F6',
-        borderRadius: '28px',
-        overflow: 'hidden',
-        padding: '56px 64px',
-        display: 'grid',
-        gridTemplateColumns: '1fr 1fr',
-        gap: '48px',
-        alignItems: 'center',
-        position: 'relative',
-      }}>
+      <div
+        className="vz-tryon-card"
+        style={{
+          maxWidth: '1200px',
+          margin: '0 auto',
+          background: '#FAF9F6',
+          borderRadius: '28px',
+          overflow: 'hidden',
+          padding: '56px 64px',
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: '48px',
+          alignItems: 'center',
+          position: 'relative',
+        }}
+      >
 
         {/* Subtle ambient glow */}
         <div style={{
@@ -125,6 +128,7 @@ export default function VirtualTryOnSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.65, delay: 0.15 }}
+          className="vz-tryon-mirror"
           style={{
             position: 'relative',
             width: '100%',

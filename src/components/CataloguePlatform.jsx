@@ -418,6 +418,7 @@ export default function CataloguePhotoshootSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.1 }}
+          className="vz-cat-stats"
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(3, 1fr)',
@@ -434,6 +435,7 @@ export default function CataloguePhotoshootSection() {
           ].map((s, i) => (
             <div
               key={i}
+              className="vz-cat-stat-card"
               style={{
                 padding: '32px 24px',
                 textAlign: 'center',

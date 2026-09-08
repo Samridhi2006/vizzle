@@ -28,6 +28,7 @@ export default function TurnBrowsersSection() {
       }}
     >
       <div
+        className="vz-partners-grid"
         style={{
           maxWidth: '1380px',
           margin: '0 auto',
@@ -228,14 +229,17 @@ export default function TurnBrowsersSection() {
           </motion.button>
 
           {/* Feature icon row */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(4, 1fr)',
-            gap: '8px',
-            width: '100%',
-            paddingTop: '22px',
-            borderTop: '1px solid rgba(226,232,240,0.7)',
-          }}>
+          <div
+            className="vz-partners-features"
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(4, 1fr)',
+              gap: '8px',
+              width: '100%',
+              paddingTop: '22px',
+              borderTop: '1px solid rgba(226,232,240,0.7)',
+            }}
+          >
             {FEATURES.map((f, i) => (
               <motion.div
                 key={i}

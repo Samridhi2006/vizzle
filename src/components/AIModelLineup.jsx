@@ -12,28 +12,34 @@ export default function AIModelLineup() {
       }}
     >
       {/* Warm studio card */}
-      <div style={{
-        maxWidth: '1200px',
-        margin: '0 auto',
-        background: 'linear-gradient(to right, #F7F3EC, #F4EFE6, #ECE5D8)',
-        borderRadius: '28px',
-        overflow: 'hidden',
-        position: 'relative',
-        minHeight: '460px',
-        display: 'grid',
-        gridTemplateColumns: '7fr 5fr',
-        alignItems: 'center',
-      }}>
+      <div
+        className="vz-lineup-card"
+        style={{
+          maxWidth: '1200px',
+          margin: '0 auto',
+          background: 'linear-gradient(to right, #F7F3EC, #F4EFE6, #ECE5D8)',
+          borderRadius: '28px',
+          overflow: 'hidden',
+          position: 'relative',
+          minHeight: '460px',
+          display: 'grid',
+          gridTemplateColumns: '7fr 5fr',
+          alignItems: 'center',
+        }}
+      >
 
         {/* ── LEFT: Family lineup image (bottom-anchored) ─────────────────── */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'flex-end',
-          justifyContent: 'flex-start',
-          height: '100%',
-          paddingBottom: '0',
-          overflow: 'hidden',
-        }}>
+        <div
+          className="vz-lineup-img-wrap"
+          style={{
+            display: 'flex',
+            alignItems: 'flex-end',
+            justifyContent: 'flex-start',
+            height: '100%',
+            paddingBottom: '0',
+            overflow: 'hidden',
+          }}
+        >
           <motion.img
             src="/ai_models_family_lineup.jpg"
             alt="AI model lineup — Indian family in white tees and black trousers"
@@ -59,6 +65,7 @@ export default function AIModelLineup() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.15 }}
+          className="vz-lineup-copy"
           style={{
             padding: '48px 48px 48px 16px',
           }}
