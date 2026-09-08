@@ -87,6 +87,43 @@ export async function uploadImageUrl(
 }
 
 /**
+ * Remove the background from a remote image URL using Cloudinary's
+ * `e_background_removal` delivery transformation (requires Plus tier or
+ * higher). Runs entirely on Cloudinary's infrastructure — nothing loads in
+ * our own process, unlike a local ONNX-based library.
+ *
+ * Returns the resulting RGBA PNG as a Buffer. Uploads to a temp folder since
+ * Cloudinary's fetch-delivery mode (transforming a remote URL without an
+ * upload) requires an account-level allowlist we can't assume is configured.
+ */
+export async function removeBackgroundFromUrl(imageUrl: string): Promise<Buffer> {
+  const uploaded = await cloudinary.uploader.upload(imageUrl, {
+    folder: "vizzle/bg-removal-temp",
+    resource_type: "image",
+  });
+
+  const cutoutUrl = cloudinary.url(uploaded.public_id, {
+    effect: "background_removal",
+    format: "png",
+    version: uploaded.version,
+    secure: true,
+  });
+
+  const res = await fetch(cutoutUrl);
+
+  // Best-effort cleanup of the temp source upload regardless of outcome.
+  cloudinary.uploader.destroy(uploaded.public_id).catch(() => {});
+
+  if (!res.ok) {
+    throw new Error(
+      `Cloudinary background removal failed (${res.status}). ` +
+      `This requires the Plus plan or higher — check your Cloudinary account tier.`
+    );
+  }
+  return Buffer.from(await res.arrayBuffer());
+}
+
+/**
  * Delete one or more Cloudinary assets by their public_ids.
  * Silently ignores individual failures so cleanup never throws.
  */

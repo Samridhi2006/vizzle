@@ -1,14 +1,21 @@
 import sharp from "sharp";
-import { removeBackground } from "@imgly/background-removal-node";
-import { uploadImageBuffer } from "@/lib/server/cloudinary";
+import { removeBackgroundFromUrl, uploadImageBuffer } from "@/lib/server/cloudinary";
 import { ApiError } from "@/server/errors";
 
 /**
- * Native cutout+composite virtual try-on: removes the garment's background,
- * isolates the clothing region, and pastes it onto the person photo at a
- * category-specific anatomical placement box. No external ML model call —
- * pure image compositing, ported from the evaluation harness's
- * vton_clients.py / preprocessing/garment_extractor.py logic.
+ * Native cutout+composite virtual try-on: removes the garment's background
+ * (via Cloudinary's e_background_removal — see note below), isolates the
+ * clothing region, and pastes it onto the person photo at a category-specific
+ * anatomical placement box. No ML model call of our own — pure image
+ * compositing, ported from the evaluation harness's vton_clients.py /
+ * preprocessing/garment_extractor.py logic.
+ *
+ * Background removal runs on Cloudinary rather than in-process: an earlier
+ * version used `@imgly/background-removal-node` directly here, but running
+ * it in the same process as `sharp` reliably segfaults (native library
+ * conflict between the two packages' compiled binaries) — confirmed by
+ * reproducing it locally, not a theoretical risk. Cloudinary's transformation
+ * avoids the conflict entirely since no ONNX runtime loads in our process.
  */
 
 type Bucket = "upper" | "lower" | "kurti" | "full";
@@ -68,14 +75,12 @@ export async function generateCompositeTryOn(input: {
   const isTallUpper =
     bucket === "upper" && TALL_UPPER_KEYWORDS.some((k) => hint.toLowerCase().includes(k));
 
-  const [humanBuf, garmentBuf] = await Promise.all([
+  // 1. Remove the garment photo's background (Cloudinary-side) and fetch the
+  //    person photo in parallel.
+  const [humanBuf, cutoutBuf] = await Promise.all([
     fetchImageBuffer(input.humanImgUrl),
-    fetchImageBuffer(input.garmentImgUrl),
+    removeBackgroundFromUrl(input.garmentImgUrl),
   ]);
-
-  // 1. Remove the garment photo's background (rembg-equivalent for Node)
-  const cutoutBlob = await removeBackground(garmentBuf);
-  const cutoutBuf = Buffer.from(await cutoutBlob.arrayBuffer());
 
   const { data, info } = await sharp(cutoutBuf)
     .ensureAlpha()
