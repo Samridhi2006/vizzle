@@ -8,6 +8,15 @@ body {
   padding: 0;
   scroll-behavior: smooth;
   background-color: #F9F3FA;
+  overflow-x: hidden;
+  max-width: 100vw;
+  width: 100%;
+}
+
+#root {
+  overflow-x: hidden;
+  max-width: 100vw;
+  width: 100%;
 }
 
 /* Custom Scrollbar to fix the floating overlay gap */
@@ -37,3 +46,324 @@ body {
     display: none;
   }
 }
+
+/* ==========================================================================
+   MOBILE RESPONSIVENESS OVERRIDES
+   Targets: Tablets & Mobile (<= 768px) and Compact Smartphones (360px - 414px)
+   Desktop layout is 100% preserved.
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  /* ── 1. Catalogue Platform (#catalogue-platform) ── */
+  #catalogue-platform {
+    padding: 56px 16px 48px !important;
+  }
+  .vz-cat-stats {
+    grid-template-columns: 1fr !important;
+    border-radius: 16px !important;
+  }
+  .vz-cat-stat-card {
+    border-right: none !important;
+    border-bottom: 1px solid rgba(8, 145, 178, 0.12) !important;
+    padding: 24px 16px !important;
+  }
+  .vz-cat-stat-card:last-child {
+    border-bottom: none !important;
+  }
+
+  /* ── 2. How It Works / Steps (#how-it-works) ── */
+  #how-it-works {
+    padding: 56px 16px 64px !important;
+  }
+  .vz-steps-arrows {
+    display: none !important;
+  }
+  .vz-steps-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  /* ── 3. Integrations / Platforms (#integrations) ── */
+  #integrations {
+    padding: 56px 16px !important;
+  }
+  .vz-platforms-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+  .vz-trust-bar {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 14px 8px !important;
+    padding-top: 24px !important;
+    margin-top: 36px !important;
+  }
+  .vz-trust-divider {
+    display: none !important;
+  }
+  .vz-trust-item > div {
+    padding: 0 !important;
+    gap: 8px !important;
+  }
+  .vz-trust-item span {
+    white-space: normal !important;
+    font-size: 12.5px !important;
+  }
+
+  /* ── 4. Camera Roll Section (#camera-roll) ── */
+  #camera-roll {
+    padding: 36px 16px 0 !important;
+  }
+  .vz-camera-card {
+    grid-template-columns: 1fr !important;
+    padding: 28px 18px !important;
+    gap: 24px !important;
+    border-radius: 20px !important;
+  }
+  .vz-camera-card p {
+    max-width: 100% !important;
+  }
+
+  /* ── 5. Catalogue Steps (#catalogue-steps) ── */
+  #catalogue-steps {
+    padding: 48px 16px 60px !important;
+  }
+  .vz-cat-steps-row {
+    flex-direction: column !important;
+    gap: 28px !important;
+  }
+  .vz-cat-step-arrow {
+    display: none !important;
+  }
+
+  /* ── 6. Brand Identity Section (#brand-identity) ── */
+  #brand-identity {
+    padding: 56px 16px 64px !important;
+  }
+  .vz-brand-main-grid {
+    grid-template-columns: 1fr !important;
+    gap: 36px !important;
+  }
+  .vz-brand-photo-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+  }
+
+  /* ── 7. AI Model Lineup (#ai-model-lineup) ── */
+  #ai-model-lineup {
+    padding: 24px 16px 0 !important;
+  }
+  .vz-lineup-card {
+    grid-template-columns: 1fr !important;
+    min-height: auto !important;
+    border-radius: 20px !important;
+  }
+  .vz-lineup-img-wrap {
+    height: auto !important;
+    max-height: 280px !important;
+    justify-content: center !important;
+    padding: 20px 16px 0 !important;
+  }
+  .vz-lineup-copy {
+    padding: 24px 18px 32px !important;
+  }
+
+  /* ── 8. Virtual Try-On Section (#virtual-try-on) ── */
+  #virtual-try-on {
+    padding: 16px 16px 48px !important;
+  }
+  .vz-tryon-card {
+    grid-template-columns: 1fr !important;
+    padding: 32px 18px !important;
+    gap: 28px !important;
+    border-radius: 20px !important;
+  }
+  .vz-tryon-mirror {
+    height: 300px !important;
+  }
+
+  /* ── 9. Catalogue Showcase Grid (#catalogue-showcase) ── */
+  #catalogue-showcase {
+    padding: 56px 16px 64px !important;
+  }
+  .vz-showcase-grid {
+    grid-template-columns: 1fr !important;
+    gap: 18px !important;
+  }
+  .vz-showcase-stats-banner {
+    grid-template-columns: 1fr !important;
+    padding: 28px 18px !important;
+    gap: 24px !important;
+    margin-top: 36px !important;
+    border-radius: 18px !important;
+  }
+  .vz-showcase-stats-row {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 8px !important;
+    width: 100% !important;
+  }
+
+  /* ── 10. Results Showcase Gallery (#results-gallery) ── */
+  #results-gallery {
+    padding: 56px 16px 64px !important;
+  }
+  .vz-masonry-gallery {
+    columns: 2 !important;
+    column-gap: 10px !important;
+  }
+
+  /* ── 11. Blog Insights Section (#blog-insights) ── */
+  #blog-insights {
+    padding: 56px 16px 64px !important;
+  }
+  .vz-blog-grid {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
+
+  /* ── 12. Turn Browsers into Buyers (#brand-partners) ── */
+  #brand-partners {
+    padding: 48px 0 !important;
+  }
+  .vz-partners-grid {
+    grid-template-columns: 1fr !important;
+    gap: 36px !important;
+    padding: 0 16px !important;
+  }
+  .vz-partners-features {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  /* ── 13. Lead Capture / Contact Section (#contact) ── */
+  #contact {
+    padding: 0 12px 60px !important;
+  }
+  .vz-contact-grid {
+    grid-template-columns: 1fr !important;
+    padding: 32px 16px !important;
+    gap: 28px !important;
+  }
+  .vz-contact-form-card {
+    padding: 24px 16px !important;
+    border-radius: 18px !important;
+    max-width: 100% !important;
+  }
+
+  /* ── 14. Footer ── */
+  .vz-footer-grid {
+    grid-template-columns: 1fr !important;
+    gap: 32px !important;
+    padding: 48px 20px 32px !important;
+  }
+  .vz-footer-bottom {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 14px !important;
+    padding: 20px !important;
+  }
+
+  /* ── 15. FAQ Section (#faq) ── */
+  #faq {
+    padding: 56px 16px 64px !important;
+  }
+
+  /* ── 16. Virtual Try-On Page Specifics ── */
+  .vz-vto-showcase {
+    grid-template-columns: 1fr !important;
+    gap: 36px !important;
+  }
+  .vz-vto-steps-grid {
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
+  }
+  .vz-vto-step-arrow {
+    display: none !important;
+  }
+  .vz-vto-omnichannel {
+    grid-template-columns: 1fr !important;
+    gap: 36px !important;
+  }
+  .vz-vto-stats-pill {
+    position: static !important;
+    transform: none !important;
+    margin: 16px auto 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    justify-content: center !important;
+    flex-wrap: wrap !important;
+    gap: 14px !important;
+    padding: 8px 14px !important;
+  }
+  .vz-vto-demographics {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+  }
+
+  /* ── 17. Floating WhatsApp Button ── */
+  .vz-whatsapp-float {
+    bottom: 18px !important;
+    right: 16px !important;
+    padding: 10px 16px !important;
+    font-size: 12.5px !important;
+    box-shadow: 0 4px 16px rgba(37, 211, 102, 0.4) !important;
+  }
+
+  /* ── 18. Touch Target Sizing (Min 44x44px for easy thumb tapping) ── */
+  button,
+  a[role="button"],
+  input,
+  select {
+    min-height: 44px;
+  }
+}
+
+/* ─── Compact Smartphones (360px – 414px) ───────────────────────────────── */
+@media (max-width: 480px) {
+  /* Headline scaling for compact widths */
+  h1 {
+    font-size: clamp(1.4rem, 6.5vw, 1.85rem) !important;
+    line-height: 1.2 !important;
+  }
+  h2 {
+    font-size: clamp(1.35rem, 5.8vw, 1.75rem) !important;
+    line-height: 1.25 !important;
+  }
+  p {
+    font-size: 0.88rem !important;
+    line-height: 1.65 !important;
+  }
+
+  /* Marquee cards in Catalogue Platform */
+  #catalogue-platform div[style*="minWidth: '300px'"],
+  #catalogue-platform div[style*="min-width: 300px"] {
+    min-width: 220px !important;
+    width: 220px !important;
+    height: 350px !important;
+  }
+
+  /* 6-Photo editorial grid: comfortable spacing on compact screens */
+  .vz-brand-photo-grid {
+    gap: 8px !important;
+  }
+
+  /* Results gallery masonry gap */
+  .vz-masonry-gallery {
+    column-gap: 8px !important;
+  }
+
+  /* Stats row in showcase */
+  .vz-showcase-stats-row {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  /* Demographics grid */
+  .vz-vto-demographics {
+    grid-template-columns: 1fr !important;
+    max-width: 280px !important;
+    margin: 0 auto 36px !important;
+  }
+}
+

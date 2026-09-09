@@ -100,6 +100,7 @@ function AppLayout() {
         target="_blank"
         rel="noopener noreferrer"
         title="Chat with us on WhatsApp"
+        className="vz-whatsapp-float"
         style={{
           position: "fixed",
           bottom: "28px",

@@ -451,18 +451,20 @@ function ProgressLines({ current, total, progress, onSelect }) {
 
 // ─── Navbar ───────────────────────────────────────────────────────────────────
 function VizzleNavbar() {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const NAV_LINKS = [
+    { label: 'Catalogue Showcase', to: '/catalogue-showcase' },
+    { label: 'Virtual Try-On',     to: '/virtual-try-on'     },
+    { label: 'Pricing',            to: '/pricing'            },
+    { label: 'Blogs',              to: '/#blogs'             },
+    { label: 'Contact',            to: '/contact'            },
+  ];
+
   return (
-    <nav style={{
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      padding: '0 48px',
-      height: '64px',
-      background: '#fff',
-      borderBottom: '1px solid #f1f5f9',
-      fontFamily: "'Plus Jakarta Sans', Inter, sans-serif",
-    }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+    <nav className="vz-nav">
+      {/* Logo + wordmark */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0 }}>
         <img
           src="/logo.png"
           alt="Vizzle"
@@ -470,30 +472,22 @@ function VizzleNavbar() {
           onError={(e) => { e.target.style.display = 'none'; }}
         />
         <div>
-          <div style={{ fontSize: '17px', fontWeight: 900, color: '#0f172a', letterSpacing: '-0.02em', lineHeight: 1.2 }}>
-            Vizzle
-          </div>
-          <div style={{ fontSize: '9.5px', fontWeight: 600, color: '#94a3b8', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-            Visualize Your Style
-          </div>
+          <div style={{ fontSize: '17px', fontWeight: 900, color: '#0f172a', letterSpacing: '-0.02em', lineHeight: 1.2 }}>Vizzle</div>
+          <div style={{ fontSize: '9.5px', fontWeight: 600, color: '#94a3b8', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Visualize Your Style</div>
         </div>
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: '28px' }}>
-        {[
-          { label: 'Catalogue Showcase', to: '/catalogue-showcase' },
-          { label: 'Virtual Try-On',     to: '/#virtual-tryon'     },
-          { label: 'Pricing',            to: '/pricing'            },
-          { label: 'Blogs',              to: '/#blogs'             },
-          { label: 'Contact',            to: '/contact'            },
-        ].map((l) => (
+      {/* Desktop nav links */}
+      <div className="vz-nav-links">
+        {NAV_LINKS.map((l) => (
           <Link key={l.label} to={l.to} style={{ fontSize: '13.5px', fontWeight: 500, color: '#475569', textDecoration: 'none', whiteSpace: 'nowrap' }}>
             {l.label}
           </Link>
         ))}
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+      {/* Desktop CTA + Sign In */}
+      <div className="vz-nav-cta">
         <a href="#" style={{ fontSize: '13px', fontWeight: 600, color: '#334155', textDecoration: 'none', whiteSpace: 'nowrap' }}>
           Try Free Catalogue Creation Now
         </a>
@@ -501,15 +495,43 @@ function VizzleNavbar() {
           href="https://dashboard.vizzle.in"
           target="_blank"
           rel="noopener noreferrer"
-          style={{
-            padding: '9px 20px', borderRadius: '999px',
-            background: '#0f172a', color: '#fff',
-            fontSize: '13px', fontWeight: 600, textDecoration: 'none', whiteSpace: 'nowrap',
-          }}
+          style={{ padding: '9px 20px', borderRadius: '999px', background: '#0f172a', color: '#fff', fontSize: '13px', fontWeight: 600, textDecoration: 'none', whiteSpace: 'nowrap' }}
         >
           Sign In
         </a>
       </div>
+
+      {/* Hamburger — mobile only */}
+      <button
+        className="vz-hamburger"
+        onClick={() => setMenuOpen(!menuOpen)}
+        aria-label="Toggle menu"
+        style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '8px', display: 'none' }}
+      >
+        <div style={{ width: 22, height: 2, background: '#0f172a', marginBottom: 5, transition: 'transform 0.2s', transform: menuOpen ? 'rotate(45deg) translate(5px,5px)' : 'none' }} />
+        <div style={{ width: 22, height: 2, background: '#0f172a', marginBottom: 5, opacity: menuOpen ? 0 : 1, transition: 'opacity 0.2s' }} />
+        <div style={{ width: 22, height: 2, background: '#0f172a', transition: 'transform 0.2s', transform: menuOpen ? 'rotate(-45deg) translate(5px,-5px)' : 'none' }} />
+      </button>
+
+      {/* Mobile dropdown */}
+      {menuOpen && (
+        <div className="vz-mobile-menu">
+          {NAV_LINKS.map((l) => (
+            <Link
+              key={l.label}
+              to={l.to}
+              onClick={() => setMenuOpen(false)}
+              style={{ display: 'block', padding: '12px 24px', fontSize: '15px', fontWeight: 600, color: '#0f172a', textDecoration: 'none', borderBottom: '1px solid #f1f5f9' }}
+            >
+              {l.label}
+            </Link>
+          ))}
+          <div style={{ padding: '16px 24px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <a href="#" style={{ fontSize: '14px', fontWeight: 600, color: '#334155', textDecoration: 'none' }}>Try Free Catalogue Creation Now</a>
+            <a href="https://dashboard.vizzle.in" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-block', padding: '10px 20px', borderRadius: '999px', background: '#0f172a', color: '#fff', fontSize: '14px', fontWeight: 600, textDecoration: 'none', textAlign: 'center' }}>Sign In</a>
+          </div>
+        </div>
+      )}
     </nav>
   );
 }
@@ -567,6 +589,118 @@ function VizzleHeroSection({ setIsFormOpen }) {
         #vz-hero * { box-sizing: border-box; }
         #vz-hero button { background: none; border: none; padding: 0; cursor: pointer; }
         #vz-hero a:hover { opacity: 0.78; }
+
+        /* ── Navbar responsive ── */
+        .vz-nav {
+          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 0 48px;
+          height: 64px;
+          background: #fff;
+          border-bottom: 1px solid #f1f5f9;
+          font-family: 'Plus Jakarta Sans', Inter, sans-serif;
+          flex-wrap: wrap;
+          z-index: 1000;
+        }
+        .vz-nav-links {
+          display: flex;
+          align-items: center;
+          gap: 28px;
+        }
+        .vz-nav-cta {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+        }
+        .vz-mobile-menu {
+          display: none;
+        }
+
+        /* ── Hero responsive ── */
+        .vz-hero-grid {
+          margin: 10px 12px 0;
+          border-radius: 24px;
+          overflow: hidden;
+          display: grid;
+          grid-template-columns: 5fr 7fr;
+          grid-template-rows: 620px;
+          height: 620px;
+          font-family: 'Plus Jakarta Sans', Inter, sans-serif;
+        }
+        .vz-hero-left {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          padding: 40px 40px 44px 52px;
+          position: relative;
+          z-index: 10;
+          height: 620px;
+          overflow: hidden;
+        }
+        .vz-hero-right {
+          position: relative;
+          overflow: hidden;
+          height: 620px;
+        }
+
+        @media (max-width: 768px) {
+          /* Nav */
+          .vz-nav {
+            padding: 0 20px;
+            height: auto;
+            min-height: 60px;
+            align-items: center;
+          }
+          .vz-nav-links { display: none; }
+          .vz-nav-cta   { display: none; }
+          .vz-hamburger { display: flex !important; flex-direction: column; justify-content: center; }
+          .vz-mobile-menu {
+            display: block;
+            position: absolute;
+            top: 60px;
+            left: 0;
+            right: 0;
+            background: #fff;
+            border-bottom: 1px solid #f1f5f9;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+            z-index: 999;
+          }
+
+          /* Hero stacks vertically */
+          .vz-hero-grid {
+            grid-template-columns: 1fr !important;
+            grid-template-rows: auto auto !important;
+            height: auto !important;
+            margin: 8px 8px 0;
+            border-radius: 16px;
+          }
+          .vz-hero-left {
+            height: auto !important;
+            padding: 32px 24px 28px;
+            overflow: visible;
+          }
+          .vz-hero-right {
+            height: 300px !important;
+          }
+
+          /* Text wrapping */
+          .vz-hero-left h1 {
+            font-size: clamp(1.5rem, 6vw, 2rem) !important;
+            word-break: break-word;
+            overflow-wrap: break-word;
+          }
+          .vz-hero-left p {
+            max-width: 100% !important;
+            font-size: 0.9rem !important;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .vz-hero-right { height: 240px !important; }
+          .vz-hero-left h1 { font-size: clamp(1.35rem, 7vw, 1.7rem) !important; }
+        }
       `}</style>
 
       <VizzleNavbar />
@@ -583,32 +717,16 @@ function VizzleHeroSection({ setIsFormOpen }) {
       */}
       <div
         id="vz-hero"
+        className="vz-hero-grid"
         style={{
-          margin: '10px 12px 0',
-          borderRadius: '24px',
-          overflow: 'hidden',
-          display: 'grid',
-          gridTemplateColumns: '5fr 7fr',
-          gridTemplateRows: '620px',
-          height: '620px',
           background: slide.heroBg,
           transition: 'background 0.75s ease',
-          fontFamily: "'Plus Jakarta Sans', Inter, sans-serif",
         }}
       >
         {/* ══════════════════════════════════════════════════════
             LEFT — static, never moves
         ══════════════════════════════════════════════════════ */}
-        <div style={{
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          padding: '40px 40px 44px 52px',
-          position: 'relative',
-          zIndex: 10,
-          height: '620px',
-          overflow: 'hidden',
-        }}>
+        <div className="vz-hero-left">
           {/* Badge */}
           <div style={{
             display: 'inline-flex',
@@ -702,7 +820,7 @@ function VizzleHeroSection({ setIsFormOpen }) {
         {/* ══════════════════════════════════════════════════════
             RIGHT — AnimatePresence, x-slide
         ══════════════════════════════════════════════════════ */}
-        <div style={{ position: 'relative', overflow: 'hidden', height: '620px' }}>
+        <div className="vz-hero-right">
           <AnimatePresence mode="wait" custom={direction}>
             <motion.div
               key={`showcase-${current}`}

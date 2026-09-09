@@ -33,6 +33,7 @@ export default function Footer() {
       }}
     >
       <div
+        className="vz-footer-grid"
         style={{
           maxWidth: '1280px',
           margin: '0 auto',
@@ -212,6 +213,7 @@ export default function Footer() {
 
       {/* ── Bottom bar ───────────────────────────────────────────────────── */}
       <div
+        className="vz-footer-bottom"
         style={{
           maxWidth: '1280px',
           margin: '0 auto',

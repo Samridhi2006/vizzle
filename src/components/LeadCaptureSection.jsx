@@ -114,6 +114,7 @@ export default function LeadCaptureSection() {
 
         {/* ── Two-column grid ───────────────────────────────── */}
         <div
+          className="vz-contact-grid"
           style={{
             position: 'relative',
             zIndex: 10,
@@ -206,6 +207,7 @@ export default function LeadCaptureSection() {
             style={{ display: 'flex', justifyContent: 'flex-end' }}
           >
             <div
+              className="vz-contact-form-card"
               style={{
                 background: 'rgba(255,255,255,0.97)',
                 backdropFilter: 'blur(16px)',
