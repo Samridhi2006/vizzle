@@ -1,5 +1,200 @@
+import { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowRight, Sparkles, Upload, Loader2, RefreshCw } from 'lucide-react';
+
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'https://dashboard.vizzle.in';
+
+const GARMENT_TYPES = [
+  'Saree', 'Kurti', 'Lehenga', 'Anarkali', 'Salwar Kameez',
+  'Shirt', 'T-shirt', 'Coat', 'Jacket', 'Dress', 'Jumpsuit',
+  'Jeans', 'Trousers', 'Skirt',
+];
+
+async function uploadDemoPhoto(file) {
+  const form = new FormData();
+  form.append('photo', file);
+  const res = await fetch(`${API_BASE}/api/v1/demo/upload`, { method: 'POST', body: form });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data?.error || 'Upload failed');
+  return data.url;
+}
+
+function SlotUploader({ label, previewUrl, busy, onPick }) {
+  const inputRef = useRef(null);
+  return (
+    <div style={{ flex: 1, minWidth: 0 }}>
+      <div style={{ fontSize: '12px', fontWeight: 700, color: '#0F172A', marginBottom: '8px' }}>
+        {label}
+      </div>
+      <div
+        onClick={() => inputRef.current?.click()}
+        style={{
+          height: '180px',
+          borderRadius: '14px',
+          border: previewUrl ? '1px solid rgba(226,232,240,0.9)' : '2px dashed rgba(8,145,178,0.35)',
+          background: previewUrl ? '#0F172A' : '#F3FBFC',
+          cursor: 'pointer',
+          overflow: 'hidden',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          position: 'relative',
+        }}
+      >
+        {previewUrl ? (
+          <img src={previewUrl} alt={label} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', color: '#0891B2' }}>
+            {busy ? <Loader2 size={20} className="animate-spin" /> : <Upload size={20} />}
+            <span style={{ fontSize: '12px', fontWeight: 600 }}>{busy ? 'Uploading…' : 'Click to upload'}</span>
+          </div>
+        )}
+      </div>
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+        style={{ display: 'none' }}
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (file) onPick(file);
+          e.target.value = '';
+        }}
+      />
+    </div>
+  );
+}
+
+function TryOnDemo() {
+  const [personUrl, setPersonUrl] = useState(null);
+  const [garmentUrl, setGarmentUrl] = useState(null);
+  const [garmentType, setGarmentType] = useState(GARMENT_TYPES[0]);
+  const [uploadingSlot, setUploadingSlot] = useState(null);
+  const [generating, setGenerating] = useState(false);
+  const [resultUrl, setResultUrl] = useState(null);
+  const [error, setError] = useState(null);
+
+  async function handlePick(slot, file) {
+    setError(null);
+    setUploadingSlot(slot);
+    try {
+      const url = await uploadDemoPhoto(file);
+      if (slot === 'person') setPersonUrl(url);
+      else setGarmentUrl(url);
+    } catch (err) {
+      setError(err.message || 'Upload failed. Please try a different photo.');
+    } finally {
+      setUploadingSlot(null);
+    }
+  }
+
+  async function handleGenerate() {
+    if (!personUrl || !garmentUrl) return;
+    setError(null);
+    setGenerating(true);
+    setResultUrl(null);
+    try {
+      const res = await fetch(`${API_BASE}/api/v1/demo/composite-tryon`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ human_img: personUrl, garm_img: garmentUrl, garment_type: garmentType }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.error || 'Try-on generation failed');
+      setResultUrl(data.output_url);
+    } catch (err) {
+      setError(err.message || 'Something went wrong. Please try again.');
+    } finally {
+      setGenerating(false);
+    }
+  }
+
+  const canGenerate = personUrl && garmentUrl && !generating && !uploadingSlot;
+
+  return (
+    <div
+      style={{
+        background: '#FAF9F6',
+        border: '1px solid rgba(226,232,240,0.8)',
+        borderRadius: '20px',
+        padding: '24px',
+      }}
+    >
+      {resultUrl ? (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+          <div style={{
+            borderRadius: '14px', overflow: 'hidden', height: '340px',
+            background: '#0F172A', display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>
+            <img src={resultUrl} alt="Your virtual try-on result" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          </div>
+          <button
+            onClick={() => { setResultUrl(null); }}
+            style={{
+              display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+              background: '#fff', border: '1px solid rgba(8,145,178,0.35)', color: '#0891B2',
+              fontWeight: 700, fontSize: '13.5px', padding: '11px 20px', borderRadius: '999px', cursor: 'pointer',
+            }}
+          >
+            <RefreshCw size={14} /> Try another combination
+          </button>
+        </div>
+      ) : (
+        <>
+          <div style={{ display: 'flex', gap: '14px', marginBottom: '16px' }}>
+            <SlotUploader
+              label="1. Your Photo"
+              previewUrl={personUrl}
+              busy={uploadingSlot === 'person'}
+              onPick={(file) => handlePick('person', file)}
+            />
+            <SlotUploader
+              label="2. Garment Photo"
+              previewUrl={garmentUrl}
+              busy={uploadingSlot === 'garment'}
+              onPick={(file) => handlePick('garment', file)}
+            />
+          </div>
+
+          <label style={{ fontSize: '12px', fontWeight: 700, color: '#0F172A', display: 'block', marginBottom: '6px' }}>
+            Garment Type
+          </label>
+          <select
+            value={garmentType}
+            onChange={(e) => setGarmentType(e.target.value)}
+            style={{
+              width: '100%', padding: '10px 12px', borderRadius: '8px',
+              border: '1px solid rgba(226,232,240,0.9)', fontSize: '13.5px',
+              fontWeight: 600, color: '#0F172A', marginBottom: '16px', background: '#fff',
+            }}
+          >
+            {GARMENT_TYPES.map((g) => <option key={g} value={g}>{g}</option>)}
+          </select>
+
+          <button
+            onClick={handleGenerate}
+            disabled={!canGenerate}
+            style={{
+              width: '100%',
+              display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+              background: canGenerate ? 'linear-gradient(135deg, #0891B2 0%, #0D9488 100%)' : '#CBD5E1',
+              color: '#fff', fontWeight: 700, fontSize: '14.5px', padding: '14px', borderRadius: '999px',
+              border: 'none', cursor: canGenerate ? 'pointer' : 'not-allowed',
+            }}
+          >
+            {generating ? <><Loader2 size={16} className="animate-spin" /> Generating…</> : <>Generate My Try-On <ArrowRight size={15} /></>}
+          </button>
+
+          {error && (
+            <div style={{ marginTop: '12px', fontSize: '12.5px', color: '#DC2626', fontWeight: 600 }}>
+              {error}
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
+}
 
 export default function VirtualTryOnSection() {
   return (
@@ -122,7 +317,7 @@ export default function VirtualTryOnSection() {
           </motion.a>
         </motion.div>
 
-        {/* ── RIGHT: Smart Mirror Visual ────────────────────────────────────── */}
+        {/* ── RIGHT: Live Try-On Demo ────────────────────────────────────── */}
         <motion.div
           initial={{ opacity: 0, y: 25 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -139,46 +334,7 @@ export default function VirtualTryOnSection() {
             overflow: 'hidden',
           }}
         >
-          <img
-            src="/virtual_tryon_smart_mirror.jpg"
-            alt="Smart AR mirror virtual try-on — woman in cocktail dress sees bridal lehenga reflection"
-            style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-              objectPosition: 'center',
-              display: 'block',
-              borderRadius: '16px',
-            }}
-          />
-
-          {/* Floating glassmorphism chip */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.4, delay: 0.5 }}
-            style={{
-              position: 'absolute',
-              bottom: '20px',
-              left: '16px',
-              background: 'rgba(255,255,255,0.92)',
-              backdropFilter: 'blur(12px)',
-              border: '1px solid rgba(226,232,240,0.7)',
-              borderRadius: '12px',
-              padding: '8px 14px',
-              fontSize: '12px',
-              fontWeight: 700,
-              color: '#0F172A',
-              boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-            }}
-          >
-            <span style={{ fontSize: '14px' }}>✨</span>
-            94% Return Reduction
-          </motion.div>
+          <TryOnDemo />
         </motion.div>
 
       </div>
