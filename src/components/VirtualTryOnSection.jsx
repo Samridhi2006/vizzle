@@ -3,6 +3,11 @@ import { motion } from 'framer-motion';
 import { ArrowRight, Sparkles, Upload, Loader2, RefreshCw } from 'lucide-react';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'https://dashboard.vizzle.in';
+// Same store API key any real merchant widget uses — issued from
+// Dashboard → Stores. Required by /api/v1/upload and /api/v1/tryon (see
+// openapi.json); the store's registered domain must also include this
+// site's origin, or the widget's CORS check rejects the request.
+const WIDGET_API_KEY = import.meta.env.VITE_WIDGET_API_KEY;
 
 const GARMENT_TYPES = [
   'Saree', 'Kurti', 'Lehenga', 'Anarkali', 'Salwar Kameez',
@@ -10,13 +15,63 @@ const GARMENT_TYPES = [
   'Jeans', 'Trousers', 'Skirt',
 ];
 
-async function uploadDemoPhoto(file) {
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+// Widget step 1 (POST /api/v1/upload) — same endpoint real merchant widgets
+// use to host the shopper's photo before starting a try-on job.
+async function uploadPhoto(file) {
   const form = new FormData();
   form.append('photo', file);
-  const res = await fetch(`${API_BASE}/api/v1/demo/upload`, { method: 'POST', body: form });
+  const res = await fetch(`${API_BASE}/api/v1/upload`, {
+    method: 'POST',
+    headers: { 'x-api-key': WIDGET_API_KEY },
+    body: form,
+  });
   const data = await res.json();
   if (!res.ok) throw new Error(data?.error || 'Upload failed');
   return data.url;
+}
+
+// Widget steps 2-3: POST /api/v1/tryon (garment passed as a direct image URL —
+// openapi.json documents product_id as accepting either a registered SKU or a
+// raw https:// garment URL, auto-detected) then poll
+// GET /api/v1/tryon/status/{id} — the exact flow documented at /docs/api and
+// used by every real merchant widget. Real ML model (IDM-VTON), no fallback.
+async function generateTryOn({ personUrl, garmentUrl, garmentType }) {
+  const startRes = await fetch(`${API_BASE}/api/v1/tryon`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-api-key': WIDGET_API_KEY },
+    body: JSON.stringify({
+      product_id: garmentUrl,
+      user_photo_url: personUrl,
+      garment_type: garmentType,
+      use_vision: true,
+    }),
+  });
+  const startData = await startRes.json();
+  if (!startRes.ok) throw new Error(startData?.error || 'Try-on generation failed');
+
+  const predictionId = startData.prediction_id;
+  const deadline = Date.now() + 120_000; // Render cold starts can take up to ~90s
+
+  while (Date.now() < deadline) {
+    const statusRes = await fetch(`${API_BASE}/api/v1/tryon/status/${predictionId}`, {
+      headers: { 'x-api-key': WIDGET_API_KEY },
+    });
+    const statusData = await statusRes.json();
+    if (!statusRes.ok) throw new Error(statusData?.error || 'Try-on generation failed');
+
+    if (statusData.status === 'succeeded' && statusData.output_url) {
+      return statusData.output_url;
+    }
+    if (statusData.status === 'failed' || statusData.status === 'canceled') {
+      throw new Error(statusData.error || 'Try-on generation failed');
+    }
+    await sleep(2500);
+  }
+  throw new Error('Try-on is taking longer than expected. Please try again.');
 }
 
 function SlotUploader({ label, previewUrl, busy, onPick }) {
@@ -71,6 +126,7 @@ function TryOnDemo() {
   const [garmentType, setGarmentType] = useState(GARMENT_TYPES[0]);
   const [uploadingSlot, setUploadingSlot] = useState(null);
   const [generating, setGenerating] = useState(false);
+  const [slowHint, setSlowHint] = useState(false);
   const [resultUrl, setResultUrl] = useState(null);
   const [error, setError] = useState(null);
 
@@ -78,7 +134,7 @@ function TryOnDemo() {
     setError(null);
     setUploadingSlot(slot);
     try {
-      const url = await uploadDemoPhoto(file);
+      const url = await uploadPhoto(file);
       if (slot === 'person') setPersonUrl(url);
       else setGarmentUrl(url);
     } catch (err) {
@@ -92,20 +148,20 @@ function TryOnDemo() {
     if (!personUrl || !garmentUrl) return;
     setError(null);
     setGenerating(true);
+    setSlowHint(false);
     setResultUrl(null);
+    // The real AI model can cold-start for up to ~60-90s if it's been idle —
+    // surface a reassuring hint after a bit so the wait doesn't read as broken.
+    const hintTimer = setTimeout(() => setSlowHint(true), 12_000);
     try {
-      const res = await fetch(`${API_BASE}/api/v1/demo/composite-tryon`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ human_img: personUrl, garm_img: garmentUrl, garment_type: garmentType }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data?.error || 'Try-on generation failed');
-      setResultUrl(data.output_url);
+      const outputUrl = await generateTryOn({ personUrl, garmentUrl, garmentType });
+      setResultUrl(outputUrl);
     } catch (err) {
       setError(err.message || 'Something went wrong. Please try again.');
     } finally {
+      clearTimeout(hintTimer);
       setGenerating(false);
+      setSlowHint(false);
     }
   }
 
@@ -184,6 +240,12 @@ function TryOnDemo() {
           >
             {generating ? <><Loader2 size={16} className="animate-spin" /> Generating…</> : <>Generate My Try-On <ArrowRight size={15} /></>}
           </button>
+
+          {generating && slowHint && (
+            <div style={{ marginTop: '12px', fontSize: '12.5px', color: '#64748B', fontWeight: 600 }}>
+              Warming up the AI model — this can take up to a minute.
+            </div>
+          )}
 
           {error && (
             <div style={{ marginTop: '12px', fontSize: '12.5px', color: '#DC2626', fontWeight: 600 }}>
