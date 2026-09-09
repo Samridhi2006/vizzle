@@ -15,6 +15,26 @@ const GARMENT_TYPES = [
   'Jeans', 'Trousers', 'Skirt',
 ];
 
+// The ML backend's garment_type is a strict lowercase enum (confirmed live:
+// sending "Shirt" instead of "shirt" gets rejected with a 422) — map the
+// Title Case labels shown in the dropdown to the exact values it accepts.
+const GARMENT_TYPE_TO_API_VALUE = {
+  'Saree': 'saree',
+  'Kurti': 'kurti',
+  'Lehenga': 'lehenga',
+  'Anarkali': 'anarkali',
+  'Salwar Kameez': 'salwar_kameez',
+  'Shirt': 'shirt',
+  'T-shirt': 't-shirt',
+  'Coat': 'coat',
+  'Jacket': 'jacket',
+  'Dress': 'dress',
+  'Jumpsuit': 'jumpsuit',
+  'Jeans': 'jeans',
+  'Trousers': 'trousers',
+  'Skirt': 'skirt',
+};
+
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -46,7 +66,7 @@ async function generateTryOn({ personUrl, garmentUrl, garmentType }) {
     body: JSON.stringify({
       product_id: garmentUrl,
       user_photo_url: personUrl,
-      garment_type: garmentType,
+      garment_type: GARMENT_TYPE_TO_API_VALUE[garmentType] ?? 'auto_detect',
       use_vision: true,
     }),
   });
@@ -54,7 +74,10 @@ async function generateTryOn({ personUrl, garmentUrl, garmentType }) {
   if (!startRes.ok) throw new Error(startData?.error || 'Try-on generation failed');
 
   const predictionId = startData.prediction_id;
-  const deadline = Date.now() + 120_000; // Render cold starts can take up to ~90s
+  // Measured live: a cold Render start alone took 105s end-to-end (17
+  // "starting" polls before it even reached "processing"). 120s cut that too
+  // close, so the deadline needs real margin above the observed worst case.
+  const deadline = Date.now() + 180_000;
 
   while (Date.now() < deadline) {
     const statusRes = await fetch(`${API_BASE}/api/v1/tryon/status/${predictionId}`, {
