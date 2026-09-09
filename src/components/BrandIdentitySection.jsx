@@ -82,15 +82,18 @@ export default function BrandIdentitySection() {
         pointerEvents: 'none',
       }} />
 
-      <div style={{
-        maxWidth: '1200px',
-        margin: '0 auto',
-        display: 'grid',
-        gridTemplateColumns: '5fr 7fr',
-        gap: '64px',
-        alignItems: 'center',
-        position: 'relative',
-      }}>
+      <div
+        className="vz-brand-main-grid"
+        style={{
+          maxWidth: '1200px',
+          margin: '0 auto',
+          display: 'grid',
+          gridTemplateColumns: '5fr 7fr',
+          gap: '64px',
+          alignItems: 'center',
+          position: 'relative',
+        }}
+      >
 
         {/* ── LEFT: Text & CTA ─────────────────────────────────────────────── */}
         <motion.div
@@ -174,11 +177,14 @@ export default function BrandIdentitySection() {
         </motion.div>
 
         {/* ── RIGHT: 6-photo editorial grid ────────────────────────────────── */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(3, 1fr)',
-          gap: '14px',
-        }}>
+        <div
+          className="vz-brand-photo-grid"
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(3, 1fr)',
+            gap: '14px',
+          }}
+        >
           {PHOTOS.map((photo, i) => (
             <PhotoCard key={i} photo={photo} index={i} />
           ))}

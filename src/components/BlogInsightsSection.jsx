@@ -211,11 +211,14 @@ export default function BlogInsightsSection() {
         </motion.div>
 
         {/* ── 3-Card Blog Grid ─────────────────────────────── */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(3, 1fr)',
-          gap: '28px',
-        }}>
+        <div
+          className="vz-blog-grid"
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(3, 1fr)',
+            gap: '28px',
+          }}
+        >
           {BLOGS.map((blog, i) => (
             <BlogCard key={blog.id} blog={blog} index={i} />
           ))}

@@ -191,6 +191,7 @@ function StatsBanner() {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.55 }}
+      className="vz-showcase-stats-banner"
       style={{
         marginTop: '56px',
         background: 'linear-gradient(135deg, #0F172A 0%, #1E293B 100%)',
@@ -219,11 +220,14 @@ function StatsBanner() {
       </div>
 
       {/* Right: 3 stats */}
-      <div style={{
-        display: 'flex',
-        gap: '48px',
-        flexShrink: 0,
-      }}>
+      <div
+        className="vz-showcase-stats-row"
+        style={{
+          display: 'flex',
+          gap: '48px',
+          flexShrink: 0,
+        }}
+      >
         {STATS.map((stat, i) => (
           <div key={i} style={{ textAlign: 'center' }}>
             <div style={{ fontSize: '22px', marginBottom: '2px' }}>{stat.emoji}</div>
@@ -301,11 +305,14 @@ export default function CatalogueShowcaseGrid() {
         </motion.div>
 
         {/* ── 6-Card Grid ──────────────────────────────────────────── */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(3, 1fr)',
-          gap: '24px',
-        }}>
+        <div
+          className="vz-showcase-grid"
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(3, 1fr)',
+            gap: '24px',
+          }}
+        >
           {CARDS.map((card, i) => (
             <ShowcaseCard key={card.id} card={card} index={i} />
           ))}

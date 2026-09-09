@@ -302,14 +302,17 @@ export default function Steps() {
         {/* ── 4-Card Grid with Connectors ───────────────────────────────────── */}
         <div style={{ position: 'relative' }}>
           {/* Connector arrows (desktop only) */}
-          <div style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            display: 'flex',
-            pointerEvents: 'none',
-          }}>
+          <div
+            className="vz-steps-arrows"
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              display: 'flex',
+              pointerEvents: 'none',
+            }}
+          >
             {/* We position connectors between each card pair */}
             {[0, 1, 2].map((i) => (
               <div
@@ -325,11 +328,14 @@ export default function Steps() {
             ))}
           </div>
 
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(4, 1fr)',
-            gap: '20px',
-          }}>
+          <div
+            className="vz-steps-grid"
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(4, 1fr)',
+              gap: '20px',
+            }}
+          >
             {STEPS.map((step, i) => (
               <StepCard key={step.id} step={step} index={i} />
             ))}

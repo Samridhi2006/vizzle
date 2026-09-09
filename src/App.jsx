@@ -10,6 +10,7 @@ import ApiRefPage from "./docs/ApiRefPage";
 import Contact from "./components/Contact";
 import Pricing from "./components/Pricing";
 import CatalogueShowcasePage from "./pages/CatalogueShowcasePage"; 
+import VirtualTryOnPage from "./pages/VirtualTryOnPage";
 
 function App() {
   return (
@@ -44,6 +45,9 @@ function App() {
 
         {/* Pricing Page */}
         <Route path="/pricing" element={<Pricing />} />
+
+        {/* Virtual Try-On */}
+        <Route path="/virtual-try-on" element={<VirtualTryOnPage />} />
       </Routes>
     </BrowserRouter>
   );
