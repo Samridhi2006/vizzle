@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { TrendingUp, ShoppingBag, Shirt, Users, CheckCircle, ArrowRight } from 'lucide-react';
+import { useModal, FIELD_PRESETS } from '../context/ModalContext';
 
 // ─── Feature pillars ──────────────────────────────────────────────────────────
 const FEATURES = [
@@ -17,6 +18,7 @@ const floatAnim = { y: [0, -8, 0] };
 const floatTrans = { duration: 3.5, repeat: Infinity, ease: 'easeInOut' };
 
 export default function TurnBrowsersSection() {
+  const { openModal } = useModal();
   return (
     <section
       id="brand-partners"
@@ -205,6 +207,7 @@ export default function TurnBrowsersSection() {
 
           {/* CTA button */}
           <motion.button
+            onClick={() => openModal('Request Brand Access', FIELD_PRESETS.all)}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.96 }}
             style={{

@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { ArrowLeft, ChevronDown, ChevronUp, Sparkles } from "lucide-react";
 import LeadCaptureSection from "../components/LeadCaptureSection";
 import Footer from "../components/Footer";
+import { useModal, FIELD_PRESETS } from "../context/ModalContext";
 
 const FAQS = [
   { id: 1, q: "How accurate is Vizzle's virtual try-on draping?", a: "Vizzle uses a proprietary diffusion-based AI model trained on millions of garment-body pairs. It preserves texture, pattern alignment, and realistic draping folds at up to 8K resolution — indistinguishable from professional studio photography." },
@@ -34,6 +35,7 @@ function FAQItem({ faq, isOpen, onToggle }) {
 }
 
 export default function VirtualTryOnPage() {
+  const { openModal } = useModal();
   const [openId, setOpenId] = useState(null);
 
   return (
@@ -74,7 +76,10 @@ export default function VirtualTryOnPage() {
           <p style={{ fontSize: 14, color: "#64748B", maxWidth: 600, margin: "0 auto 28px", lineHeight: 1.75 }}>
             Customers who can see an outfit on their own body buy faster, return less, and trust your brand more. Vizzle AI virtual try-on works on your website, app, and in-store kiosks.
           </p>
-          <button style={{ background: "linear-gradient(135deg,#F97316,#F59E0B,#EF4444)", color: "#fff", border: "none", borderRadius: 999, padding: "12px 28px", fontSize: 12, fontWeight: 700, cursor: "pointer", boxShadow: "0 4px 14px rgba(249,115,22,0.3)" }}>
+          <button
+            onClick={() => openModal('Book a Free Demo', FIELD_PRESETS.all)}
+            style={{ background: "linear-gradient(135deg,#F97316,#F59E0B,#EF4444)", color: "#fff", border: "none", borderRadius: 999, padding: "12px 28px", fontSize: 12, fontWeight: 700, cursor: "pointer", boxShadow: "0 4px 14px rgba(249,115,22,0.3)" }}
+          >
             Book A Free Demo →
           </button>
         </motion.div>
@@ -281,6 +286,7 @@ export default function VirtualTryOnPage() {
             </div>
 
             <button
+              onClick={() => openModal('Talk To Our Team', FIELD_PRESETS.all)}
               style={{ background: "linear-gradient(135deg,#F97316,#F59E0B,#EF4444)", color: "#fff", border: "none", borderRadius: 12, padding: "14px 24px", fontSize: 13, fontWeight: 700, cursor: "pointer", boxShadow: "0 4px 16px rgba(249,115,22,0.3)", display: "inline-flex", alignItems: "center", gap: 8, transition: "transform 0.15s ease, opacity 0.15s ease" }}
               onMouseEnter={e => (e.currentTarget.style.transform = "scale(1.02)")}
               onMouseLeave={e => (e.currentTarget.style.transform = "scale(1)")}
@@ -407,6 +413,7 @@ export default function VirtualTryOnPage() {
           {/* Bottom CTA */}
           <div style={{ textAlign: "center" }}>
             <button
+              onClick={() => openModal('Book a Free Demo', FIELD_PRESETS.all)}
               style={{ background: "linear-gradient(135deg,#F97316,#F59E0B,#EF4444)", color: "#fff", border: "none", borderRadius: 999, padding: "12px 28px", fontSize: 12, fontWeight: 700, cursor: "pointer", boxShadow: "0 4px 18px rgba(249,115,22,0.35)", display: "inline-flex", alignItems: "center", gap: 8, transition: "transform 0.15s ease, opacity 0.15s ease" }}
               onMouseEnter={e => (e.currentTarget.style.transform = "scale(1.05)")}
               onMouseLeave={e => (e.currentTarget.style.transform = "scale(1)")}

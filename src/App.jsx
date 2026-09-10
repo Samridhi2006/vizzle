@@ -1,4 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { ModalProvider } from "./context/ModalContext";
 
 import AppLayout from "./AppLayout";
 import PrivacyPolicy from "./components/privacy";
@@ -14,6 +15,7 @@ import VirtualTryOnPage from "./pages/VirtualTryOnPage";
 
 function App() {
   return (
+    <ModalProvider>
     <BrowserRouter>
       <Routes>
         {/* Main landing page */}
@@ -50,6 +52,7 @@ function App() {
         <Route path="/virtual-try-on" element={<VirtualTryOnPage />} />
       </Routes>
     </BrowserRouter>
+    </ModalProvider>
   );
 }
 
