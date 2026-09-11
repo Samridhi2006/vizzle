@@ -74,8 +74,185 @@ export default function LeadCaptureSection() {
         fontFamily: "'Plus Jakarta Sans', Inter, sans-serif",
       }}
     >
-      {/* ── Outer card with BG image ─────────────────────────── */}
+      {/* ══════════════════════════════════════════════════════════
+          MOBILE LAYOUT  (hidden on lg+, see CSS .vz-contact-mobile)
+      ══════════════════════════════════════════════════════════ */}
+      <div className="vz-contact-mobile">
+
+        {/* ── Hero image block ─── */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.55 }}
+          style={{
+            position: 'relative',
+            width: '100%',
+            height: '340px',
+            borderRadius: '24px 24px 0 0',
+            overflow: 'hidden',
+          }}
+        >
+          <img
+            src="/contact/fashion_studio_bg.jpg"
+            alt="Fashion model in studio"
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              objectPosition: 'top',
+              display: 'block',
+            }}
+          />
+
+          {/* Bottom-to-top gradient for text legibility */}
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              background: 'linear-gradient(to top, rgba(0,0,0,0.74) 0%, rgba(0,0,0,0.18) 55%, transparent 100%)',
+            }}
+          />
+
+          {/* Headline and trust pills over image */}
+          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '24px 20px' }}>
+            <h2
+              style={{
+                fontSize: 'clamp(1.4rem, 5vw, 1.9rem)',
+                fontWeight: 900,
+                color: '#fff',
+                letterSpacing: '-0.04em',
+                lineHeight: 1.15,
+                margin: '0 0 12px',
+                textShadow: '0 2px 12px rgba(0,0,0,0.4)',
+              }}
+            >
+              Experience the Future of{' '}
+              <span
+                style={{
+                  background: 'linear-gradient(135deg, #22D3EE 0%, #5EEAD4 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                }}
+              >
+                Fashion Visualization
+              </span>
+            </h2>
+
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+              {['No credit card', 'Free trial', '5-min setup'].map(tag => (
+                <div
+                  key={tag}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '5px',
+                    background: 'rgba(255,255,255,0.15)',
+                    backdropFilter: 'blur(8px)',
+                    border: '1px solid rgba(255,255,255,0.25)',
+                    borderRadius: '20px',
+                    padding: '4px 10px',
+                    fontSize: '11px',
+                    fontWeight: 600,
+                    color: '#fff',
+                  }}
+                >
+                  <CheckCircle size={10} color="#22D3EE" strokeWidth={3} />
+                  {tag}
+                </div>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+
+        {/* ── Form card — overlaps image bottom by 40px ─── */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.55, delay: 0.1 }}
+          style={{ marginTop: '-40px', position: 'relative', zIndex: 10 }}
+        >
+          <div
+            style={{
+              background: 'rgba(255,255,255,0.97)',
+              backdropFilter: 'blur(16px)',
+              WebkitBackdropFilter: 'blur(16px)',
+              borderRadius: '24px',
+              padding: '28px 20px 24px',
+              boxShadow: '0 16px 48px rgba(0,0,0,0.18)',
+              border: '1px solid rgba(255,255,255,0.6)',
+              boxSizing: 'border-box',
+            }}
+          >
+            {status === 'success' ? (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.92 }}
+                animate={{ opacity: 1, scale: 1 }}
+                style={{ textAlign: 'center', padding: '20px 0' }}
+              >
+                <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: 'linear-gradient(135deg, #0891B2, #06B6D4)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', boxShadow: '0 8px 24px rgba(8,145,178,0.3)' }}>
+                  <CheckCircle size={26} color="#fff" strokeWidth={2.5} />
+                </div>
+                <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#0F172A', margin: '0 0 8px', letterSpacing: '-0.03em' }}>
+                  We&apos;ve got your details!
+                </h3>
+                <p style={{ fontSize: '13px', color: '#64748B', lineHeight: 1.7, margin: 0 }}>
+                  Our team will reach out within 24 hours to set up your free demo.
+                </p>
+              </motion.div>
+            ) : (
+              <>
+                <h3 style={{ fontSize: '19px', fontWeight: 800, color: '#0F172A', letterSpacing: '-0.03em', margin: '0 0 4px' }}>
+                  Get In Touch
+                </h3>
+                <p style={{ fontSize: '12px', color: '#94A3B8', margin: '0 0 18px' }}>
+                  Start your free trial today. No credit card needed.
+                </p>
+                <form onSubmit={handleSubmit}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    <FormField label="Name"       id="lead-name-m"  placeholder="Enter your name"       value={form.name}  onChange={handleChange('name')}  required />
+                    <FormField label="Brand Name" id="lead-brand-m" placeholder="Enter your brand name" value={form.brand} onChange={handleChange('brand')} />
+                    <FormField label="Email"      id="lead-email-m" type="email" placeholder="Enter your email"  value={form.email} onChange={handleChange('email')} required />
+                    <FormField label="Phone"      id="lead-phone-m" type="tel"   placeholder="Enter your phone"  value={form.phone} onChange={handleChange('phone')} required />
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={status === 'loading'}
+                    style={{
+                      width: '100%', padding: '13px', marginTop: '18px', borderRadius: '12px', border: 'none',
+                      background: status === 'loading' ? '#475569' : 'linear-gradient(135deg, #0F172A 0%, #1E293B 100%)',
+                      color: '#fff', fontSize: '14px', fontWeight: 700, fontFamily: 'inherit',
+                      cursor: status === 'loading' ? 'not-allowed' : 'pointer',
+                      boxShadow: '0 4px 14px rgba(15,23,42,0.25)', transition: 'all 0.25s ease',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', letterSpacing: '-0.01em',
+                    }}
+                    onMouseEnter={e => { if (status !== 'loading') e.currentTarget.style.background = 'linear-gradient(135deg, #1E293B 0%, #334155 100%)'; }}
+                    onMouseLeave={e => { if (status !== 'loading') e.currentTarget.style.background = 'linear-gradient(135deg, #0F172A 0%, #1E293B 100%)'; }}
+                  >
+                    {status === 'loading' ? (
+                      <><Loader2 size={15} style={{ animation: 'spin 1s linear infinite' }} />Submitting...</>
+                    ) : 'Submit'}
+                  </button>
+                  <p style={{ textAlign: 'center', fontSize: '11px', color: '#94A3B8', marginTop: '12px', lineHeight: 1.6 }}>
+                    By submitting, you agree to our{' '}
+                    <a href="/terms" style={{ color: '#64748B', textDecoration: 'underline' }}>Terms of Service</a>{' '}
+                    and{' '}
+                    <a href="/privacy" style={{ color: '#64748B', textDecoration: 'underline' }}>Privacy Policy</a>.
+                  </p>
+                </form>
+              </>
+            )}
+          </div>
+        </motion.div>
+      </div>
+
+      {/* ══════════════════════════════════════════════════════════
+          DESKTOP LAYOUT  (hidden on mobile, shown at lg+ breakpoint)
+      ══════════════════════════════════════════════════════════ */}
       <motion.div
+        className="vz-contact-desktop"
         initial={{ opacity: 0, y: 24 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
@@ -114,7 +291,6 @@ export default function LeadCaptureSection() {
 
         {/* ── Two-column grid ───────────────────────────────── */}
         <div
-          className="vz-contact-grid"
           style={{
             position: 'relative',
             zIndex: 10,
@@ -222,7 +398,6 @@ export default function LeadCaptureSection() {
               }}
             >
               {status === 'success' ? (
-                // ── Success State ────────────────────────────
                 <motion.div
                   initial={{ opacity: 0, scale: 0.92 }}
                   animate={{ opacity: 1, scale: 1 }}
@@ -230,46 +405,24 @@ export default function LeadCaptureSection() {
                 >
                   <div
                     style={{
-                      width: '64px',
-                      height: '64px',
-                      borderRadius: '50%',
+                      width: '64px', height: '64px', borderRadius: '50%',
                       background: 'linear-gradient(135deg, #0891B2, #06B6D4)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      margin: '0 auto 20px',
-                      boxShadow: '0 8px 24px rgba(8,145,178,0.3)',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      margin: '0 auto 20px', boxShadow: '0 8px 24px rgba(8,145,178,0.3)',
                     }}
                   >
                     <CheckCircle size={30} color="#fff" strokeWidth={2.5} />
                   </div>
-                  <h3
-                    style={{
-                      fontSize: '20px',
-                      fontWeight: 800,
-                      color: '#0F172A',
-                      margin: '0 0 10px',
-                      letterSpacing: '-0.03em',
-                    }}
-                  >
-                    We've got your details!
+                  <h3 style={{ fontSize: '20px', fontWeight: 800, color: '#0F172A', margin: '0 0 10px', letterSpacing: '-0.03em' }}>
+                    We&apos;ve got your details!
                   </h3>
                   <p style={{ fontSize: '13px', color: '#64748B', lineHeight: 1.7, margin: 0 }}>
                     Our team will reach out within 24 hours to set up your free demo.
                   </p>
                 </motion.div>
               ) : (
-                // ── Form State ───────────────────────────────
                 <>
-                  <h3
-                    style={{
-                      fontSize: '20px',
-                      fontWeight: 800,
-                      color: '#0F172A',
-                      letterSpacing: '-0.03em',
-                      margin: '0 0 4px',
-                    }}
-                  >
+                  <h3 style={{ fontSize: '20px', fontWeight: 800, color: '#0F172A', letterSpacing: '-0.03em', margin: '0 0 4px' }}>
                     Get In Touch
                   </h3>
                   <p style={{ fontSize: '12px', color: '#94A3B8', margin: '0 0 20px' }}>
@@ -278,39 +431,10 @@ export default function LeadCaptureSection() {
 
                   <form onSubmit={handleSubmit}>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                      <FormField
-                        label="Name"
-                        id="lead-name"
-                        placeholder="Enter your name"
-                        value={form.name}
-                        onChange={handleChange('name')}
-                        required
-                      />
-                      <FormField
-                        label="Brand Name"
-                        id="lead-brand"
-                        placeholder="Enter your brand name"
-                        value={form.brand}
-                        onChange={handleChange('brand')}
-                      />
-                      <FormField
-                        label="Email"
-                        id="lead-email"
-                        type="email"
-                        placeholder="Enter your email"
-                        value={form.email}
-                        onChange={handleChange('email')}
-                        required
-                      />
-                      <FormField
-                        label="Phone"
-                        id="lead-phone"
-                        type="tel"
-                        placeholder="Enter your phone number"
-                        value={form.phone}
-                        onChange={handleChange('phone')}
-                        required
-                      />
+                      <FormField label="Name"       id="lead-name-d"  placeholder="Enter your name"            value={form.name}  onChange={handleChange('name')}  required />
+                      <FormField label="Brand Name" id="lead-brand-d" placeholder="Enter your brand name"      value={form.brand} onChange={handleChange('brand')} />
+                      <FormField label="Email"      id="lead-email-d" type="email" placeholder="Enter your email"       value={form.email} onChange={handleChange('email')} required />
+                      <FormField label="Phone"      id="lead-phone-d" type="tel"   placeholder="Enter your phone number" value={form.phone} onChange={handleChange('phone')} required />
                     </div>
 
                     {/* Submit button */}
@@ -318,26 +442,12 @@ export default function LeadCaptureSection() {
                       type="submit"
                       disabled={status === 'loading'}
                       style={{
-                        width: '100%',
-                        padding: '13px',
-                        marginTop: '20px',
-                        borderRadius: '12px',
-                        border: 'none',
-                        background: status === 'loading'
-                          ? '#475569'
-                          : 'linear-gradient(135deg, #0F172A 0%, #1E293B 100%)',
-                        color: '#fff',
-                        fontSize: '14px',
-                        fontWeight: 700,
-                        fontFamily: 'inherit',
+                        width: '100%', padding: '13px', marginTop: '20px', borderRadius: '12px', border: 'none',
+                        background: status === 'loading' ? '#475569' : 'linear-gradient(135deg, #0F172A 0%, #1E293B 100%)',
+                        color: '#fff', fontSize: '14px', fontWeight: 700, fontFamily: 'inherit',
                         cursor: status === 'loading' ? 'not-allowed' : 'pointer',
-                        boxShadow: '0 4px 14px rgba(15,23,42,0.25)',
-                        transition: 'all 0.25s ease',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '8px',
-                        letterSpacing: '-0.01em',
+                        boxShadow: '0 4px 14px rgba(15,23,42,0.25)', transition: 'all 0.25s ease',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', letterSpacing: '-0.01em',
                       }}
                       onMouseEnter={e => {
                         if (status !== 'loading') e.currentTarget.style.background = 'linear-gradient(135deg, #1E293B 0%, #334155 100%)';
@@ -347,31 +457,15 @@ export default function LeadCaptureSection() {
                       }}
                     >
                       {status === 'loading' ? (
-                        <>
-                          <Loader2 size={15} style={{ animation: 'spin 1s linear infinite' }} />
-                          Submitting...
-                        </>
+                        <><Loader2 size={15} style={{ animation: 'spin 1s linear infinite' }} />Submitting...</>
                       ) : 'Submit'}
                     </button>
 
                     {/* Legal */}
-                    <p
-                      style={{
-                        textAlign: 'center',
-                        fontSize: '11px',
-                        color: '#94A3B8',
-                        marginTop: '14px',
-                        lineHeight: 1.6,
-                      }}
-                    >
+                    <p style={{ textAlign: 'center', fontSize: '11px', color: '#94A3B8', marginTop: '14px', lineHeight: 1.6 }}>
                       By submitting, you agree to our{' '}
-                      <a href="/terms" style={{ color: '#64748B', textDecoration: 'underline' }}>
-                        Terms of Service
-                      </a>{' '}
+                      <a href="/terms" style={{ color: '#64748B', textDecoration: 'underline' }}>Terms of Service</a>{' '}
                       and{' '}
-                      <a href="/privacy" style={{ color: '#64748B', textDecoration: 'underline' }}>
-                        Privacy Policy
-                      </a>
                       .
                     </p>
                   </form>

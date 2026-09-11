@@ -12,6 +12,8 @@ import Contact from "./components/Contact";
 import Pricing from "./components/Pricing";
 import CatalogueShowcasePage from "./pages/CatalogueShowcasePage"; 
 import VirtualTryOnPage from "./pages/VirtualTryOnPage";
+import BlogsPage from "./pages/BlogsPage";
+import SignInPage from "./pages/SignInPage";
 
 function App() {
   return (
@@ -20,6 +22,10 @@ function App() {
       <Routes>
         {/* Main landing page */}
         <Route path="/" element={<AppLayout />} />
+
+        {/* Sign In / Login */}
+        <Route path="/signin" element={<SignInPage />} />
+        <Route path="/login" element={<SignInPage />} />
 
         {/* Privacy Policy Page */}
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
@@ -50,6 +56,9 @@ function App() {
 
         {/* Virtual Try-On */}
         <Route path="/virtual-try-on" element={<VirtualTryOnPage />} />
+
+        {/* Blogs */}
+        <Route path="/blogs" element={<BlogsPage />} />
       </Routes>
     </BrowserRouter>
     </ModalProvider>

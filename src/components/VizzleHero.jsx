@@ -452,14 +452,14 @@ function ProgressLines({ current, total, progress, onSelect }) {
 
 // ─── Navbar ───────────────────────────────────────────────────────────────────
 function VizzleNavbar() {
-  const { openModal } = useModal();
+  const { openModal, openSignInModal } = useModal();
   const [menuOpen, setMenuOpen] = useState(false);
 
   const NAV_LINKS = [
     { label: 'Catalogue Showcase', to: '/catalogue-showcase' },
     { label: 'Virtual Try-On',     to: '/virtual-try-on'     },
     { label: 'Pricing',            to: '/pricing'            },
-    { label: 'Blogs',              to: '/#blogs'             },
+    { label: 'Blogs',              to: '/blogs'              },
     { label: 'Contact',            to: '/contact'            },
   ];
 
@@ -496,14 +496,25 @@ function VizzleNavbar() {
         >
           Try Free Catalogue Creation Now
         </button>
-        <a
-          href="https://dashboard.vizzle.in"
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{ padding: '9px 20px', borderRadius: '999px', background: '#0f172a', color: '#fff', fontSize: '13px', fontWeight: 600, textDecoration: 'none', whiteSpace: 'nowrap' }}
+        <button
+          onClick={openSignInModal}
+          style={{
+            padding: '9px 20px',
+            borderRadius: '999px',
+            background: '#0f172a',
+            color: '#fff',
+            fontSize: '13px',
+            fontWeight: 600,
+            border: 'none',
+            cursor: 'pointer',
+            whiteSpace: 'nowrap',
+            transition: 'background 0.2s',
+          }}
+          onMouseEnter={(e) => { e.currentTarget.style.background = '#1e293b'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.background = '#0f172a'; }}
         >
           Sign In
-        </a>
+        </button>
       </div>
 
       {/* Hamburger — mobile only */}
@@ -538,7 +549,26 @@ function VizzleNavbar() {
             >
               Try Free Catalogue Creation Now
             </button>
-            <a href="https://dashboard.vizzle.in" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-block', padding: '10px 20px', borderRadius: '999px', background: '#0f172a', color: '#fff', fontSize: '14px', fontWeight: 600, textDecoration: 'none', textAlign: 'center' }}>Sign In</a>
+            <button
+              onClick={() => {
+                setMenuOpen(false);
+                openSignInModal();
+              }}
+              style={{
+                display: 'inline-block',
+                padding: '10px 20px',
+                borderRadius: '999px',
+                background: '#0f172a',
+                color: '#fff',
+                fontSize: '14px',
+                fontWeight: 600,
+                border: 'none',
+                cursor: 'pointer',
+                textAlign: 'center',
+              }}
+            >
+              Sign In
+            </button>
           </div>
         </div>
       )}

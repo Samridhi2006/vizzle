@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useCallback } from 'react';
 import CTAModal, { FIELD_PRESETS } from '../components/CTAModal';
+import SignInModal from '../components/SignInModal';
 
 // ─── Context ───────────────────────────────────────────────────────────────────
 const ModalContext = createContext(null);
@@ -7,6 +8,7 @@ const ModalContext = createContext(null);
 // ─── Provider ─────────────────────────────────────────────────────────────────
 export function ModalProvider({ children }) {
   const [config, setConfig] = useState(null); // { title, fieldKeys }
+  const [isSignInOpen, setIsSignInOpen] = useState(false);
 
   const openModal = useCallback((title, fieldKeys = FIELD_PRESETS.all) => {
     setConfig({ title, fieldKeys });
@@ -14,8 +16,24 @@ export function ModalProvider({ children }) {
 
   const closeModal = useCallback(() => setConfig(null), []);
 
+  const openSignInModal = useCallback(() => {
+    setIsSignInOpen(true);
+  }, []);
+
+  const closeSignInModal = useCallback(() => {
+    setIsSignInOpen(false);
+  }, []);
+
   return (
-    <ModalContext.Provider value={{ openModal, closeModal }}>
+    <ModalContext.Provider
+      value={{
+        openModal,
+        closeModal,
+        isSignInOpen,
+        openSignInModal,
+        closeSignInModal,
+      }}
+    >
       {children}
       <CTAModal
         isOpen={!!config}
@@ -27,6 +45,7 @@ export function ModalProvider({ children }) {
           console.info('[Vizzle] Modal submitted:', data);
         }}
       />
+      <SignInModal isOpen={isSignInOpen} onClose={closeSignInModal} />
     </ModalContext.Provider>
   );
 }

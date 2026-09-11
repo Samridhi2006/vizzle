@@ -3,9 +3,11 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/20/solid";
+import { useModal } from "../context/ModalContext";
 
 function Navbar({ launchingRef, setIsFormOpen }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { openSignInModal } = useModal();
 
   useEffect(() => {
     const handleResize = () => {
@@ -41,12 +43,20 @@ function Navbar({ launchingRef, setIsFormOpen }) {
           </Link>
           <Link to="/pricing" className="hover:text-[#1D8DB2] transition-colors">Pricing</Link>
           <Link to="/contact" className="hover:text-[#1D8DB2] transition-colors">Contact</Link>
+          <Link to="/blogs" className="hover:text-amber-500 transition-colors font-semibold text-amber-600">Blog</Link>
           <Link to="/catalogue-showcase" className="hover:text-[#1D8DB2] transition-colors font-bold text-[#0891B2]">Catalogue Showcase</Link>
           <Link to="/virtual-try-on" className="hover:text-[#1D8DB2] transition-colors font-bold text-rose-500">Virtual Try-On</Link>
         </div>
 
         {/* Desktop Buttons */}
-        <div className="hidden sm:flex gap-3">
+        <div className="hidden sm:flex items-center gap-3">
+          {/* Sign In button */}
+          <button
+            onClick={openSignInModal}
+            className="flex items-center gap-2 px-5 py-3.5 rounded-full bg-slate-900 text-white text-sm font-semibold shadow-md hover:bg-slate-800 transition-all cursor-pointer"
+          >
+            Sign In
+          </button>
 
           {/* Download App */}
           <a
@@ -97,11 +107,21 @@ function Navbar({ launchingRef, setIsFormOpen }) {
             <Link to="/docs/api" className="text-[#4A91FD] font-semibold px-2" onClick={() => setIsMenuOpen(false)}>⚡ API Reference</Link>
             <Link to="/pricing" className="text-gray-700 font-semibold px-2" onClick={() => setIsMenuOpen(false)}>Pricing</Link>
             <Link to="/contact" className="text-gray-700 font-semibold px-2" onClick={() => setIsMenuOpen(false)}>Contact</Link>
+            <Link to="/blogs" className="text-amber-600 font-bold px-2" onClick={() => setIsMenuOpen(false)}>✍️ Blog</Link>
             <Link to="/catalogue-showcase" className="text-[#0891B2] font-bold px-2" onClick={() => setIsMenuOpen(false)}>🎨 Catalogue Showcase</Link>
             <Link to="/virtual-try-on" className="text-rose-500 font-bold px-2" onClick={() => setIsMenuOpen(false)}>👗 Virtual Try-On</Link>
           </div>
 
           <div className="flex flex-col gap-3 w-full mt-4 border-t border-gray-200 pt-4">
+            <button
+              onClick={() => {
+                setIsMenuOpen(false);
+                openSignInModal();
+              }}
+              className="flex items-center justify-center gap-2 px-4 py-3 rounded-full bg-slate-900 text-white text-xs font-semibold shadow-md cursor-pointer"
+            >
+              Sign In
+            </button>
             <a
               href="https://play.google.com/store/apps/details?id=app.vercel.vizzle_pwa.twa&pcampaignid=web_share"
               target="_blank"
