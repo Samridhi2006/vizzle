@@ -56,7 +56,13 @@ function LoginCard({ onLogin }) {
       sessionStorage.setItem(AUTH_STORAGE_KEY, auth);
       onLogin(auth);
     } catch (err) {
-      setError("Invalid username or password.");
+      if (err.status === 401) {
+        setError("Invalid username or password.");
+      } else if (err.status) {
+        setError(`Login request failed (HTTP ${err.status}): ${err.message}`);
+      } else {
+        setError(`Could not reach the backend at ${API_BASE} — ${err.message}. Check VITE_VIZZLE_API_BASE_URL and that the backend is running.`);
+      }
     } finally {
       setLoading(false);
     }
