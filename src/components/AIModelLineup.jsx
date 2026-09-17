@@ -1,7 +1,9 @@
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
+import { useModal, FIELD_PRESETS } from '../context/ModalContext';
 
 export default function AIModelLineup() {
+  const { openModal } = useModal();
   return (
     <section
       id="ai-model-lineup"
@@ -97,8 +99,8 @@ export default function AIModelLineup() {
           </p>
 
           {/* CTA */}
-          <motion.a
-            href="#"
+          <motion.button
+            onClick={() => openModal('Try Your Model Now', FIELD_PRESETS.all)}
             id="ai-lineup-cta"
             whileHover={{ y: -2, transition: { duration: 0.22 } }}
             style={{
@@ -111,17 +113,19 @@ export default function AIModelLineup() {
               fontSize: '14px',
               padding: '13px 26px',
               borderRadius: '999px',
-              textDecoration: 'none',
+              border: 'none',
+              cursor: 'pointer',
               boxShadow: '0 4px 18px rgba(8,145,178,0.28)',
               letterSpacing: '-0.01em',
               transition: 'box-shadow 0.25s ease',
+              fontFamily: "'Plus Jakarta Sans', Inter, sans-serif",
             }}
             onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 8px 28px rgba(8,145,178,0.42)'; }}
             onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 4px 18px rgba(8,145,178,0.28)'; }}
           >
             Try Your Model Now
             <ArrowRight size={14} strokeWidth={2.5} />
-          </motion.a>
+          </motion.button>
         </motion.div>
 
       </div>

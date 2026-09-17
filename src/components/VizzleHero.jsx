@@ -3,6 +3,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useModal, FIELD_PRESETS } from '../context/ModalContext';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 const SLIDE_DURATION = 6000;
@@ -451,13 +452,14 @@ function ProgressLines({ current, total, progress, onSelect }) {
 
 // ─── Navbar ───────────────────────────────────────────────────────────────────
 function VizzleNavbar() {
+  const { openModal, openSignInModal } = useModal();
   const [menuOpen, setMenuOpen] = useState(false);
 
   const NAV_LINKS = [
     { label: 'Catalogue Showcase', to: '/catalogue-showcase' },
     { label: 'Virtual Try-On',     to: '/virtual-try-on'     },
     { label: 'Pricing',            to: '/pricing'            },
-    { label: 'Blogs',              to: '/#blogs'             },
+    { label: 'Blogs',              to: '/blogs'              },
     { label: 'Contact',            to: '/contact'            },
   ];
 
@@ -488,17 +490,31 @@ function VizzleNavbar() {
 
       {/* Desktop CTA + Sign In */}
       <div className="vz-nav-cta">
-        <a href="#" style={{ fontSize: '13px', fontWeight: 600, color: '#334155', textDecoration: 'none', whiteSpace: 'nowrap' }}>
+        <button
+          onClick={() => openModal('Try Free Catalogue Creation', FIELD_PRESETS.all)}
+          style={{ fontSize: '13px', fontWeight: 600, color: '#334155', background: 'none', border: 'none', cursor: 'pointer', whiteSpace: 'nowrap', padding: 0, fontFamily: 'inherit' }}
+        >
           Try Free Catalogue Creation Now
-        </a>
-        <a
-          href="https://dashboard.vizzle.in"
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{ padding: '9px 20px', borderRadius: '999px', background: '#0f172a', color: '#fff', fontSize: '13px', fontWeight: 600, textDecoration: 'none', whiteSpace: 'nowrap' }}
+        </button>
+        <button
+          onClick={openSignInModal}
+          style={{
+            padding: '9px 20px',
+            borderRadius: '999px',
+            background: '#0f172a',
+            color: '#fff',
+            fontSize: '13px',
+            fontWeight: 600,
+            border: 'none',
+            cursor: 'pointer',
+            whiteSpace: 'nowrap',
+            transition: 'background 0.2s',
+          }}
+          onMouseEnter={(e) => { e.currentTarget.style.background = '#1e293b'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.background = '#0f172a'; }}
         >
           Sign In
-        </a>
+        </button>
       </div>
 
       {/* Hamburger — mobile only */}
@@ -527,8 +543,32 @@ function VizzleNavbar() {
             </Link>
           ))}
           <div style={{ padding: '16px 24px', display: 'flex', flexDirection: 'column', gap: 10 }}>
-            <a href="#" style={{ fontSize: '14px', fontWeight: 600, color: '#334155', textDecoration: 'none' }}>Try Free Catalogue Creation Now</a>
-            <a href="https://dashboard.vizzle.in" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-block', padding: '10px 20px', borderRadius: '999px', background: '#0f172a', color: '#fff', fontSize: '14px', fontWeight: 600, textDecoration: 'none', textAlign: 'center' }}>Sign In</a>
+            <button
+              onClick={() => { setMenuOpen(false); openModal('Try Free Catalogue Creation', FIELD_PRESETS.all); }}
+              style={{ fontSize: '14px', fontWeight: 600, color: '#334155', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', padding: 0, fontFamily: 'inherit' }}
+            >
+              Try Free Catalogue Creation Now
+            </button>
+            <button
+              onClick={() => {
+                setMenuOpen(false);
+                openSignInModal();
+              }}
+              style={{
+                display: 'inline-block',
+                padding: '10px 20px',
+                borderRadius: '999px',
+                background: '#0f172a',
+                color: '#fff',
+                fontSize: '14px',
+                fontWeight: 600,
+                border: 'none',
+                cursor: 'pointer',
+                textAlign: 'center',
+              }}
+            >
+              Sign In
+            </button>
           </div>
         </div>
       )}
@@ -538,6 +578,7 @@ function VizzleNavbar() {
 
 // ─── Root Component ───────────────────────────────────────────────────────────
 function VizzleHeroSection({ setIsFormOpen }) {
+  const { openModal } = useModal();
   const [current,     setCurrent]     = useState(0);
   const [direction,   setDirection]   = useState(1);
   const [progress,    setProgress]    = useState(0);
@@ -777,7 +818,10 @@ function VizzleHeroSection({ setIsFormOpen }) {
           {/* CTA Button */}
           <button
             id="vizzle-hero-cta"
-            onClick={() => setIsFormOpen && setIsFormOpen(true)}
+            onClick={() => {
+              openModal('Book a Free Demo', FIELD_PRESETS.all);
+              setIsFormOpen && setIsFormOpen(true);
+            }}
             style={{
               alignSelf: 'flex-start',
               display: 'inline-flex',

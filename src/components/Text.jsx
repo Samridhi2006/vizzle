@@ -1,6 +1,7 @@
-import { Link } from "react-router-dom";
+import { useModal, FIELD_PRESETS } from "../context/ModalContext";
 
 export default function TrylleLanding() {
+  const { openModal } = useModal();
   return (
     <div className="min-h-screen bg-[#F9F3FA] text-white flex flex-col items-center justify-center px-4 text-center">
 
@@ -17,13 +18,13 @@ export default function TrylleLanding() {
       </p>
 
       {/* Updated Button */}
-      <Link to="/form">
-        <button className="mt-6 bg-[#1D8DB2] hover:bg-cyan-300 text-white px-8 py-3 rounded-xl text-lg font-semibold transition">
-          Request Brand Access
-        </button>
-      </Link>
+      <button 
+        onClick={() => openModal('Request Brand Access', FIELD_PRESETS.all)}
+        className="mt-6 bg-[#1D8DB2] hover:bg-cyan-300 text-white px-8 py-3 rounded-xl text-lg font-semibold transition"
+      >
+        Request Brand Access
+      </button>
 
-      
     </div>
   );
 }

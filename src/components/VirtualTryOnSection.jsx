@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, Sparkles, Upload, Loader2, RefreshCw } from 'lucide-react';
+import { useModal, FIELD_PRESETS } from '../context/ModalContext';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'https://dashboard.vizzle.in';
 // Same store API key any real merchant widget uses — issued from
@@ -282,6 +283,7 @@ function TryOnDemo() {
 }
 
 export default function VirtualTryOnSection() {
+  const { openModal } = useModal();
   return (
     <section
       id="virtual-try-on"
@@ -374,9 +376,8 @@ export default function VirtualTryOnSection() {
             apps, and in-store kiosks.
           </p>
 
-          {/* CTA */}
-          <motion.a
-            href="#"
+          <motion.button
+            onClick={() => openModal('Book a Free Demo', FIELD_PRESETS.all)}
             id="virtual-tryon-cta"
             whileHover={{ y: -2, transition: { duration: 0.2 } }}
             style={{
@@ -389,17 +390,19 @@ export default function VirtualTryOnSection() {
               fontSize: '14.5px',
               padding: '14px 28px',
               borderRadius: '999px',
-              textDecoration: 'none',
+              border: 'none',
+              cursor: 'pointer',
               boxShadow: '0 4px 20px rgba(8,145,178,0.28)',
               letterSpacing: '-0.01em',
               transition: 'box-shadow 0.25s ease',
+              fontFamily: "'Plus Jakarta Sans', Inter, sans-serif",
             }}
             onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 8px 32px rgba(8,145,178,0.42)'; }}
             onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 4px 20px rgba(8,145,178,0.28)'; }}
           >
             Book A Free Demo
             <ArrowRight size={15} strokeWidth={2.5} />
-          </motion.a>
+          </motion.button>
         </motion.div>
 
         {/* ── RIGHT: Live Try-On Demo ────────────────────────────────────── */}

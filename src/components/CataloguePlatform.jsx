@@ -1,6 +1,7 @@
 import { useRef, useState, useEffect } from 'react';
 import { motion, useAnimation, useMotionValue } from 'framer-motion';
 import { Play, ArrowRight } from 'lucide-react';
+import { useModal, FIELD_PRESETS } from '../context/ModalContext';
 
 // ─── Category Cards Data ──────────────────────────────────────────────────────
 // Swap src paths to any image in /public as needed
@@ -263,6 +264,7 @@ function MarqueeTrack() {
 
 // ─── Main Section ─────────────────────────────────────────────────────────────
 export default function CataloguePhotoshootSection() {
+  const { openModal } = useModal();
   return (
     <section
       id="catalogue-platform"
@@ -359,6 +361,7 @@ export default function CataloguePhotoshootSection() {
         >
           <button
             id="catalogue-watch-demo"
+            onClick={() => openModal('Watch A Demo', FIELD_PRESETS.all)}
             style={{
               display: 'inline-flex',
               alignItems: 'center',

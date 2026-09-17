@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
+import { useModal, FIELD_PRESETS } from '../context/ModalContext';
 
 // ─── Photo grid data ──────────────────────────────────────────────────────────
 const PHOTOS = [
@@ -49,6 +50,7 @@ function PhotoCard({ photo, index }) {
 
 // ─── Main Section ─────────────────────────────────────────────────────────────
 export default function BrandIdentitySection() {
+  const { openModal } = useModal();
   return (
     <section
       id="brand-identity"
@@ -149,8 +151,8 @@ export default function BrandIdentitySection() {
           </p>
 
           {/* CTA */}
-          <motion.a
-            href="#"
+          <motion.button
+            onClick={() => openModal('Create Your AI Catalogue', FIELD_PRESETS.all)}
             id="brand-identity-cta"
             whileHover={{ y: -2, transition: { duration: 0.22 } }}
             style={{
@@ -163,17 +165,19 @@ export default function BrandIdentitySection() {
               fontSize: '14.5px',
               padding: '14px 28px',
               borderRadius: '999px',
-              textDecoration: 'none',
+              border: 'none',
+              cursor: 'pointer',
               boxShadow: '0 4px 20px rgba(8,145,178,0.25)',
               letterSpacing: '-0.01em',
               transition: 'box-shadow 0.25s ease',
+              fontFamily: "'Plus Jakarta Sans', Inter, sans-serif",
             }}
             onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 8px 28px rgba(8,145,178,0.38)'; }}
             onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 4px 20px rgba(8,145,178,0.25)'; }}
           >
             Create Your AI Catalogue
             <ArrowRight size={15} strokeWidth={2.5} />
-          </motion.a>
+          </motion.button>
         </motion.div>
 
         {/* ── RIGHT: 6-photo editorial grid ────────────────────────────────── */}
