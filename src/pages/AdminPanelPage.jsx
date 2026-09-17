@@ -2,7 +2,13 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft, Loader2, LogOut, CheckCircle2, XCircle } from "lucide-react";
 
-const API_BASE = import.meta.env.VITE_VIZZLE_API_BASE_URL || "http://localhost:8000";
+// Hardcoded to the real production backend on purpose — VITE_VIZZLE_API_BASE_URL
+// only exists in the local, gitignored .env file, which Vercel's build never
+// sees (it builds from git, and .env isn't committed). Falling back to
+// "localhost:8000" there silently pointed the deployed panel at the visitor's
+// own machine. An env var override still works for local dev against a
+// locally-run backend, but production no longer depends on Vercel having it set.
+const API_BASE = import.meta.env.VITE_VIZZLE_API_BASE_URL || "https://vizzle-backend.onrender.com";
 const AUTH_STORAGE_KEY = "vizzle_admin_auth";
 
 const IMAGE_MODEL_OPTIONS = [
