@@ -14,6 +14,7 @@ import CatalogueShowcasePage from "./pages/CatalogueShowcasePage";
 import VirtualTryOnPage from "./pages/VirtualTryOnPage";
 import BlogsPage from "./pages/BlogsPage";
 import SignInPage from "./pages/SignInPage";
+import AdminPanelPage from "./pages/AdminPanelPage";
 
 function App() {
   return (
@@ -38,6 +39,9 @@ function App() {
 
         {/* Admin Page */}
         <Route path="/admin" element={<Admin />} />
+
+        {/* Admin Panel — Gemini virtual try-on configuration */}
+        <Route path="/admin-panel" element={<AdminPanelPage />} />
 
         {/* Docs Page */}
         <Route path="/docs" element={<DocsPage />} />
