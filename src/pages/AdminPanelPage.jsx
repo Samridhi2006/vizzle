@@ -8,7 +8,14 @@ import { ArrowLeft, Loader2, LogOut, CheckCircle2, XCircle } from "lucide-react"
 // "localhost:8000" there silently pointed the deployed panel at the visitor's
 // own machine. An env var override still works for local dev against a
 // locally-run backend, but production no longer depends on Vercel having it set.
-const API_BASE = import.meta.env.VITE_VIZZLE_API_BASE_URL || "https://vizzle-backend.onrender.com";
+//
+// NOTE: this is "vizzle-backend-vvc6", not "vizzle-backend" — Render assigned
+// the "-vvc6" suffix because the exact name "vizzle-backend" was already
+// taken by a separate, older service still running stale pre-Gemini code.
+// Confirmed via that service's own deploy log: "Available at your primary
+// URL https://vizzle-backend-vvc6.onrender.com". Using the un-suffixed URL
+// anywhere silently hits the wrong (old) backend.
+const API_BASE = import.meta.env.VITE_VIZZLE_API_BASE_URL || "https://vizzle-backend-vvc6.onrender.com";
 const AUTH_STORAGE_KEY = "vizzle_admin_auth";
 
 const IMAGE_MODEL_OPTIONS = [
