@@ -1,13 +1,26 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Mail, Lock, Eye, EyeOff, ArrowRight, X, User, Sparkles, Zap, Loader2 } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, ArrowRight, X, User, Sparkles, Zap, Loader2, AlertCircle } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 export default function SignInModal({ isOpen, onClose }) {
+  const navigate = useNavigate();
+  const { signInWithGoogle, signInWithGoogleDemo, signInWithEmail } = useAuth();
+  
   const [emailOrUsername, setEmailOrUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState(false);
+  const [errors, setErrors] = useState({ email: '', password: '', general: '', code: '' });
+
+  // When user clicks Continue with Google -> redirect to Vizzle brand login
+  const handleGoogleSignIn = () => {
+    setIsGoogleLoading(true);
+    window.location.href = 'https://dashboard.vizzle.in/login';
+  };
 
   // Lock scroll & handle Escape key when modal is active
   useEffect(() => {
@@ -31,20 +44,43 @@ export default function SignInModal({ isOpen, onClose }) {
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!emailOrUsername || !password) return;
-    setIsSubmitting(true);
+  const validate = () => {
+    const errs = { email: '', password: '', general: '' };
+    let valid = true;
+    if (!emailOrUsername.trim()) {
+      errs.email = 'Email or username is required.';
+      valid = false;
+    }
+    if (!password) {
+      errs.password = 'Password is required.';
+      valid = false;
+    } else if (password.length < 6) {
+      errs.password = 'Password must be at least 6 characters.';
+      valid = false;
+    }
+    setErrors(errs);
+    return valid;
+  };
 
-    // Simulate login & credit assignment
-    setTimeout(() => {
-      setIsSubmitting(false);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!validate()) return;
+    setIsSubmitting(true);
+    setErrors({ email: '', password: '', general: '' });
+
+    const result = await signInWithEmail(emailOrUsername, password);
+    setIsSubmitting(false);
+
+    if (result.success) {
       setSuccessMessage(true);
       setTimeout(() => {
         setSuccessMessage(false);
         onClose();
-      }, 1400);
-    }, 900);
+        navigate('/dashboard/studio');
+      }, 500);
+    } else {
+      setErrors((prev) => ({ ...prev, general: result.error || 'Failed to sign in.' }));
+    }
   };
 
   return (
@@ -96,38 +132,54 @@ export default function SignInModal({ isOpen, onClose }) {
               <h2 className="text-[26px] sm:text-[30px] font-extrabold text-[#1c1917] tracking-tight mb-1 font-sans leading-tight">
                 Welcome Back
               </h2>
-              <div className="flex items-center gap-2 text-xs sm:text-[13.5px] font-medium text-[#736c64] mb-6">
+              <div className="flex items-center gap-2 text-xs sm:text-[13.5px] font-medium text-[#736c64] mb-5">
                 <span className="text-base leading-none">🎁</span>
                 <span>Get 100 Free credits to start.</span>
               </div>
 
-              {/* Google Button */}
+              {/* Error message banner */}
+              {errors.general && (
+                <div className="mb-4 p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs flex items-start gap-2">
+                  <AlertCircle className="w-4 h-4 shrink-0 text-amber-600 mt-0.5" />
+                  <span className="leading-snug">{errors.general}</span>
+                </div>
+              )}
+
+              {/* Real Google OAuth Button */}
               <button
                 type="button"
-                onClick={() => {
-                  window.location.href = 'https://dashboard.vizzle.in';
-                }}
-                className="w-full py-3.5 px-4 rounded-xl border border-stone-200/90 bg-white hover:bg-stone-50/80 text-[#2b2724] text-xs sm:text-[13.5px] font-semibold flex items-center justify-center gap-2.5 shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-all cursor-pointer"
+                onClick={handleGoogleSignIn}
+                disabled={isGoogleLoading || isSubmitting}
+                className="w-full py-3.5 px-4 rounded-xl border border-stone-200/90 bg-white hover:bg-stone-50/80 active:bg-stone-100 text-[#2b2724] text-xs sm:text-[13.5px] font-semibold flex items-center justify-center gap-2.5 shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-all cursor-pointer disabled:opacity-60"
               >
-                <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
-                  <path
-                    fill="#4285F4"
-                    d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"
-                  />
-                  <path
-                    fill="#34A853"
-                    d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"
-                  />
-                  <path
-                    fill="#FBBC05"
-                    d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.16 0 9.97 0 12s.45 3.84 1.25 5.42l4.03-3.15z"
-                  />
-                  <path
-                    fill="#EA4335"
-                    d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"
-                  />
-                </svg>
-                <span>Continue with Google</span>
+                {isGoogleLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin text-stone-600" />
+                    <span>Redirecting to Vizzle...</span>
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
+                      <path
+                        fill="#4285F4"
+                        d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"
+                      />
+                      <path
+                        fill="#34A853"
+                        d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"
+                      />
+                      <path
+                        fill="#FBBC05"
+                        d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.16 0 9.97 0 12s.45 3.84 1.25 5.42l4.03-3.15z"
+                      />
+                      <path
+                        fill="#EA4335"
+                        d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"
+                      />
+                    </svg>
+                    <span>Continue with Google</span>
+                  </>
+                )}
               </button>
 
               {/* Divider */}
@@ -160,13 +212,19 @@ export default function SignInModal({ isOpen, onClose }) {
                     <Mail className="absolute left-3.5 w-4 h-4 text-stone-400 pointer-events-none" />
                     <input
                       type="text"
-                      required
                       value={emailOrUsername}
-                      onChange={(e) => setEmailOrUsername(e.target.value)}
-                      placeholder="Enter your email or username"
-                      className="vz-signin-input w-full pl-10 pr-4 py-3 rounded-xl border border-stone-200 text-xs sm:text-[13.5px] text-[#1c1917] placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-stone-900 transition-all font-sans bg-white"
+                      onChange={(e) => { setEmailOrUsername(e.target.value); setErrors(prev => ({...prev, email:''})); }}
+                      placeholder="Enter your email"
+                      className={`vz-signin-input w-full pl-10 pr-4 py-3 rounded-xl border text-xs sm:text-[13.5px] text-[#1c1917] placeholder:text-stone-400 focus:outline-none focus:ring-2 transition-all font-sans bg-white ${
+                        errors.email
+                          ? 'border-red-400 focus:ring-red-300 focus:border-red-400'
+                          : 'border-stone-200 focus:ring-stone-900 focus:border-stone-900'
+                      }`}
                     />
                   </div>
+                  {errors.email && (
+                    <p className="mt-1.5 text-xs text-red-500 font-medium">{errors.email}</p>
+                  )}
                 </div>
 
                 {/* Password */}
@@ -187,11 +245,14 @@ export default function SignInModal({ isOpen, onClose }) {
                     <Lock className="absolute left-3.5 w-4 h-4 text-stone-400 pointer-events-none" />
                     <input
                       type={showPassword ? 'text' : 'password'}
-                      required
                       value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder="Enter password"
-                      className="vz-signin-input w-full pl-10 pr-10 py-3 rounded-xl border border-stone-200 text-xs sm:text-[13.5px] text-[#1c1917] placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-stone-900 transition-all font-sans bg-white"
+                      onChange={(e) => { setPassword(e.target.value); setErrors(prev => ({...prev, password:''})); }}
+                      placeholder="Enter password (min. 6 chars)"
+                      className={`vz-signin-input w-full pl-10 pr-10 py-3 rounded-xl border text-xs sm:text-[13.5px] text-[#1c1917] placeholder:text-stone-400 focus:outline-none focus:ring-2 transition-all font-sans bg-white ${
+                        errors.password
+                          ? 'border-red-400 focus:ring-red-300 focus:border-red-400'
+                          : 'border-stone-200 focus:ring-stone-900 focus:border-stone-900'
+                      }`}
                     />
                     <button
                       type="button"
@@ -201,6 +262,9 @@ export default function SignInModal({ isOpen, onClose }) {
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
                   </div>
+                  {errors.password && (
+                    <p className="mt-1.5 text-xs text-red-500 font-medium">{errors.password}</p>
+                  )}
                 </div>
 
                 {/* Submit Button */}

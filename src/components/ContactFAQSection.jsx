@@ -11,7 +11,7 @@ const FAQS = [
   {
     id: 2,
     q: 'How fast is  Vizzle team to reply to enquiries?',
-    a: "We respond to all queries within a day, usually. Or you can directly contact us through phone or WhatsApp with your urgent queries on time-sensitive work such as product launches, trade show deployments, or any work which requires immediate help or attention. Phone No. +91 7729883692. We know there's a world of fashion out there and like to ensure there's no waiting around when you require your assistance.",
+    a: "We respond to all queries within a day, usually. Or you can directly contact us through phone or WhatsApp with your urgent queries on time-sensitive work such as product launches, trade show deployments, or any work which requires immediate help or attention. Phone No. +91 8310247975. We know there's a world of fashion out there and like to ensure there's no waiting around when you require your assistance.",
   },
   {
     id: 3,
