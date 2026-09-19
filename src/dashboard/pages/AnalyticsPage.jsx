@@ -1,4 +1,4 @@
-﻿import { BarChart2, TrendingUp, Users, Zap, Eye } from "lucide-react";
+import { BarChart2, TrendingUp, Users, Zap, Eye } from "lucide-react";
 
 const METRICS = [
   { label: "Total Try-ons", value: "0", delta: "+0%", icon: Zap, color: "text-blue-500", bg: "bg-blue-50" },
@@ -9,12 +9,12 @@ const METRICS = [
 
 export default function AnalyticsPage() {
   return (
-    <div className="p-6 space-y-5">
+    <div className="p-4 sm:p-6 space-y-5">
       <div>
         <h1 className="text-xl font-bold text-gray-900">Analytics</h1>
         <p className="text-sm text-gray-400 mt-0.5">Track try-on performance, conversions, and user engagement.</p>
       </div>
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {METRICS.map(({ label, value, delta, icon: Icon, color, bg }) => (
           <div key={label} className="bg-white rounded-xl border border-gray-100 p-4 shadow-sm">
             <div className="flex items-center justify-between mb-3">

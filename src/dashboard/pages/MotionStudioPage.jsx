@@ -25,7 +25,7 @@ function UploadDropzone({ onImageSelected }) {
 
   return (
     <div
-      className={`relative flex flex-col items-center justify-center min-h-[480px] rounded-3xl border-2 transition-all duration-300 p-10 text-center shadow-sm
+      className={`relative flex flex-col items-center justify-center min-h-[340px] sm:min-h-[480px] rounded-3xl border-2 transition-all duration-300 p-6 sm:p-10 text-center shadow-sm
         ${dragging ? "border-blue-400 bg-blue-50/50 shadow-blue-100" : preview ? "border-slate-200 bg-white cursor-default" : "border-dashed border-slate-200 bg-white hover:border-blue-300 hover:bg-blue-50/20 cursor-pointer"}`}
       onClick={() => !preview && inputRef.current?.click()}
       onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
@@ -102,10 +102,10 @@ export default function MotionStudioPage() {
 
   return (
     <div className="min-h-screen" style={{ background: "#f0f4f8" }}>
-      <div className="max-w-6xl mx-auto px-6 py-7 space-y-6">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 sm:py-7 space-y-5 sm:space-y-6">
 
         {/* Page header */}
-        <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }} className="flex items-center justify-between">
+        <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <div className="flex items-center gap-2 mb-0.5">
               <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-sm">
@@ -114,9 +114,9 @@ export default function MotionStudioPage() {
               <h1 className="text-xl font-bold text-slate-900 tracking-tight">Motion Studio</h1>
               <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 border border-blue-200">BETA</span>
             </div>
-            <p className="text-xs text-slate-500 ml-9">Animate a catalogue photo into a motion-ready product video</p>
+            <p className="text-xs text-slate-500 sm:ml-9">Animate a catalogue photo into a motion-ready product video</p>
           </div>
-          <div className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold border ${canGenerate ? "bg-blue-50 border-blue-200 text-blue-700" : "bg-blue-50 border-blue-200 text-blue-700"}`}>
+          <div className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold border self-start sm:self-auto ${canGenerate ? "bg-blue-50 border-blue-200 text-blue-700" : "bg-blue-50 border-blue-200 text-blue-700"}`}>
             <Zap size={11} /> {USER_CREDITS} Credits
           </div>
         </motion.div>
@@ -131,7 +131,7 @@ export default function MotionStudioPage() {
 
           {/* RIGHT: Config */}
           <motion.div initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4, delay: 0.1 }} className="lg:col-span-6 space-y-4">
-            <div className="bg-white rounded-3xl p-8 border border-slate-200/90 shadow-sm space-y-6">
+            <div className="bg-white rounded-3xl p-5 sm:p-8 border border-slate-200/90 shadow-sm space-y-6">
               <h2 className="text-lg font-bold text-slate-900">Configure your video</h2>
 
               {/* Template carousel — uses MotionPreviewCard */}
@@ -139,7 +139,7 @@ export default function MotionStudioPage() {
                 <p className="text-xs font-bold text-slate-700 mb-3 flex items-center gap-1.5">
                   <Film size={12} className="text-blue-500" />Motion Template
                 </p>
-                <div className="grid grid-cols-4 gap-2 mb-3">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
                   {CAROUSEL_TEMPLATES.map((t) => (
                     <MotionPreviewCard
                       key={t.id}
@@ -151,13 +151,13 @@ export default function MotionStudioPage() {
                   ))}
                 </div>
                 <button type="button" onClick={() => setTemplateModalOpen(true)}
-                  className="w-full py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 hover:border-blue-300 text-xs font-semibold text-slate-700 hover:text-blue-700 transition-all flex items-center justify-center gap-1.5">
+                  className="w-full py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 hover:border-blue-300 text-xs font-semibold text-slate-700 hover:text-blue-700 transition-all flex items-center justify-center gap-1.5 min-h-[44px] cursor-pointer">
                   <ChevronRight size={13} className="text-blue-400" /> View all {26} templates
                 </button>
               </div>
 
               {/* Duration & Quality */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="text-xs font-bold text-slate-700 mb-1.5 block">Duration (seconds)</label>
                   <input type="number" min={3} max={30} value={duration}

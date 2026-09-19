@@ -92,11 +92,11 @@ function Homesection({ launchingRef, aboutRef, setIsFormOpen }) {
         </div>
 
         {/* RIGHT SIDE IMAGE */}
-        <div className="w-[22.5rem] md:w-[35rem] h-auto">
+        <div className="w-full max-w-[22.5rem] md:max-w-[35rem] h-auto">
           <img
             src="vizzleVisuals.png"
             alt="vizzleVisuals"
-            className="w-full h-full"
+            className="w-full h-full object-contain"
           />
         </div>
       </div>

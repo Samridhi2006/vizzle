@@ -1,4 +1,4 @@
-﻿import { Code2, Copy, ExternalLink, CheckCircle, Zap } from "lucide-react";
+import { Code2, Copy, ExternalLink, CheckCircle, Zap } from "lucide-react";
 import { useState } from "react";
 
 const CODE_SNIPPET = `<!-- Add to your product page -->
@@ -18,7 +18,7 @@ export default function IntegrationPage() {
   };
 
   return (
-    <div className="p-6 space-y-5">
+    <div className="p-4 sm:p-6 space-y-5">
       <div>
         <h1 className="text-xl font-bold text-gray-900">Integration</h1>
         <p className="text-sm text-gray-400 mt-0.5">Connect Vizzle to your e-commerce platform via API.</p>

@@ -373,6 +373,47 @@ body {
     max-width: 280px !important;
     margin: 0 auto 36px !important;
   }
+
+  /* Pricing category tabs */
+  .vz-pricing-tabs {
+    flex-direction: column !important;
+    width: 100% !important;
+    max-width: 320px !important;
+    border-radius: 18px !important;
+    padding: 6px !important;
+    gap: 6px !important;
+  }
+  .vz-pricing-tabs button {
+    width: 100% !important;
+    justify-content: center !important;
+    padding: 10px 14px !important;
+    font-size: 12px !important;
+    border-radius: 12px !important;
+    min-height: 44px !important;
+  }
+
+  /* Compact WhatsApp float circle on small screens */
+  .vz-whatsapp-float {
+    bottom: 16px !important;
+    right: 14px !important;
+    padding: 12px !important;
+    border-radius: 50% !important;
+    width: 48px !important;
+    height: 48px !important;
+    min-width: 48px !important;
+    min-height: 48px !important;
+    justify-content: center !important;
+    align-items: center !important;
+    box-shadow: 0 4px 16px rgba(37, 211, 102, 0.45) !important;
+  }
+  .vz-whatsapp-float .vz-whatsapp-text {
+    display: none !important;
+  }
+
+  /* Robust word breaking to prevent text overflow at 360px */
+  h1, h2, h3, p, span, :is(a), button {
+    overflow-wrap: break-word;
+  }
 }
 
 

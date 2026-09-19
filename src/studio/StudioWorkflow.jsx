@@ -1,4 +1,4 @@
-﻿import { useState, useRef } from "react";
+import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Upload, Check, ChevronRight, Sparkles, Plus, ArrowRight,
@@ -216,7 +216,7 @@ export default function StudioWorkflow() {
 
   return (
     <div className="flex-1 overflow-y-auto" style={{ background: '#f0f4f8' }}>
-      <div className="max-w-4xl mx-auto px-6 py-6 space-y-4">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 sm:py-6 space-y-4">
 
         {/* Single / Batch Toggle */}
         <div className="flex items-center gap-2">
@@ -787,14 +787,14 @@ export default function StudioWorkflow() {
           </div>
 
           {/* Summary bar */}
-          <div className="flex items-center justify-between bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 mb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 mb-4">
             <div className="flex flex-col gap-0.5">
               <p className="text-sm font-bold text-slate-700">
                 <span className="text-blue-600">{credits} Credits</span> required
               </p>
               <p className="text-xs text-slate-400">You have 100 credits · {Math.floor(100 / credits)} generation{Math.floor(100 / credits) !== 1 ? "s" : ""}</p>
             </div>
-            <div className="text-right">
+            <div className="text-left sm:text-right border-t sm:border-t-0 pt-2 sm:pt-0 border-slate-200/60">
               <p className="text-xs text-slate-400">Estimated time</p>
               <p className="text-sm font-bold text-slate-700">~25 seconds</p>
             </div>
@@ -824,7 +824,7 @@ export default function StudioWorkflow() {
                 <p className="text-sm font-bold text-slate-700 mb-4 flex items-center gap-2">
                   <Sparkles size={14} className="text-blue-600" /> Your Catalogue is Ready
                 </p>
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   {["/catalogue/brand_main.jpg", "/catalogue/lookbook_main.jpg", "/catalogue/social_main.jpg"].map((src, i) => (
                     <div key={i} className="rounded-xl overflow-hidden aspect-[3/4] bg-slate-100">
                       <img src={src} alt={`result-${i}`} className="w-full h-full object-cover" />

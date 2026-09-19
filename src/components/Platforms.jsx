@@ -224,12 +224,14 @@ export default function Platforms() {
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.08 }}
             style={{
-              fontSize: 'clamp(2rem, 4.5vw, 3.25rem)',
+              fontSize: 'clamp(1.6rem, 5vw, 3.25rem)',
               fontWeight: 900,
               color: '#0F172A',
               letterSpacing: '-0.035em',
-              lineHeight: 1.1,
+              lineHeight: 1.15,
               margin: '0 0 16px',
+              wordWrap: 'break-word',
+              overflowWrap: 'break-word',
             }}
           >
             Works Everywhere You Do

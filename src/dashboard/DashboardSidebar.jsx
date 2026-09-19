@@ -1,7 +1,7 @@
-﻿import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import {
   Wand2, LayoutDashboard, Store, Package,
-  BarChart2, CreditCard, Code2, LogOut, MessageCircle, Film, Images
+  BarChart2, CreditCard, Code2, LogOut, MessageCircle, Film, Images, X
 } from 'lucide-react';
 import { useAuth } from '../context/useAuth';
 
@@ -27,20 +27,29 @@ const NAV_GROUPS = [
   },
 ];
 
-export default function DashboardSidebar() {
+export default function DashboardSidebar({ mobileOpen = false, onClose = () => {} }) {
   const navigate = useNavigate();
   const { logout } = useAuth();
 
-  return (
-    <aside
-      className="flex flex-col justify-between bg-white border-r border-gray-200 flex-shrink-0"
-      style={{ width: '188px', minHeight: '100vh' }}
-    >
+  const renderSidebarContent = (isMobile = false) => (
+    <>
       {/* Logo */}
       <div>
-        <div className="flex items-center gap-2.5 px-4 py-[18px] border-b border-gray-100">
-          <img src="/logo.png" alt="Vizzle" className="h-8 w-auto" onError={e => { e.target.style.display='none'; }} />
-          <span className="text-base font-bold text-gray-900 tracking-tight">Vizzle</span>
+        <div className="flex items-center justify-between px-4 py-[18px] border-b border-gray-100">
+          <div className="flex items-center gap-2.5">
+            <img src="/logo.png" alt="Vizzle" className="h-8 w-auto" onError={e => { e.target.style.display='none'; }} />
+            <span className="text-base font-bold text-gray-900 tracking-tight">Vizzle</span>
+          </div>
+          {isMobile && (
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="Close menu"
+              className="w-9 h-9 rounded-lg flex items-center justify-center text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+            >
+              <X size={19} />
+            </button>
+          )}
         </div>
 
         {/* Nav groups */}
@@ -53,8 +62,11 @@ export default function DashboardSidebar() {
                   <NavLink
                     key={label}
                     to={path}
+                    onClick={() => {
+                      if (isMobile) onClose();
+                    }}
                     className={({ isActive }) =>
-                      `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                      `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all min-h-[44px] ${
                         isActive
                           ? accent === 'purple'
                             ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-600/20'
@@ -89,22 +101,52 @@ export default function DashboardSidebar() {
           href="https://wa.me/918310247975"
           target="_blank"
           rel="noreferrer"
-          className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-green-600 hover:bg-green-50 transition-all"
+          className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-green-600 hover:bg-green-50 transition-all min-h-[44px]"
         >
           <MessageCircle size={17} strokeWidth={1.8} className="text-green-500" />
           WhatsApp Support
         </a>
         <button
           onClick={async () => {
+            if (isMobile) onClose();
             await logout();
             navigate('/');
           }}
-          className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-800 transition-all w-full cursor-pointer"
+          className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-800 transition-all w-full cursor-pointer min-h-[44px]"
         >
           <LogOut size={17} strokeWidth={1.8} className="text-gray-400" />
           Sign out
         </button>
       </div>
-    </aside>
+    </>
+  );
+
+  return (
+    <>
+      {/* Desktop Sidebar (hidden on screens < 768px) */}
+      <aside
+        className="hidden md:flex flex-col justify-between bg-white border-r border-gray-200 flex-shrink-0"
+        style={{ width: '188px', minHeight: '100vh' }}
+      >
+        {renderSidebarContent(false)}
+      </aside>
+
+      {/* Mobile Drawer (visible on screens < 768px when mobileOpen is true) */}
+      {mobileOpen && (
+        <div className="fixed inset-0 z-50 md:hidden flex">
+          {/* Backdrop overlay */}
+          <div
+            className="fixed inset-0 bg-black/50 backdrop-blur-xs transition-opacity"
+            onClick={onClose}
+          />
+          {/* Slide-over panel */}
+          <aside
+            className="relative flex flex-col justify-between bg-white w-64 max-w-[80vw] h-full shadow-2xl z-10 overflow-y-auto"
+          >
+            {renderSidebarContent(true)}
+          </aside>
+        </div>
+      )}
+    </>
   );
 }

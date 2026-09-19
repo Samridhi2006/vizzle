@@ -283,8 +283,8 @@ function Pricing() {
           </p>
         </div>
 
-        <div style={{ display: "flex", justifyContent: "center", marginBottom: "48px", padding: "0 24px" }}>
-          <div style={{
+        <div className="vz-pricing-tabs-wrap" style={{ display: "flex", justifyContent: "center", marginBottom: "48px", padding: "0 16px" }}>
+          <div className="vz-pricing-tabs" style={{
             display: "inline-flex", background: "#fff", borderRadius: "50px", padding: "5px",
             boxShadow: "0 2px 12px rgba(0,0,0,0.08)", border: "1px solid #E8E8E8",
             gap: "4px", fontFamily: "'Plus Jakarta Sans', Inter, sans-serif",

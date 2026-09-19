@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, Lock, Eye, EyeOff, ArrowRight, X, User, Sparkles, Zap, Loader2, AlertCircle } from 'lucide-react';
@@ -101,20 +101,20 @@ export default function SignInModal({ isOpen, onClose }) {
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 16 }}
           transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
-          className="relative z-10 w-full max-w-[1040px] bg-white rounded-[28px] sm:rounded-[36px] overflow-hidden shadow-[0_25px_80px_rgba(0,0,0,0.65)] border border-stone-800/20 grid grid-cols-1 lg:grid-cols-12 my-auto"
+          className="relative z-10 w-full max-w-md lg:max-w-[1040px] bg-white rounded-[28px] sm:rounded-[36px] overflow-hidden shadow-[0_25px_80px_rgba(0,0,0,0.65)] border border-stone-800/20 grid grid-cols-1 lg:grid-cols-12 my-auto"
         >
           {/* Close button (top right of modal card) */}
           <button
             type="button"
             onClick={onClose}
-            className="absolute top-4 right-4 lg:top-5 lg:right-5 z-30 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-black/50 hover:bg-black/75 text-white flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm shadow-md"
+            className="absolute top-4 right-4 lg:top-5 lg:right-5 z-30 w-9 h-9 sm:w-10 sm:h-10 min-w-[36px] min-h-[36px] rounded-full bg-black/50 hover:bg-black/75 text-white flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm shadow-md"
             aria-label="Close modal"
           >
             <X className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
 
-          {/* â”€â”€ Left Column: Form Card â”€â”€ */}
-          <div className="lg:col-span-5 p-6 sm:p-9 lg:p-11 flex flex-col justify-between bg-white">
+          {/* ── Left Column: Form Card ── */}
+          <div className="w-full lg:col-span-5 p-6 sm:p-9 lg:p-11 flex flex-col justify-between bg-white">
             <div>
               {/* Brand Logo with viz.png symbol */}
               <div className="flex items-center gap-3 mb-5">
@@ -133,7 +133,7 @@ export default function SignInModal({ isOpen, onClose }) {
                 Welcome Back
               </h2>
               <div className="flex items-center gap-2 text-xs sm:text-[13.5px] font-medium text-[#736c64] mb-5">
-                <span className="text-base leading-none">ðŸŽ</span>
+                <span className="text-base leading-none">🎁 </span>
                 <span>Get 100 Free credits to start.</span>
               </div>
 
@@ -279,7 +279,7 @@ export default function SignInModal({ isOpen, onClose }) {
                       <span>Signing In...</span>
                     </>
                   ) : successMessage ? (
-                    <span>Welcome to Vizzle! âœ“</span>
+                    <span>Welcome to Vizzle! ✓</span>
                   ) : (
                     <>
                       <span>Continue</span>
@@ -305,9 +305,9 @@ export default function SignInModal({ isOpen, onClose }) {
             </p>
           </div>
 
-          {/* â”€â”€ Right Column: Showcase Art â”€â”€ */}
+          {/* ── Right Column: Showcase Art ── */}
           <div
-            className="lg:col-span-7 relative min-h-[460px] lg:min-h-[580px] flex flex-col justify-between p-7 sm:p-10 lg:p-12 overflow-hidden bg-cover bg-center"
+            className="hidden lg:flex lg:col-span-7 relative min-h-[580px] flex-col justify-between p-7 sm:p-10 lg:p-12 overflow-hidden bg-cover bg-center"
             style={{
               backgroundImage: "url('/images/auth/signin_showcase.jpg')",
             }}

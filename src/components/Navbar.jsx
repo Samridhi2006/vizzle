@@ -25,11 +25,11 @@ function Navbar({ launchingRef, setIsFormOpen }) {
       <nav className="container mx-auto flex items-center justify-between h-[6.5rem] px-4 sm:px-1 2xl:px-16">
         
         {/* Logo */}
-        <Link to="/">
+        <Link to="/" className="shrink-0">
           <img
             src="/logo.png"
             alt="Vizzle logo"
-            className="w-[175px] md:w-[200px] transition-all duration-500"
+            className="w-[140px] sm:w-[175px] md:w-[200px] transition-all duration-500"
           />
         </Link>
 
@@ -78,18 +78,19 @@ function Navbar({ launchingRef, setIsFormOpen }) {
         </div>
 
         {/* Mobile Menu Icon */}
-        <div className="sm:hidden relative w-10 h-10 z-50">
-          {!isMenuOpen ? (
-            <Bars3Icon
-              className="w-10 h-10 cursor-pointer text-blue-950"
-              onClick={() => setIsMenuOpen(true)}
-            />
-          ) : (
-            <XMarkIcon
-              className="w-10 h-10 cursor-pointer text-blue-950"
-              onClick={() => setIsMenuOpen(false)}
-            />
-          )}
+        <div className="sm:hidden relative z-50 flex items-center">
+          <button
+            type="button"
+            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="w-11 h-11 flex items-center justify-center rounded-xl text-blue-950 hover:bg-black/5 transition-colors cursor-pointer"
+          >
+            {!isMenuOpen ? (
+              <Bars3Icon className="w-8 h-8" />
+            ) : (
+              <XMarkIcon className="w-8 h-8" />
+            )}
+          </button>
         </div>
 
         {/* Mobile Menu */}

@@ -1,4 +1,4 @@
-﻿import { Store, Package, Zap, Users, CreditCard, Plus } from "lucide-react";
+import { Store, Package, Zap, Users, CreditCard, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const STATS = [
@@ -11,26 +11,26 @@ const STATS = [
 export default function OverviewPage() {
   const navigate = useNavigate();
   return (
-    <div className="p-6 space-y-5">
+    <div className="p-4 sm:p-6 space-y-5">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h1 className="text-xl font-bold text-gray-900">Dashboard</h1>
           <p className="text-sm text-gray-400 mt-0.5">Virtual try-on platform — stores, products, analytics.</p>
         </div>
         <button
           onClick={() => navigate("/dashboard/stores")}
-          className="flex items-center gap-2 px-4 py-2.5 bg-gray-900 text-white text-sm font-semibold rounded-xl hover:bg-gray-800 transition-colors"
+          className="flex items-center justify-center gap-2 px-4 py-2.5 bg-gray-900 text-white text-sm font-semibold rounded-xl hover:bg-gray-800 transition-colors min-h-[44px] cursor-pointer"
         >
           <Plus size={15} /> New Store
         </button>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {STATS.map(({ label, value, icon: Icon, color, bg }) => (
           <div key={label} className="bg-white rounded-xl border border-gray-100 p-4 flex items-center gap-3 shadow-sm">
-            <div className={`w-10 h-10 ${bg} rounded-xl flex items-center justify-center`}>
+            <div className={`w-10 h-10 ${bg} rounded-xl flex items-center justify-center shrink-0`}>
               <Icon size={18} className={color} strokeWidth={1.8} />
             </div>
             <div>
@@ -42,9 +42,9 @@ export default function OverviewPage() {
       </div>
 
       {/* Credit Balance */}
-      <div className="bg-white rounded-xl border border-gray-100 p-4 flex items-center justify-between shadow-sm">
+      <div className="bg-white rounded-xl border border-gray-100 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center">
+          <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center shrink-0">
             <CreditCard size={18} className="text-blue-500" strokeWidth={1.8} />
           </div>
           <div>
@@ -54,18 +54,18 @@ export default function OverviewPage() {
         </div>
         <button
           onClick={() => navigate("/dashboard/billing")}
-          className="flex items-center gap-2 px-4 py-2 border border-gray-200 text-sm font-semibold rounded-xl hover:bg-gray-50 transition-colors"
+          className="flex items-center justify-center gap-2 px-4 py-2 border border-gray-200 text-sm font-semibold rounded-xl hover:bg-gray-50 transition-colors min-h-[44px] cursor-pointer"
         >
           Top Up →
         </button>
       </div>
 
       {/* Step 1 CTA */}
-      <div className="bg-white rounded-xl border border-gray-100 p-5 shadow-sm">
+      <div className="bg-white rounded-xl border border-gray-100 p-4 sm:p-5 shadow-sm">
         <p className="text-xs font-bold text-blue-500 uppercase tracking-widest mb-3">Step 1 — Create a Store</p>
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center shrink-0">
               <Store size={18} className="text-blue-500" strokeWidth={1.8} />
             </div>
             <div>
@@ -75,7 +75,7 @@ export default function OverviewPage() {
           </div>
           <button
             onClick={() => navigate("/dashboard/stores")}
-            className="flex items-center gap-2 px-4 py-2 border border-gray-200 text-sm font-semibold rounded-xl hover:bg-gray-50 transition-colors"
+            className="flex items-center justify-center gap-2 px-4 py-2 border border-gray-200 text-sm font-semibold rounded-xl hover:bg-gray-50 transition-colors min-h-[44px] cursor-pointer"
           >
             <Plus size={14} /> Create Store
           </button>

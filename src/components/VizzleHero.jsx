@@ -522,7 +522,20 @@ function VizzleNavbar() {
         className="vz-hamburger"
         onClick={() => setMenuOpen(!menuOpen)}
         aria-label="Toggle menu"
-        style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '8px', display: 'none' }}
+        style={{
+          background: 'none',
+          border: 'none',
+          cursor: 'pointer',
+          padding: '10px',
+          width: '44px',
+          height: '44px',
+          minWidth: '44px',
+          minHeight: '44px',
+          display: 'none',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexDirection: 'column',
+        }}
       >
         <div style={{ width: 22, height: 2, background: '#0f172a', marginBottom: 5, transition: 'transform 0.2s', transform: menuOpen ? 'rotate(45deg) translate(5px,5px)' : 'none' }} />
         <div style={{ width: 22, height: 2, background: '#0f172a', marginBottom: 5, opacity: menuOpen ? 0 : 1, transition: 'opacity 0.2s' }} />
@@ -696,7 +709,7 @@ function VizzleHeroSection({ setIsFormOpen }) {
           }
           .vz-nav-links { display: none; }
           .vz-nav-cta   { display: none; }
-          .vz-hamburger { display: flex !important; flex-direction: column; justify-content: center; }
+          .vz-hamburger { display: flex !important; flex-direction: column; justify-content: center; align-items: center; width: 44px; height: 44px; min-width: 44px; min-height: 44px; }
           .vz-mobile-menu {
             display: block;
             position: absolute;

@@ -40,15 +40,15 @@ const PLANS = [
 export default function BillingPage() {
   const navigate = useNavigate();
   return (
-    <div className="p-6 space-y-5">
+    <div className="p-4 sm:p-6 space-y-5">
       <div>
         <h1 className="text-xl font-bold text-gray-900">Credits & Billing</h1>
         <p className="text-sm text-gray-400 mt-0.5">Manage your credit balance and subscription plan.</p>
       </div>
       {/* Balance card */}
-      <div className="bg-white rounded-xl border border-gray-100 p-5 flex items-center justify-between shadow-sm">
+      <div className="bg-white rounded-xl border border-gray-100 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
+          <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center shrink-0">
             <CreditCard size={22} className="text-blue-500" strokeWidth={1.8} />
           </div>
           <div>
@@ -56,8 +56,8 @@ export default function BillingPage() {
             <p className="text-3xl font-black text-gray-900">100 <span className="text-base font-semibold text-gray-400">credits</span></p>
           </div>
         </div>
-        <div className="text-right">
-          <p className="text-xs text-gray-400 mb-2">Equivalent to</p>
+        <div className="text-left sm:text-right border-t sm:border-t-0 pt-3 sm:pt-0 border-gray-100">
+          <p className="text-xs text-gray-400 mb-1 sm:mb-2">Equivalent to</p>
           <p className="text-sm font-bold text-gray-800">10 × 2K generations</p>
           <p className="text-sm font-bold text-gray-500">5 × 4K generations</p>
         </div>
@@ -66,7 +66,7 @@ export default function BillingPage() {
       {/* Plans */}
       <div>
         <p className="text-sm font-bold text-gray-700 mb-3">Top Up Credits</p>
-        <div className="grid grid-cols-4 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-3">
           {PLANS.map(({ name, subtitle, price, tryons, perUnit, features, popular }) => (
             <div
               key={name}
