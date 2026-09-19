@@ -1,18 +1,30 @@
-import { NavLink, useNavigate } from 'react-router-dom';
+﻿import { NavLink, useNavigate } from 'react-router-dom';
 import {
   Wand2, LayoutDashboard, Store, Package,
-  BarChart2, CreditCard, Code2, LogOut, MessageCircle
+  BarChart2, CreditCard, Code2, LogOut, MessageCircle, Film, Images
 } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/useAuth';
 
-const NAV_ITEMS = [
-  { label: 'Studio',           icon: Wand2,          path: '/dashboard/studio' },
-  { label: 'Overview',         icon: LayoutDashboard, path: '/dashboard/overview' },
-  { label: 'Stores',           icon: Store,           path: '/dashboard/stores' },
-  { label: 'Products',         icon: Package,         path: '/dashboard/products' },
-  { label: 'Analytics',        icon: BarChart2,       path: '/dashboard/analytics' },
-  { label: 'Credits & Billing',icon: CreditCard,      path: '/dashboard/billing' },
-  { label: 'Integration',      icon: Code2,           path: '/dashboard/integration' },
+const NAV_GROUPS = [
+  {
+    groupLabel: 'CREATE',
+    items: [
+      { label: 'Studio',        icon: Wand2,   path: '/dashboard/studio' },
+      { label: 'Motion Studio', icon: Film,    path: '/dashboard/motion-studio', accent: 'purple' },
+      { label: 'My Creations',  icon: Images,  path: '/dashboard/creations',     accent: 'pink' },
+    ],
+  },
+  {
+    groupLabel: 'MANAGE',
+    items: [
+      { label: 'Overview',          icon: LayoutDashboard, path: '/dashboard/overview' },
+      { label: 'Stores',            icon: Store,           path: '/dashboard/stores' },
+      { label: 'Products',          icon: Package,         path: '/dashboard/products' },
+      { label: 'Analytics',         icon: BarChart2,       path: '/dashboard/analytics' },
+      { label: 'Credits & Billing', icon: CreditCard,      path: '/dashboard/billing' },
+      { label: 'Integration',       icon: Code2,           path: '/dashboard/integration' },
+    ],
+  },
 ];
 
 export default function DashboardSidebar() {
@@ -31,33 +43,42 @@ export default function DashboardSidebar() {
           <span className="text-base font-bold text-gray-900 tracking-tight">Vizzle</span>
         </div>
 
-        {/* Nav */}
-        <nav className="px-3 py-3 flex flex-col gap-0.5">
-          {NAV_ITEMS.map(({ label, icon: Icon, path }, idx) => (
-            <NavLink
-              key={label}
-              to={path}
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
-                  isActive
-                    ? idx === 0
-                      ? 'bg-blue-50 text-blue-600'
-                      : 'bg-blue-50 text-blue-600'
-                    : 'text-gray-500 hover:bg-gray-50 hover:text-gray-800'
-                }`
-              }
-            >
-              {({ isActive }) => (
-                <>
-                  <Icon
-                    size={17}
-                    strokeWidth={1.8}
-                    className={isActive ? 'text-blue-500' : 'text-gray-400'}
-                  />
-                  {label}
-                </>
-              )}
-            </NavLink>
+        {/* Nav groups */}
+        <nav className="px-3 py-3 flex flex-col gap-3">
+          {NAV_GROUPS.map(({ groupLabel, items }) => (
+            <div key={groupLabel}>
+              <p className="px-3 mb-1 text-[9px] font-bold text-gray-400 tracking-widest uppercase">{groupLabel}</p>
+              <div className="flex flex-col gap-0.5">
+                {items.map(({ label, icon: Icon, path, accent }) => (
+                  <NavLink
+                    key={label}
+                    to={path}
+                    className={({ isActive }) =>
+                      `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                        isActive
+                          ? accent === 'purple'
+                            ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-600/20'
+                            : accent === 'pink'
+                            ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-md shadow-blue-600/20'
+                            : 'bg-blue-50 text-blue-600'
+                          : 'text-gray-500 hover:bg-gray-50 hover:text-gray-800'
+                      }`
+                    }
+                  >
+                    {({ isActive }) => (
+                      <>
+                        <Icon
+                          size={17}
+                          strokeWidth={1.8}
+                          className={isActive ? 'text-white' : 'text-gray-400'}
+                        />
+                        {label}
+                      </>
+                    )}
+                  </NavLink>
+                ))}
+              </div>
+            </div>
           ))}
         </nav>
       </div>

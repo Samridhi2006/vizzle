@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 
 const STATS = [
   { label: "Stores", value: "0", icon: Store, color: "text-blue-500", bg: "bg-blue-50" },
-  { label: "Products", value: "0", icon: Package, color: "text-purple-500", bg: "bg-purple-50" },
-  { label: "Try-ons (30d)", value: "0", icon: Zap, color: "text-amber-500", bg: "bg-amber-50" },
+  { label: "Products", value: "0", icon: Package, color: "text-blue-500", bg: "bg-blue-50" },
+  { label: "Try-ons (30d)", value: "0", icon: Zap, color: "text-blue-500", bg: "bg-blue-50" },
   { label: "Unique users (30d)", value: "0", icon: Users, color: "text-emerald-500", bg: "bg-emerald-50" },
 ];
 
@@ -83,12 +83,12 @@ export default function OverviewPage() {
       </div>
 
       {/* Studio CTA */}
-      <div className="bg-gradient-to-r from-pink-50 to-purple-50 border border-purple-100 rounded-xl p-5">
+      <div className="bg-gradient-to-r from-sky-50 to-blue-50 border border-blue-100 rounded-xl p-5">
         <p className="text-sm font-bold text-gray-900 mb-1">🎨 Ready to create catalogues?</p>
         <p className="text-xs text-gray-500 mb-3">Turn flat-lay garments into professional model shoots in minutes.</p>
         <button
           onClick={() => navigate("/dashboard/studio")}
-          className="px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white text-sm font-bold rounded-xl hover:opacity-90 transition-opacity"
+          className="px-4 py-2 bg-gradient-to-r from-sky-500 to-blue-600 text-white text-sm font-bold rounded-xl hover:opacity-90 transition-opacity"
         >
           Open Studio →
         </button>

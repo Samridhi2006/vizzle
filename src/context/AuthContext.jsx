@@ -2,13 +2,13 @@ import { createContext, useContext, useState, useEffect } from 'react';
 import { 
   signInWithPopup, 
   signOut, 
-  onAuthStateChanged,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword
 } from 'firebase/auth';
 import { auth, googleProvider } from '../components/firebase';
 
 const AuthContext = createContext(null);
+export { AuthContext };
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => {
@@ -35,9 +35,13 @@ export function AuthProvider({ children }) {
     };
   };
 
-  // Sync with Firebase auth state
+  // Sync with Firebase auth state (or stub no-op when Firebase not configured)
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+    if (!auth || typeof auth.onAuthStateChanged !== 'function') {
+      setLoading(false);
+      return;
+    }
+    const unsubscribe = auth.onAuthStateChanged((firebaseUser) => {
       if (firebaseUser) {
         const formatted = formatUser(firebaseUser);
         setUser(formatted);
@@ -201,11 +205,5 @@ export function AuthProvider({ children }) {
     </AuthContext.Provider>
   );
 }
-
-export function useAuth() {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
-}
+// Note: useAuth hook is in ./useAuth.js to satisfy Vite Fast Refresh
+// (React Fast Refresh requires component files to only export components)

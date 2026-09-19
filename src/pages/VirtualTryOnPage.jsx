@@ -19,7 +19,7 @@ function FAQItem({ faq, isOpen, onToggle }) {
     <div style={{ borderRadius: 16, border: isOpen ? "1.5px solid #06B6D4" : "1.5px solid #E2E8F0", background: "#fff", overflow: "hidden", boxShadow: isOpen ? "0 4px 20px rgba(6,182,212,0.08)" : "0 1px 4px rgba(0,0,0,0.04)", transition: "all 0.2s ease" }}>
       <button onClick={onToggle} style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "20px 24px", background: "none", border: "none", cursor: "pointer", textAlign: "left", gap: 12 }}>
         <span style={{ fontWeight: 700, fontSize: 14, color: isOpen ? "#0891B2" : "#0F172A", lineHeight: 1.5 }}>{faq.q}</span>
-        <span style={{ flexShrink: 0, width: 28, height: 28, borderRadius: "50%", background: isOpen ? "#FFF1F2" : "#F1F5F9", display: "flex", alignItems: "center", justifyContent: "center", color: isOpen ? "#F43F5E" : "#64748B" }}>
+        <span style={{ flexShrink: 0, width: 28, height: 28, borderRadius: "50%", background: isOpen ? "#EFF6FF" : "#F1F5F9", display: "flex", alignItems: "center", justifyContent: "center", color: isOpen ? "#2563EB" : "#64748B" }}>
           {isOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
         </span>
       </button>
@@ -52,7 +52,7 @@ export default function VirtualTryOnPage() {
         <div style={{ width: 1, height: 20, background: "#E2E8F0" }} />
         <img src="/viz.png" alt="Vizzle" style={{ height: 28, width: "auto" }} />
         <div style={{ marginLeft: "auto", display: "flex", gap: 8 }}>
-          <span style={{ background: "linear-gradient(135deg,#F97316,#EF4444)", color: "#fff", borderRadius: 999, padding: "4px 14px", fontSize: 11, fontWeight: 700 }}>Virtual Try-On</span>
+          <span style={{ background: "linear-gradient(135deg,#2563EB,#4F46E5)", color: "#fff", borderRadius: 999, padding: "4px 14px", fontSize: 11, fontWeight: 700 }}>Virtual Try-On</span>
         </div>
       </div>
 
@@ -69,7 +69,7 @@ export default function VirtualTryOnPage() {
           </div>
           <h1 style={{ fontSize: "clamp(1.8rem,4vw,3rem)", fontWeight: 900, color: "#0F172A", letterSpacing: "-0.04em", lineHeight: 1.13, margin: "0 0 16px" }}>
             Let Shoppers See It On Themselves —{" "}
-            <span style={{ background: "linear-gradient(135deg,#F97316,#F59E0B,#EF4444)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
+            <span style={{ background: "linear-gradient(135deg,#2563EB,#4F46E5)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
               Before They Buy.
             </span>
           </h1>
@@ -78,7 +78,7 @@ export default function VirtualTryOnPage() {
           </p>
           <button
             onClick={() => openModal('Book a Free Demo', FIELD_PRESETS.all)}
-            style={{ background: "linear-gradient(135deg,#F97316,#F59E0B,#EF4444)", color: "#fff", border: "none", borderRadius: 999, padding: "12px 28px", fontSize: 12, fontWeight: 700, cursor: "pointer", boxShadow: "0 4px 14px rgba(249,115,22,0.3)" }}
+            style={{ background: "linear-gradient(135deg,#2563EB,#4F46E5)", color: "#fff", border: "none", borderRadius: 999, padding: "12px 28px", fontSize: 12, fontWeight: 700, cursor: "pointer", boxShadow: "0 4px 14px rgba(37,99,235,0.25)" }}
           >
             Book A Free Demo →
           </button>
@@ -141,14 +141,14 @@ export default function VirtualTryOnPage() {
             <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 12, marginBottom: 32 }}>
               {[["3s","Try-On Time"],["55%","Return Drop"],["3x","Conversion Lift"]].map(([stat, label]) => (
                 <div key={label} style={{ background: "#fff", borderRadius: 16, border: "1px solid #E2E8F0", padding: "16px 12px", textAlign: "center", boxShadow: "0 1px 4px rgba(0,0,0,0.04)" }}>
-                  <div style={{ fontSize: 24, fontWeight: 900, background: "linear-gradient(135deg,#F97316,#EF4444)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>{stat}</div>
+                  <div style={{ fontSize: 24, fontWeight: 900, background: "linear-gradient(135deg,#2563EB,#4F46E5)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>{stat}</div>
                   <div style={{ fontSize: 10, color: "#94A3B8", fontWeight: 600, marginTop: 2 }}>{label}</div>
                 </div>
               ))}
             </div>
 
             <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-              <button style={{ background: "linear-gradient(135deg,#F97316,#F59E0B,#EF4444)", color: "#fff", border: "none", borderRadius: 12, padding: "14px 28px", fontSize: 13, fontWeight: 700, cursor: "pointer", boxShadow: "0 4px 14px rgba(249,115,22,0.3)" }}>
+              <button style={{ background: "linear-gradient(135deg,#2563EB,#4F46E5)", color: "#fff", border: "none", borderRadius: 12, padding: "14px 28px", fontSize: 13, fontWeight: 700, cursor: "pointer", boxShadow: "0 4px 14px rgba(37,99,235,0.25)" }}>
                 Start Your Free Trial →
               </button>
               <button style={{ background: "#fff", color: "#334155", border: "1.5px solid #E2E8F0", borderRadius: 12, padding: "14px 28px", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>
@@ -164,7 +164,7 @@ export default function VirtualTryOnPage() {
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.55 }} style={{ textAlign: "center", marginBottom: 48 }}>
             <h2 style={{ fontSize: "clamp(1.6rem,3.5vw,2.6rem)", fontWeight: 900, color: "#0F172A", letterSpacing: "-0.04em", lineHeight: 1.15, margin: "0 0 12px" }}>
               Simple for Shoppers.{" "}
-              <span style={{ background: "linear-gradient(135deg,#F97316,#EF4444)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
+              <span style={{ background: "linear-gradient(135deg,#2563EB,#4F46E5)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
                 Powerful for Brands.
               </span>
             </h2>
@@ -221,10 +221,10 @@ export default function VirtualTryOnPage() {
                   ✨ Step 3: See the AI Result
                 </span>
               </div>
-              <div style={{ aspectRatio: "3/4", background: "#F1F5F9", borderRadius: 24, overflow: "hidden", border: "2px solid #F97316", boxShadow: "0 8px 32px rgba(249,115,22,0.18)", position: "relative" }}>
+              <div style={{ aspectRatio: "3/4", background: "#F1F5F9", borderRadius: 24, overflow: "hidden", border: "2px solid #2563EB", boxShadow: "0 8px 32px rgba(37,99,235,0.18)", position: "relative" }}>
                 <img src="/tryon/step3_ai_result.jpg" alt="Step 3 - AI virtual try-on result wearing olive bomber jacket" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top", display: "block" }} />
                 {/* AI badge top */}
-                <div style={{ position: "absolute", top: 12, right: 12, background: "linear-gradient(135deg,#F97316,#EF4444)", color: "#fff", borderRadius: 999, padding: "5px 12px", fontSize: 10, fontWeight: 800, boxShadow: "0 2px 8px rgba(249,115,22,0.4)", display: "flex", alignItems: "center", gap: 4 }}>
+                <div style={{ position: "absolute", top: 12, right: 12, background: "linear-gradient(135deg,#2563EB,#4F46E5)", color: "#fff", borderRadius: 999, padding: "5px 12px", fontSize: 10, fontWeight: 800, boxShadow: "0 2px 8px rgba(37,99,235,0.35)", display: "flex", alignItems: "center", gap: 4 }}>
                   ⚡ Vizzle AI
                 </div>
                 {/* Photorealistic fit tag bottom */}
@@ -251,14 +251,14 @@ export default function VirtualTryOnPage() {
           {/* Left — Value Proposition */}
           <motion.div initial={{ opacity: 0, x: -32 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.65 }}>
             {/* Section label */}
-            <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "linear-gradient(135deg,#FFF7ED,#FEF2F2)", border: "1px solid #FED7AA", borderRadius: 999, padding: "5px 14px", marginBottom: 20 }}>
-              <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#F97316", display: "inline-block" }} />
-              <span style={{ fontSize: 10, fontWeight: 700, color: "#EA580C", letterSpacing: "0.06em", textTransform: "uppercase" }}>Omnichannel Platform</span>
+            <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "linear-gradient(135deg,#EFF6FF,#EEF2FF)", border: "1px solid #BFDBFE", borderRadius: 999, padding: "5px 14px", marginBottom: 20 }}>
+              <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#2563EB", display: "inline-block" }} />
+              <span style={{ fontSize: 10, fontWeight: 700, color: "#1D4ED8", letterSpacing: "0.06em", textTransform: "uppercase" }}>Omnichannel Platform</span>
             </div>
 
             <h2 style={{ fontSize: "clamp(1.7rem,3.5vw,2.7rem)", fontWeight: 900, color: "#0F172A", letterSpacing: "-0.04em", lineHeight: 1.15, margin: "0 0 16px" }}>
               Made for{" "}
-              <span style={{ background: "linear-gradient(135deg,#F97316,#EF4444)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
+              <span style={{ background: "linear-gradient(135deg,#2563EB,#4F46E5)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
                 Every Fashion Business
               </span>
             </h2>
@@ -279,7 +279,7 @@ export default function VirtualTryOnPage() {
                 "Kids' Wear and Teen Fashion Retailers",
               ].map((item) => (
                 <div key={item} style={{ display: "flex", alignItems: "flex-start", gap: 10, fontSize: 13, fontWeight: 500, color: "#334155" }}>
-                  <span style={{ color: "#F43F5E", fontWeight: 900, fontSize: 16, lineHeight: 1, marginTop: 1, flexShrink: 0 }}>•</span>
+                  <span style={{ color: "#2563EB", fontWeight: 900, fontSize: 16, lineHeight: 1, marginTop: 1, flexShrink: 0 }}>•</span>
                   {item}
                 </div>
               ))}
@@ -287,7 +287,7 @@ export default function VirtualTryOnPage() {
 
             <button
               onClick={() => openModal('Talk To Our Team', FIELD_PRESETS.all)}
-              style={{ background: "linear-gradient(135deg,#F97316,#F59E0B,#EF4444)", color: "#fff", border: "none", borderRadius: 12, padding: "14px 24px", fontSize: 13, fontWeight: 700, cursor: "pointer", boxShadow: "0 4px 16px rgba(249,115,22,0.3)", display: "inline-flex", alignItems: "center", gap: 8, transition: "transform 0.15s ease, opacity 0.15s ease" }}
+              style={{ background: "linear-gradient(135deg,#2563EB,#4F46E5)", color: "#fff", border: "none", borderRadius: 12, padding: "14px 24px", fontSize: 13, fontWeight: 700, cursor: "pointer", boxShadow: "0 4px 16px rgba(37,99,235,0.25)", display: "inline-flex", alignItems: "center", gap: 8, transition: "transform 0.15s ease, opacity 0.15s ease" }}
               onMouseEnter={e => (e.currentTarget.style.transform = "scale(1.02)")}
               onMouseLeave={e => (e.currentTarget.style.transform = "scale(1)")}
             >
@@ -298,7 +298,7 @@ export default function VirtualTryOnPage() {
           {/* Right — Visual Card */}
           <motion.div initial={{ opacity: 0, x: 32 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.65, delay: 0.1 }} style={{ position: "relative" }}>
             {/* Ambient glow */}
-            <div style={{ position: "absolute", inset: -20, background: "radial-gradient(ellipse at center, rgba(249,115,22,0.12) 0%, transparent 70%)", borderRadius: 40, pointerEvents: "none" }} />
+            <div style={{ position: "absolute", inset: -20, background: "radial-gradient(ellipse at center, rgba(37,99,235,0.12) 0%, transparent 70%)", borderRadius: 40, pointerEvents: "none" }} />
 
             <div style={{ borderRadius: 28, overflow: "hidden", boxShadow: "0 24px 64px rgba(0,0,0,0.14)", border: "1px solid #E2E8F0", background: "#fff", aspectRatio: "16/9", position: "relative" }}>
               <img
@@ -322,7 +322,7 @@ export default function VirtualTryOnPage() {
               {/* Bottom caption bar */}
               <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, background: "linear-gradient(to top, rgba(0,0,0,0.65) 0%, transparent 100%)", padding: "28px 20px 16px", display: "flex", alignItems: "flex-end", justifyContent: "space-between" }}>
                 <span style={{ color: "rgba(255,255,255,0.85)", fontSize: 11, fontWeight: 500 }}>Luxury Boutique · Terrazzo Floor · Mumbai</span>
-                <span style={{ background: "linear-gradient(135deg,#F97316,#EF4444)", color: "#fff", fontSize: 10, fontWeight: 800, padding: "4px 12px", borderRadius: 999, letterSpacing: "0.03em" }}>VIZZLE KIOSK</span>
+                <span style={{ background: "linear-gradient(135deg,#2563EB,#4F46E5)", color: "#fff", fontSize: 10, fontWeight: 800, padding: "4px 12px", borderRadius: 999, letterSpacing: "0.03em" }}>VIZZLE KIOSK</span>
               </div>
             </div>
 
@@ -343,7 +343,7 @@ export default function VirtualTryOnPage() {
       {/* ── Built for Every Shopper, Every Wardrobe ── */}
       <section style={{ background: "#1C1F26", width: "100%", padding: "80px 24px", position: "relative", overflow: "hidden" }}>
         {/* Ambient radial glow */}
-        <div style={{ position: "absolute", top: "30%", left: "50%", transform: "translate(-50%,-50%)", width: 800, height: 600, background: "radial-gradient(ellipse at center, rgba(249,115,22,0.07) 0%, transparent 70%)", pointerEvents: "none" }} />
+        <div style={{ position: "absolute", top: "30%", left: "50%", transform: "translate(-50%,-50%)", width: 800, height: 600, background: "radial-gradient(ellipse at center, rgba(37,99,235,0.07) 0%, transparent 70%)", pointerEvents: "none" }} />
 
         <div style={{ maxWidth: 1200, margin: "0 auto", position: "relative", zIndex: 1 }}>
 
@@ -351,7 +351,7 @@ export default function VirtualTryOnPage() {
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.55 }} style={{ textAlign: "center", marginBottom: 56 }}>
             <h2 style={{ fontSize: "clamp(1.7rem,3.5vw,2.8rem)", fontWeight: 900, color: "#fff", letterSpacing: "-0.04em", lineHeight: 1.15, margin: "0 0 12px" }}>
               Built for{" "}
-              <span style={{ background: "linear-gradient(135deg,#F97316,#F59E0B,#EF4444)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
+              <span style={{ background: "linear-gradient(135deg,#2563EB,#4F46E5)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
                 Every Shopper,
               </span>{" "}
               Every Wardrobe
@@ -367,7 +367,7 @@ export default function VirtualTryOnPage() {
               { label: "Women's Wear",  src: "/showcase/western_emerald_dress.jpg",    emoji: "👗", color: "#EC4899" },
               { label: "Men's Wear",    src: "/showcase/men_denim_streetwear.jpg",      emoji: "👔", color: "#3B82F6" },
               { label: "Boys Wear",     src: "/showcase/kids_boy_polo_shorts.jpg",      emoji: "🧒", color: "#10B981" },
-              { label: "Girls Wear",    src: "/showcase/kids_girl_tulle_frock.jpg",     emoji: "👧", color: "#F59E0B" },
+              { label: "Girls Wear",    src: "/showcase/kids_girl_tulle_frock.jpg",     emoji: "👧", color: "#2563EB" },
             ].map(({ label, src, emoji, color }, i) => (
               <motion.div
                 key={label}
@@ -414,7 +414,7 @@ export default function VirtualTryOnPage() {
           <div style={{ textAlign: "center" }}>
             <button
               onClick={() => openModal('Book a Free Demo', FIELD_PRESETS.all)}
-              style={{ background: "linear-gradient(135deg,#F97316,#F59E0B,#EF4444)", color: "#fff", border: "none", borderRadius: 999, padding: "12px 28px", fontSize: 12, fontWeight: 700, cursor: "pointer", boxShadow: "0 4px 18px rgba(249,115,22,0.35)", display: "inline-flex", alignItems: "center", gap: 8, transition: "transform 0.15s ease, opacity 0.15s ease" }}
+              style={{ background: "linear-gradient(135deg,#2563EB,#4F46E5)", color: "#fff", border: "none", borderRadius: 999, padding: "12px 28px", fontSize: 12, fontWeight: 700, cursor: "pointer", boxShadow: "0 4px 18px rgba(37,99,235,0.3)", display: "inline-flex", alignItems: "center", gap: 8, transition: "transform 0.15s ease, opacity 0.15s ease" }}
               onMouseEnter={e => (e.currentTarget.style.transform = "scale(1.05)")}
               onMouseLeave={e => (e.currentTarget.style.transform = "scale(1)")}
             >
@@ -447,7 +447,7 @@ export default function VirtualTryOnPage() {
             {[
               { src: "/tryon/business_fashion_brands.jpg",  title: "Fashion Brands",   caption: "Offer interactive shopping experiences.",  icon: "✨", color: "#8B5CF6" },
               { src: "/tryon/business_retail_stores.jpg",   title: "Retail Stores",    caption: "Enable in-store virtual fitting.",          icon: "🏪", color: "#06B6D4" },
-              { src: "/tryon/business_shopping_malls.jpg",  title: "Shopping Malls",   caption: "Deploy smart fashion kiosks.",              icon: "🛍️", color: "#F97316" },
+              { src: "/tryon/business_shopping_malls.jpg",  title: "Shopping Malls",   caption: "Deploy smart fashion kiosks.",              icon: "🛍️", color: "#0284C7" },
             ].map(({ src, title, caption, icon, color }, i) => (
               <motion.div
                 key={title}
@@ -483,7 +483,7 @@ export default function VirtualTryOnPage() {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(380px,1fr))", gap: 20 }}>
             {[
               { src: "/tryon/business_ecommerce_web.jpg",      title: "E-Commerce Websites",  caption: "Increase engagement and conversions.",         icon: "💻", color: "#10B981" },
-              { src: "/tryon/business_fashion_boutiques.jpg",  title: "Fashion Boutiques",    caption: "Enhance customer confidence before purchase.",  icon: "🪞", color: "#F43F5E" },
+              { src: "/tryon/business_fashion_boutiques.jpg",  title: "Fashion Boutiques",    caption: "Enhance customer confidence before purchase.",  icon: "🪞", color: "#2563EB" },
             ].map(({ src, title, caption, icon, color }, i) => (
               <motion.div
                 key={title}

@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+﻿import { useState, useRef } from 'react';
 import { Check, X, Image as ImageIcon, AlertCircle } from 'lucide-react';
 
 export default function GarmentUploadStep({ garmentLabel = 'Saree', onBodyUpload, onPalluUpload }) {
@@ -69,7 +69,7 @@ export default function GarmentUploadStep({ garmentLabel = 'Saree', onBodyUpload
       {/* ── Numbered Step Header ── */}
       <div className="mb-4">
         <div className="flex items-center gap-2 mb-1">
-          <span className="w-6 h-6 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 text-white text-[11px] font-bold flex items-center justify-center flex-shrink-0">
+          <span className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 text-white text-[11px] font-bold flex items-center justify-center flex-shrink-0">
             3
           </span>
           <h3 className="text-sm font-bold text-slate-900">Upload Garment Images</h3>
@@ -86,7 +86,7 @@ export default function GarmentUploadStep({ garmentLabel = 'Saree', onBodyUpload
             onClick={() => !bodyPreview && bodyInputRef.current?.click()}
             className={`group rounded-xl border transition-all duration-200 p-6 flex flex-col items-center justify-center text-center flex-1 bg-white relative ${
               bodyPreview
-                ? 'border-pink-500/80 ring-2 ring-pink-500/10'
+                ? 'border-blue-600/80 ring-2 ring-blue-500/10'
                 : 'border-slate-200 hover:border-slate-300 cursor-pointer'
             }`}
           >
@@ -118,7 +118,7 @@ export default function GarmentUploadStep({ garmentLabel = 'Saree', onBodyUpload
                 <button
                   type="button"
                   onClick={() => bodyInputRef.current?.click()}
-                  className="mt-3 inline-flex items-center gap-1.5 text-xs font-bold text-slate-800 hover:text-pink-600 transition-colors cursor-pointer bg-slate-50 hover:bg-slate-100 border border-slate-200/80 px-3.5 py-1.5 rounded-lg"
+                  className="mt-3 inline-flex items-center gap-1.5 text-xs font-bold text-slate-800 hover:text-blue-600 transition-colors cursor-pointer bg-slate-50 hover:bg-slate-100 border border-slate-200/80 px-3.5 py-1.5 rounded-lg"
                 >
                   <ImageIcon size={13} className="text-slate-600" />
                   <span>Browse</span>
@@ -146,7 +146,7 @@ export default function GarmentUploadStep({ garmentLabel = 'Saree', onBodyUpload
             onClick={() => !palluPreview && palluInputRef.current?.click()}
             className={`group rounded-xl border transition-all duration-200 p-6 flex flex-col items-center justify-center text-center flex-1 bg-white relative ${
               palluPreview
-                ? 'border-pink-500/80 ring-2 ring-pink-500/10'
+                ? 'border-blue-600/80 ring-2 ring-blue-500/10'
                 : 'border-slate-200 hover:border-slate-300 cursor-pointer'
             }`}
           >
@@ -178,7 +178,7 @@ export default function GarmentUploadStep({ garmentLabel = 'Saree', onBodyUpload
                 <button
                   type="button"
                   onClick={() => palluInputRef.current?.click()}
-                  className="mt-3 inline-flex items-center gap-1.5 text-xs font-bold text-slate-800 hover:text-pink-600 transition-colors cursor-pointer bg-slate-50 hover:bg-slate-100 border border-slate-200/80 px-3.5 py-1.5 rounded-lg"
+                  className="mt-3 inline-flex items-center gap-1.5 text-xs font-bold text-slate-800 hover:text-blue-600 transition-colors cursor-pointer bg-slate-50 hover:bg-slate-100 border border-slate-200/80 px-3.5 py-1.5 rounded-lg"
                 >
                   <ImageIcon size={13} className="text-slate-600" />
                   <span>Browse</span>

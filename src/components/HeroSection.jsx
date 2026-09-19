@@ -10,10 +10,10 @@ const SLIDES = [
 ];
 
 const AVATARS = [
-  { initials: 'SA', color: '#7C3AED' },
-  { initials: 'MK', color: '#6366F1' },
-  { initials: 'PR', color: '#A855F7' },
-  { initials: 'LT', color: '#EC4899' },
+  { initials: 'SA', color: '#2563EB' },
+  { initials: 'MK', color: '#1D4ED8' },
+  { initials: 'PR', color: '#0284C7' },
+  { initials: 'LT', color: '#4F46E5' },
 ];
 
 const HERO_CSS = `
@@ -22,22 +22,22 @@ const HERO_CSS = `
   @keyframes heroFadeIn { from { opacity:0; transform:scale(1.04); } to { opacity:1; transform:scale(1); } }
   @keyframes fadeSlideUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
   @keyframes pulseGlow { 0%,100% { opacity:0.55; transform:scale(1); } 50% { opacity:0.85; transform:scale(1.08); } }
-  @keyframes badgePulse { 0%,100% { box-shadow:0 0 0 0 rgba(124,58,237,0.35); } 50% { box-shadow:0 0 0 8px rgba(124,58,237,0); } }
+  @keyframes badgePulse { 0%,100% { box-shadow:0 0 0 0 rgba(37,99,235,0.35); } 50% { box-shadow:0 0 0 8px rgba(37,99,235,0); } }
   @keyframes shimmer { 0% { background-position:-200% center; } 100% { background-position:200% center; } }
   @keyframes slideInLeft { from { opacity:0; transform:translateX(-32px); } to { opacity:1; transform:translateX(0); } }
   @keyframes slideInRight { from { opacity:0; transform:translateX(32px); } to { opacity:1; transform:translateX(0); } }
   .hero-gradient-text {
-    background: linear-gradient(135deg, #7C3AED 0%, #6366F1 40%, #EC4899 100%);
+    background: linear-gradient(135deg, #2563EB 0%, #3B82F6 40%, #4F46E5 100%);
     background-size: 200% auto;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
     animation: shimmer 4s linear infinite;
   }
-  .hero-primary-btn { background:linear-gradient(135deg,#7C3AED,#6366F1); transition:all 0.3s ease; box-shadow:0 4px 20px rgba(124,58,237,0.4); }
-  .hero-primary-btn:hover { background:linear-gradient(135deg,#6D28D9,#4F46E5); box-shadow:0 6px 28px rgba(124,58,237,0.6); transform:translateY(-2px); }
-  .hero-secondary-btn { border:1.5px solid rgba(124,58,237,0.4); background:rgba(124,58,237,0.06); backdrop-filter:blur(8px); transition:all 0.3s ease; }
-  .hero-secondary-btn:hover { background:rgba(124,58,237,0.12); border-color:rgba(124,58,237,0.7); transform:translateY(-2px); box-shadow:0 4px 16px rgba(124,58,237,0.2); }
+  .hero-primary-btn { background:linear-gradient(135deg,#2563EB,#4F46E5); transition:all 0.3s ease; box-shadow:0 4px 20px rgba(37,99,235,0.35); }
+  .hero-primary-btn:hover { background:linear-gradient(135deg,#1D4ED8,#4338CA); box-shadow:0 6px 28px rgba(37,99,235,0.5); transform:translateY(-2px); }
+  .hero-secondary-btn { border:1.5px solid rgba(37,99,235,0.35); background:rgba(37,99,235,0.06); backdrop-filter:blur(8px); transition:all 0.3s ease; }
+  .hero-secondary-btn:hover { background:rgba(37,99,235,0.12); border-color:rgba(37,99,235,0.7); transform:translateY(-2px); box-shadow:0 4px 16px rgba(37,99,235,0.2); }
   .hero-left-col { animation:slideInLeft 0.75s cubic-bezier(0.4,0,0.2,1) 0.1s both; }
   .hero-right-col { animation:slideInRight 0.75s cubic-bezier(0.4,0,0.2,1) 0.25s both; }
 `;
@@ -59,7 +59,7 @@ function AvatarGroup() {
       <div className="flex flex-col">
         <div className="flex items-center gap-0.5">
           {[...Array(5)].map((_, i) => (
-            <Star key={i} size={12} className="fill-amber-400 text-amber-400" />
+            <Star key={i} size={12} className="fill-blue-500 text-blue-500" />
           ))}
         </div>
         <span className="text-xs text-gray-500 mt-0.5">
@@ -218,7 +218,7 @@ function HeroSection({ setIsFormOpen }) {
             style={{
               position: 'absolute', top: '-10%', left: '-5%',
               width: '600px', height: '600px', borderRadius: '50%',
-              background: 'radial-gradient(circle, rgba(124,58,237,0.18) 0%, transparent 70%)',
+              background: 'radial-gradient(circle, rgba(37,99,235,0.18) 0%, transparent 70%)',
               animation: 'pulseGlow 6s ease-in-out infinite',
             }}
           />
@@ -255,8 +255,8 @@ function HeroSection({ setIsFormOpen }) {
               id="hero-top-badge"
               className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold mb-6 cursor-default select-none"
               style={{
-                background: 'linear-gradient(135deg, rgba(124,58,237,0.1), rgba(99,102,241,0.1))',
-                border: '1px solid rgba(124,58,237,0.25)',
+                background: 'linear-gradient(135deg, rgba(37,99,235,0.1), rgba(99,102,241,0.1))',
+                border: '1px solid rgba(37,99,235,0.25)',
                 color: '#7C3AED',
                 animation: 'badgePulse 2.5s ease-in-out infinite',
               }}
@@ -313,7 +313,7 @@ function HeroSection({ setIsFormOpen }) {
               >
                 <span
                   className="flex items-center justify-center w-7 h-7 rounded-full shrink-0"
-                  style={{ background: 'rgba(124,58,237,0.12)' }}
+                  style={{ background: 'rgba(37,99,235,0.12)' }}
                 >
                   <Play
                     size={13}
@@ -331,7 +331,7 @@ function HeroSection({ setIsFormOpen }) {
             {/* Stats */}
             <div
               className="flex flex-wrap items-center gap-x-8 gap-y-3 mt-8 pt-8"
-              style={{ borderTop: '1px solid rgba(124,58,237,0.12)' }}
+              style={{ borderTop: '1px solid rgba(37,99,235,0.12)' }}
             >
               {[
                 { value: '10x', label: 'Faster Catalog Shoots' },

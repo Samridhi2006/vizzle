@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, Lock, Eye, EyeOff, ArrowRight, X, User, Sparkles, Zap, Loader2, AlertCircle } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/useAuth';
 
 export default function SignInModal({ isOpen, onClose }) {
   const navigate = useNavigate();
@@ -113,7 +113,7 @@ export default function SignInModal({ isOpen, onClose }) {
             <X className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
 
-          {/* ── Left Column: Form Card ── */}
+          {/* â”€â”€ Left Column: Form Card â”€â”€ */}
           <div className="lg:col-span-5 p-6 sm:p-9 lg:p-11 flex flex-col justify-between bg-white">
             <div>
               {/* Brand Logo with viz.png symbol */}
@@ -133,14 +133,14 @@ export default function SignInModal({ isOpen, onClose }) {
                 Welcome Back
               </h2>
               <div className="flex items-center gap-2 text-xs sm:text-[13.5px] font-medium text-[#736c64] mb-5">
-                <span className="text-base leading-none">🎁</span>
+                <span className="text-base leading-none">ðŸŽ</span>
                 <span>Get 100 Free credits to start.</span>
               </div>
 
               {/* Error message banner */}
               {errors.general && (
-                <div className="mb-4 p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs flex items-start gap-2">
-                  <AlertCircle className="w-4 h-4 shrink-0 text-amber-600 mt-0.5" />
+                <div className="mb-4 p-3 rounded-xl bg-blue-50 border border-blue-200 text-blue-800 text-xs flex items-start gap-2">
+                  <AlertCircle className="w-4 h-4 shrink-0 text-blue-600 mt-0.5" />
                   <span className="leading-snug">{errors.general}</span>
                 </div>
               )}
@@ -279,7 +279,7 @@ export default function SignInModal({ isOpen, onClose }) {
                       <span>Signing In...</span>
                     </>
                   ) : successMessage ? (
-                    <span>Welcome to Vizzle! ✓</span>
+                    <span>Welcome to Vizzle! âœ“</span>
                   ) : (
                     <>
                       <span>Continue</span>
@@ -305,7 +305,7 @@ export default function SignInModal({ isOpen, onClose }) {
             </p>
           </div>
 
-          {/* ── Right Column: Showcase Art ── */}
+          {/* â”€â”€ Right Column: Showcase Art â”€â”€ */}
           <div
             className="lg:col-span-7 relative min-h-[460px] lg:min-h-[580px] flex flex-col justify-between p-7 sm:p-10 lg:p-12 overflow-hidden bg-cover bg-center"
             style={{
@@ -321,7 +321,7 @@ export default function SignInModal({ isOpen, onClose }) {
               }}
             />
 
-            {/* Top Right Tag matching reference: STYLE / AI / YOU ── */}
+            {/* Top Right Tag matching reference: STYLE / AI / YOU â”€â”€ */}
             <div className="relative z-10 flex justify-end">
               <div className="flex items-center gap-2.5 sm:gap-3">
                 <span className="text-[10px] sm:text-[11px] font-bold tracking-[0.25em] text-stone-300/90 uppercase font-sans">
@@ -350,7 +350,7 @@ export default function SignInModal({ isOpen, onClose }) {
                 style={{ fontFamily: "'Plus Jakarta Sans', Inter, sans-serif" }}
               >
                 Generate realistic AI fashion looks with premium models, trendy styles, and endless
-                possibilities — all in one place.
+                possibilities â€” all in one place.
               </p>
 
               <div className="flex items-center gap-3 sm:gap-4 text-xs font-medium text-stone-300 border-t border-white/15 pt-4">

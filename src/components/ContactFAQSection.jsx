@@ -51,7 +51,7 @@ function FAQItem({ item, index, isOpen, onToggle }) {
         </span>
 
         <div
-          className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition-colors duration-200 ${isOpen ? 'bg-rose-50 text-rose-500' : 'bg-slate-50 text-slate-500'
+          className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition-colors duration-200 ${isOpen ? 'bg-blue-50 text-blue-600' : 'bg-slate-50 text-slate-500'
             }`}
         >
           {isOpen ? (

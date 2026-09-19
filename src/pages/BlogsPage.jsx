@@ -52,7 +52,7 @@ const BLOGS = [
 
 // ─── Category badge color map ─────────────────────────────────────────────────
 const CATEGORY_COLORS = {
-  "Fit Science":   { bg: "#FFF7ED", text: "#C2410C", dot: "#F97316" },
+  "Fit Science":   { bg: "#EFF6FF", text: "#1D4ED8", dot: "#2563EB" },
   "Fashion Tech":  { bg: "#EFF6FF", text: "#1D4ED8", dot: "#3B82F6" },
   "AI & Fashion":  { bg: "#F5F3FF", text: "#6D28D9", dot: "#8B5CF6" },
   "Sustainability":{ bg: "#F0FDF4", text: "#166534", dot: "#22C55E" },
@@ -161,7 +161,7 @@ function BlogCard({ blog }) {
             paddingTop: "16px",
             transition: "color 0.18s ease",
           }}
-          onMouseEnter={e => (e.currentTarget.style.color = "#F97316")}
+          onMouseEnter={e => (e.currentTarget.style.color = "#2563EB")}
           onMouseLeave={e => (e.currentTarget.style.color = "#111")}
         >
           Read full story on Medium
@@ -209,8 +209,8 @@ export default function BlogsPage() {
             transition: "all 0.15s ease",
           }}
           onMouseEnter={e => {
-            e.currentTarget.style.borderColor = "#F97316";
-            e.currentTarget.style.color = "#F97316";
+            e.currentTarget.style.borderColor = "#2563EB";
+            e.currentTarget.style.color = "#2563EB";
           }}
           onMouseLeave={e => {
             e.currentTarget.style.borderColor = "#E8E8E8";
@@ -235,7 +235,7 @@ export default function BlogsPage() {
             fontSize: "11.5px", fontWeight: 700, color: "#64748B",
             marginBottom: "20px", boxShadow: "0 1px 4px rgba(0,0,0,0.05)",
           }}>
-            <Tag size={12} style={{ color: "#F97316" }} />
+            <Tag size={12} style={{ color: "#2563EB" }} />
             VIZZLE JOURNAL
           </div>
 
@@ -248,7 +248,7 @@ export default function BlogsPage() {
             margin: "0 0 18px",
           }}>
             Fashion Tech, Fit Science{" "}
-            <span style={{ color: "#F97316" }}>&amp; Trends</span>
+            <span style={{ color: "#2563EB" }}>&amp; Trends</span>
           </h1>
 
           <p style={{ fontSize: "15px", color: "#64748B", lineHeight: 1.7, margin: 0 }}>

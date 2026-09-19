@@ -1,10 +1,10 @@
 ﻿import { BarChart2, TrendingUp, Users, Zap, Eye } from "lucide-react";
 
 const METRICS = [
-  { label: "Total Try-ons", value: "0", delta: "+0%", icon: Zap, color: "text-amber-500", bg: "bg-amber-50" },
+  { label: "Total Try-ons", value: "0", delta: "+0%", icon: Zap, color: "text-blue-500", bg: "bg-blue-50" },
   { label: "Unique Users", value: "0", delta: "+0%", icon: Users, color: "text-blue-500", bg: "bg-blue-50" },
   { label: "Conversion Rate", value: "0%", delta: "+0%", icon: TrendingUp, color: "text-emerald-500", bg: "bg-emerald-50" },
-  { label: "Page Views", value: "0", delta: "+0%", icon: Eye, color: "text-purple-500", bg: "bg-purple-50" },
+  { label: "Page Views", value: "0", delta: "+0%", icon: Eye, color: "text-blue-500", bg: "bg-blue-50" },
 ];
 
 export default function AnalyticsPage() {

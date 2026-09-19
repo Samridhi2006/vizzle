@@ -1,6 +1,6 @@
 import { Phone, Headphones, Sparkles } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/useAuth';
 
 export default function DashboardTopBar({ credits = 100 }) {
   const { pathname } = useLocation();
@@ -12,13 +12,15 @@ export default function DashboardTopBar({ credits = 100 }) {
   const userPhoto = user?.photoURL;
 
   const PAGE_META = {
-    '/dashboard/studio':      { title: 'Studio',            sub: 'Create premium AI catalogue shoots from flat lay garments in minutes.' },
-    '/dashboard/overview':    { title: 'Overview',          sub: `Welcome back, ${firstName}` },
-    '/dashboard/stores':      { title: 'Stores',            sub: 'Manage your connected stores and API keys.' },
-    '/dashboard/products':    { title: 'Products',          sub: 'Browse and manage your uploaded product catalogue.' },
-    '/dashboard/analytics':   { title: 'Analytics',         sub: 'Track try-on performance, conversions, and user engagement.' },
-    '/dashboard/billing':     { title: 'Credits & Billing', sub: 'Manage your credit balance and subscription plan.' },
-    '/dashboard/integration': { title: 'Integration',       sub: 'Connect Vizzle to your e-commerce platform via API.' },
+    '/dashboard/studio':        { title: 'Studio',            sub: 'Create premium AI catalogue shoots from flat lay garments in minutes.' },
+    '/dashboard/motion-studio': { title: 'Motion Studio',     sub: 'Animate a catalogue photo into a motion-ready product video.' },
+    '/dashboard/creations':     { title: 'My Creations',      sub: 'View, manage, and download your previously generated catalog images.' },
+    '/dashboard/overview':      { title: 'Overview',          sub: `Welcome back, ${firstName}` },
+    '/dashboard/stores':        { title: 'Stores',            sub: 'Manage your connected stores and API keys.' },
+    '/dashboard/products':      { title: 'Products',          sub: 'Browse and manage your uploaded product catalogue.' },
+    '/dashboard/analytics':     { title: 'Analytics',         sub: 'Track try-on performance, conversions, and user engagement.' },
+    '/dashboard/billing':       { title: 'Credits & Billing', sub: 'Manage your credit balance and subscription plan.' },
+    '/dashboard/integration':   { title: 'Integration',       sub: 'Connect Vizzle to your e-commerce platform via API.' },
   };
 
   const meta = PAGE_META[pathname] || { title: 'Dashboard', sub: '' };

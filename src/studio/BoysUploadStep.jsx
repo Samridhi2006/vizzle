@@ -73,7 +73,7 @@ export default function BoysUploadStep({ garmentLabel = 'Garment', garmentId = '
       {/* ── Step Header ── */}
       <div className="mb-5">
         <div className="flex items-center gap-2 mb-1">
-          <span className="w-6 h-6 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 text-white text-[10px] font-bold flex items-center justify-center flex-shrink-0">
+          <span className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 text-white text-[10px] font-bold flex items-center justify-center flex-shrink-0">
             3
           </span>
           <h3 className="text-sm font-bold text-slate-900">Upload Garment Image</h3>
@@ -95,10 +95,10 @@ export default function BoysUploadStep({ garmentLabel = 'Garment', garmentId = '
               group flex-1 rounded-xl border-2 border-dashed transition-all duration-200
               flex flex-col items-center justify-center text-center p-8 relative min-h-[240px]
               ${preview
-                ? 'border-pink-400/70 bg-white ring-2 ring-pink-500/10 cursor-default'
+                ? 'border-blue-500/70 bg-white ring-2 ring-blue-500/10 cursor-default'
                 : dragging
-                  ? 'border-pink-400 bg-pink-50/60 cursor-copy'
-                  : 'border-slate-200 bg-slate-50/40 hover:border-pink-300 hover:bg-pink-50/30 cursor-pointer'
+                  ? 'border-blue-400 bg-blue-50/60 cursor-copy'
+                  : 'border-slate-200 bg-slate-50/40 hover:border-blue-300 hover:bg-blue-50/30 cursor-pointer'
               }
             `}
           >
@@ -131,9 +131,9 @@ export default function BoysUploadStep({ garmentLabel = 'Garment', garmentId = '
               /* ── Empty / drag-over state ── */
               <>
                 <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-4 transition-colors ${
-                  dragging ? 'bg-pink-100' : 'bg-slate-100 group-hover:bg-pink-50'
+                  dragging ? 'bg-blue-100' : 'bg-slate-100 group-hover:bg-blue-50'
                 }`}>
-                  <Upload size={22} className={`transition-colors ${dragging ? 'text-pink-500' : 'text-slate-400 group-hover:text-pink-400'}`} />
+                  <Upload size={22} className={`transition-colors ${dragging ? 'text-blue-500' : 'text-slate-400 group-hover:text-blue-400'}`} />
                 </div>
                 <p className="text-sm font-bold text-slate-800 mb-1">
                   Upload {garmentLabel}
@@ -144,7 +144,7 @@ export default function BoysUploadStep({ garmentLabel = 'Garment', garmentId = '
                 <button
                   type="button"
                   onClick={(e) => { e.stopPropagation(); inputRef.current?.click(); }}
-                  className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-700 hover:text-pink-600 bg-white hover:bg-pink-50 border border-slate-200 hover:border-pink-300 px-4 py-2 rounded-lg transition-all cursor-pointer shadow-xs"
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-700 hover:text-blue-600 bg-white hover:bg-blue-50 border border-slate-200 hover:border-blue-300 px-4 py-2 rounded-lg transition-all cursor-pointer shadow-xs"
                 >
                   <ImageIcon size={13} className="text-slate-500" />
                   Browse

@@ -54,7 +54,7 @@ export default function GarmentSelectorModal({ isOpen, onClose, selectedId, onSe
                 <h2 className="text-base sm:text-lg font-bold text-slate-900">
                   Select Your Garment Type
                 </h2>
-                <span className="text-[11px] font-semibold px-2.5 py-0.5 bg-pink-50 text-pink-700 border border-pink-200/80 rounded-full">
+                <span className="text-[11px] font-semibold px-2.5 py-0.5 bg-blue-50 text-blue-700 border border-blue-200/80 rounded-full">
                   38 Styles
                 </span>
               </div>
@@ -108,7 +108,7 @@ export default function GarmentSelectorModal({ isOpen, onClose, selectedId, onSe
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search styles..."
-                className="w-full pl-8 pr-7 py-1.5 rounded-lg border border-slate-200 bg-white text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
+                className="w-full pl-8 pr-7 py-1.5 rounded-lg border border-slate-200 bg-white text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
               />
               {searchQuery && (
                 <button
@@ -132,7 +132,7 @@ export default function GarmentSelectorModal({ isOpen, onClose, selectedId, onSe
                     setActiveCategory('all');
                     setSearchQuery('');
                   }}
-                  className="mt-3 px-4 py-1.5 text-xs font-semibold text-pink-600 bg-pink-50 hover:bg-pink-100 rounded-lg transition-colors cursor-pointer"
+                  className="mt-3 px-4 py-1.5 text-xs font-semibold text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors cursor-pointer"
                 >
                   Reset Filters
                 </button>
@@ -151,7 +151,7 @@ export default function GarmentSelectorModal({ isOpen, onClose, selectedId, onSe
                       }}
                       className={`group relative rounded-2xl border transition-all duration-200 cursor-pointer flex flex-col items-center bg-[#FAFAFC] hover:bg-white text-left ${
                         isSelected
-                          ? 'border-pink-500 ring-2 ring-pink-500/20 shadow-md bg-white'
+                          ? 'border-2 border-blue-600 ring-2 ring-blue-100 shadow-md shadow-blue-500/20 bg-white'
                           : 'border-slate-200 hover:border-slate-300 shadow-xs'
                       }`}
                     >
@@ -170,7 +170,7 @@ export default function GarmentSelectorModal({ isOpen, onClose, selectedId, onSe
 
                       {/* Selected checkmark badge top-right */}
                       {isSelected && (
-                        <div className="absolute top-2.5 right-2.5 w-5 h-5 rounded-full bg-pink-500 text-white flex items-center justify-center shadow-xs">
+                        <div className="absolute top-2.5 right-2.5 w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-xs">
                           <Check size={11} strokeWidth={3} />
                         </div>
                       )}

@@ -138,7 +138,7 @@ const TRYON_PLANS = [
   },
 ];
 
-const DOT_COLORS = ["#1D8DB2", "#22C55E", "#6366F1", "#A855F7", "#F43F5E"];
+const DOT_COLORS = ["#2563EB", "#0284C7", "#3B82F6", "#60A5FA", "#0EA5E9"];
 
 function PlanCard({ plan, index }) {
   const { openModal } = useModal();
@@ -310,9 +310,9 @@ function Pricing() {
                 fontSize: "13px", fontWeight: 700, fontFamily: "inherit",
                 cursor: "pointer", transition: "all 0.2s ease",
                 display: "flex", alignItems: "center", gap: "7px",
-                background: activeTab === "tryon" ? "#1D8DB2" : "transparent",
+                background: activeTab === "tryon" ? "#2563EB" : "transparent",
                 color: activeTab === "tryon" ? "#fff" : "#666",
-                boxShadow: activeTab === "tryon" ? "0 2px 12px rgba(29,141,178,0.25)" : "none",
+                boxShadow: activeTab === "tryon" ? "0 2px 12px rgba(37,99,235,0.25)" : "none",
               }}
             >
               <Video size={14} />

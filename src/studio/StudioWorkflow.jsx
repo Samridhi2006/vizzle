@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+﻿import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Upload, Check, ChevronRight, Sparkles, Plus, ArrowRight,
@@ -64,7 +64,7 @@ function StepHeader({ number, title, children }) {
   return (
     <div className="mb-4">
       <div className="flex items-center gap-2 mb-1">
-        <span className="w-6 h-6 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 text-white text-[10px] font-bold flex items-center justify-center flex-shrink-0">
+        <span className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 text-white text-[10px] font-bold flex items-center justify-center flex-shrink-0">
           {number}
         </span>
         <h3 className="text-sm font-bold text-slate-800">{title}</h3>
@@ -81,7 +81,7 @@ function SelectionCard({ img, label, selected, onClick, sublabel, aspectClass = 
       onClick={onClick}
       className={`group relative rounded-2xl border transition-all duration-200 cursor-pointer flex flex-col items-center bg-white text-left w-full overflow-hidden ${
         selected
-          ? "border-2 border-[#D82E78] ring-2 ring-[#D82E78]/15 shadow-sm"
+          ? "border-2 border-blue-600 ring-2 ring-blue-100 shadow-md shadow-blue-500/20"
           : "border border-slate-200/90 hover:border-slate-300 shadow-2xs hover:shadow-xs"
       }`}
     >
@@ -92,7 +92,7 @@ function SelectionCard({ img, label, selected, onClick, sublabel, aspectClass = 
           className="w-full h-full object-contain transition-transform duration-200 group-hover:scale-102"
         />
         {selected && (
-          <div className="absolute top-2.5 right-2.5 w-5 h-5 bg-[#D82E78] rounded-full flex items-center justify-center text-white shadow-xs">
+          <div className="absolute top-2.5 right-2.5 w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center text-white shadow-xs">
             <Check size={11} className="text-white" strokeWidth={3} />
           </div>
         )}
@@ -125,7 +125,7 @@ function UploadZone({ label, onFile }) {
   return (
     <div
       className={`relative flex flex-col items-center justify-center border-2 border-dashed rounded-2xl p-6 cursor-pointer transition-all min-h-[160px] ${
-        dragging ? "border-purple-400 bg-purple-50" : "border-slate-200 bg-slate-50 hover:border-purple-300 hover:bg-purple-50/50"
+        dragging ? "border-blue-400 bg-blue-50" : "border-slate-200 bg-slate-50 hover:border-blue-300 hover:bg-blue-50/50"
       }`}
       onClick={() => ref.current?.click()}
       onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
@@ -227,7 +227,7 @@ export default function StudioWorkflow() {
               onClick={() => setMode(m)}
               className={`px-5 py-1.5 rounded-full text-xs sm:text-sm font-bold capitalize transition-all cursor-pointer ${
                 mode === m
-                  ? "bg-[#D82E78] text-white shadow-xs"
+                  ? "bg-blue-600 text-white shadow-xs"
                   : "bg-white border border-slate-200 text-slate-600 hover:border-slate-300 hover:text-slate-800"
               }`}
             >
@@ -259,12 +259,12 @@ export default function StudioWorkflow() {
                 }}
                 className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all border-2 cursor-pointer ${
                   audience === a.id
-                    ? "border-[#D82E78] bg-pink-50/70 text-[#D82E78] shadow-xs"
+                    ? "border-blue-600 bg-blue-50/70 text-blue-700 shadow-xs"
                     : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50/80"
                 }`}
               >
                 <span>{a.label}</span>
-                {audience === a.id && <Check size={13} className="text-[#D82E78]" strokeWidth={3} />}
+                {audience === a.id && <Check size={13} className="text-blue-600" strokeWidth={3} />}
               </button>
             ))}
           </div>
@@ -275,8 +275,8 @@ export default function StudioWorkflow() {
           <div className="flex items-center justify-between mb-4">
             <StepHeader number={2} title="Select Your Garment Type" />
             {audience === "women" && (
-              <span className="text-[11px] font-bold px-2.5 py-1 bg-pink-50 text-pink-700 border border-pink-200/80 rounded-full flex items-center gap-1">
-                <Sparkles size={11} className="text-pink-500" /> 38 Unique Styles Available
+              <span className="text-[11px] font-bold px-2.5 py-1 bg-blue-50 text-blue-700 border border-blue-200/80 rounded-full flex items-center gap-1">
+                <Sparkles size={11} className="text-blue-600" /> 38 Unique Styles Available
               </span>
             )}
           </div>
@@ -290,7 +290,7 @@ export default function StudioWorkflow() {
                 <p className="text-xs text-slate-500">Select the garment category</p>
                 <button
                   type="button"
-                  className="inline-flex items-center gap-1.5 text-xs font-bold text-pink-600 hover:text-pink-700 bg-pink-50 hover:bg-pink-100/80 px-3 py-1.5 rounded-lg border border-pink-200/70 transition-colors cursor-pointer"
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100/80 px-3 py-1.5 rounded-lg border border-blue-200/70 transition-colors cursor-pointer"
                 >
                   <ChevronRight size={13} />
                   View All
@@ -330,32 +330,71 @@ export default function StudioWorkflow() {
             garmentId={garmentType}
           />
         ) : (
+          /* ── Men / default: single-garment upload panel ── */
           <div className="bg-white rounded-2xl border border-gray-200/90 p-5 sm:p-6 shadow-xs">
-            <StepHeader number={3} title={`Upload Your ${GARMENTS[audience].find(g => g.id === garmentType)?.label || "Garment"} Image`} />
-            <div className="grid grid-cols-2 gap-6">
-              {/* Upload zone */}
+            {/* Numbered header */}
+            <div className="flex items-center gap-2 mb-5">
+              <span className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 text-white text-[11px] font-bold flex items-center justify-center flex-shrink-0">
+                3
+              </span>
               <div>
-                <p className="text-xs font-semibold text-slate-500 mb-2">Upload Image</p>
-                <UploadZone label="Click or drag & drop your garment" />
+                <h3 className="text-sm font-bold text-slate-900">
+                  Upload Your {GARMENTS[audience].find(g => g.id === garmentType)?.label || "Garment"} Image
+                </h3>
+                <p className="text-xs text-slate-400 mt-0.5">Upload a clean flat-lay garment photo for best results</p>
               </div>
-              {/* Quality guide */}
+            </div>
+
+            {/* Two-column panel */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 items-start">
+
+              {/* LEFT — Upload Dropzone */}
               <div>
-                <p className="text-xs font-semibold text-slate-500 mb-2">Quality Guide</p>
+                <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-2">Upload Image</p>
+                <UploadZone label="Click or drag &amp; drop your garment" />
+              </div>
+
+              {/* RIGHT — Quality Guide */}
+              <div>
+                <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-2">Quality Guide</p>
                 <div className="grid grid-cols-2 gap-3">
-                  <div className="rounded-xl overflow-hidden border-2 border-emerald-200 relative">
-                    <img src="/vz_flatlay_hoodie.jpg" alt="Good example" className="w-full aspect-square object-cover" />
-                    <div className="absolute top-2 left-2 flex items-center gap-1 bg-emerald-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full">
-                      <Check size={8} strokeWidth={3} /> Good
+
+                  {/* Good card */}
+                  <div className="rounded-xl overflow-hidden border-2 border-emerald-300 bg-white shadow-sm">
+                    <div className="relative">
+                      <img
+                        src="/images/studio/men_guide/good.jpg"
+                        alt="Good input example"
+                        className="w-full aspect-square object-cover"
+                      />
+                      <div className="absolute top-2 left-2 flex items-center gap-1 bg-emerald-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full shadow-sm">
+                        <Check size={8} strokeWidth={3} />
+                        Good
+                      </div>
                     </div>
-                    <p className="text-[10px] text-emerald-700 font-medium text-center py-1.5 bg-emerald-50">Clean flat-lay, clear edges</p>
+                    <p className="text-[10px] text-emerald-700 font-semibold text-center py-2 bg-emerald-50 border-t border-emerald-100">
+                      Clean flat-lay, clear edges
+                    </p>
                   </div>
-                  <div className="rounded-xl overflow-hidden border-2 border-red-200 relative">
-                    <img src="/step1_jumpsuit_flatlay.jpg" alt="Bad example" className="w-full aspect-square object-cover" />
-                    <div className="absolute top-2 left-2 flex items-center gap-1 bg-red-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full">
-                      <X size={8} strokeWidth={3} /> Avoid
+
+                  {/* Avoid card */}
+                  <div className="rounded-xl overflow-hidden border-2 border-red-300 bg-white shadow-sm">
+                    <div className="relative">
+                      <img
+                        src="/images/studio/men_guide/bad.jpg"
+                        alt="Bad input example"
+                        className="w-full aspect-square object-cover"
+                      />
+                      <div className="absolute top-2 left-2 flex items-center gap-1 bg-red-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full shadow-sm">
+                        <X size={8} strokeWidth={3} />
+                        Avoid
+                      </div>
                     </div>
-                    <p className="text-[10px] text-red-600 font-medium text-center py-1.5 bg-red-50">Wrinkled or poorly lit</p>
+                    <p className="text-[10px] text-red-600 font-semibold text-center py-2 bg-red-50 border-t border-red-100">
+                      Wrinkled or poorly lit
+                    </p>
                   </div>
+
                 </div>
               </div>
             </div>
@@ -368,7 +407,7 @@ export default function StudioWorkflow() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 mb-4">
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <span className="w-6 h-6 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 text-white text-[11px] font-bold flex items-center justify-center flex-shrink-0">
+                <span className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 text-white text-[11px] font-bold flex items-center justify-center flex-shrink-0">
                   4
                 </span>
                 <h3 className="text-sm sm:text-base font-bold text-slate-900">Choose AI Model</h3>
@@ -382,7 +421,7 @@ export default function StudioWorkflow() {
             <button
               type="button"
               onClick={() => setModelModalOpen(true)}
-              className="inline-flex items-center gap-1.5 text-xs font-bold text-pink-600 hover:text-pink-700 bg-pink-50 hover:bg-pink-100/80 px-3 py-1.5 rounded-lg border border-pink-200/70 transition-colors cursor-pointer shrink-0 self-start sm:self-auto"
+              className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100/80 px-3 py-1.5 rounded-lg border border-blue-200/70 transition-colors cursor-pointer shrink-0 self-start sm:self-auto"
             >
               <span>View All</span>
               <ChevronRight size={13} />
@@ -400,7 +439,7 @@ export default function StudioWorkflow() {
                   onClick={() => setSelectedModel(m.id)}
                   className={`group relative rounded-xl border transition-all duration-200 cursor-pointer flex flex-col items-center bg-white text-left p-2.5 ${
                     isSelected
-                      ? "border-pink-500 ring-2 ring-pink-500/20 shadow-none bg-white"
+                      ? "border-blue-600 ring-2 ring-blue-500/20 shadow-none bg-white"
                       : "border-slate-200 hover:border-slate-300 shadow-none"
                   }`}
                   style={{ borderRadius: "12px" }}
@@ -417,9 +456,9 @@ export default function StudioWorkflow() {
                       }}
                     />
 
-                    {/* Small circular badge, top-right corner of the image, pink background with white checkmark */}
+                    {/* Small circular badge, top-right corner of the image, blue background with white checkmark */}
                     {isSelected && (
-                      <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-pink-500 text-white flex items-center justify-center shadow-xs z-10">
+                      <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-500 text-white flex items-center justify-center shadow-xs z-10">
                         <Check size={11} strokeWidth={3} />
                       </div>
                     )}
@@ -443,7 +482,7 @@ export default function StudioWorkflow() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 mb-4">
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <span className="w-6 h-6 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 text-white text-[11px] font-bold flex items-center justify-center flex-shrink-0">
+                <span className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 text-white text-[11px] font-bold flex items-center justify-center flex-shrink-0">
                   5
                 </span>
                 <h3 className="text-sm sm:text-base font-bold text-slate-900">Select Background</h3>
@@ -456,7 +495,7 @@ export default function StudioWorkflow() {
             <button
               type="button"
               onClick={() => customBgInputRef.current?.click()}
-              className="inline-flex items-center gap-1.5 text-xs font-bold text-pink-600 hover:text-pink-700 bg-pink-50 hover:bg-pink-100/80 px-3 py-1.5 rounded-lg border border-pink-200/70 transition-colors cursor-pointer shrink-0 self-start sm:self-auto"
+              className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100/80 px-3 py-1.5 rounded-lg border border-blue-200/70 transition-colors cursor-pointer shrink-0 self-start sm:self-auto"
             >
               <Plus size={13} strokeWidth={2.5} />
               <span>Upload Background</span>
@@ -488,12 +527,12 @@ export default function StudioWorkflow() {
               <button
                 type="button"
                 onClick={() => customBgInputRef.current?.click()}
-                className="w-[140px] h-[92px] shrink-0 rounded-xl border-2 border-dashed border-slate-300 hover:border-pink-400 bg-slate-50/80 hover:bg-pink-50/30 flex flex-col items-center justify-center gap-1 transition-all cursor-pointer group"
+                className="w-[140px] h-[92px] shrink-0 rounded-xl border-2 border-dashed border-slate-300 hover:border-blue-400 bg-slate-50/80 hover:bg-blue-50/30 flex flex-col items-center justify-center gap-1 transition-all cursor-pointer group"
               >
-                <div className="w-7 h-7 rounded-full bg-white border border-slate-200 group-hover:border-pink-300 flex items-center justify-center text-slate-500 group-hover:text-pink-600 shadow-2xs transition-colors">
+                <div className="w-7 h-7 rounded-full bg-white border border-slate-200 group-hover:border-blue-300 flex items-center justify-center text-slate-500 group-hover:text-blue-600 shadow-2xs transition-colors">
                   <Plus size={14} strokeWidth={2.5} />
                 </div>
-                <p className="text-[11px] font-bold text-slate-700 group-hover:text-pink-600 transition-colors">
+                <p className="text-[11px] font-bold text-slate-700 group-hover:text-blue-600 transition-colors">
                   Add Background
                 </p>
                 <p className="text-[9px] text-slate-400">JPG, PNG · Max 10MB</p>
@@ -509,14 +548,14 @@ export default function StudioWorkflow() {
                       onClick={() => setSelectedBg(bg.id)}
                       className={`w-[140px] h-[92px] rounded-xl border overflow-hidden transition-all duration-200 cursor-pointer flex flex-col text-left bg-white ${
                         isSelected
-                          ? "border-2 border-pink-500 ring-2 ring-pink-500/20"
+                          ? "border-2 border-blue-600 ring-2 ring-blue-500/20"
                           : "border-slate-200 hover:border-slate-300"
                       }`}
                     >
                       <div className="w-full h-[62px] bg-slate-100 overflow-hidden relative">
                         <img src={bg.img} alt={bg.label} className="w-full h-full object-cover" />
                         {isSelected && (
-                          <div className="absolute top-1.5 right-1.5 w-4.5 h-4.5 rounded-full bg-pink-500 text-white flex items-center justify-center shadow-xs">
+                          <div className="absolute top-1.5 right-1.5 w-4.5 h-4.5 rounded-full bg-blue-500 text-white flex items-center justify-center shadow-xs">
                             <Check size={10} strokeWidth={3} />
                           </div>
                         )}
@@ -560,7 +599,7 @@ export default function StudioWorkflow() {
                   onClick={() => setSelectedBg(b.id)}
                   className={`group relative rounded-xl border transition-all duration-200 cursor-pointer flex flex-col bg-white text-left overflow-hidden ${
                     isSelected
-                      ? "border-2 border-pink-500 ring-2 ring-pink-500/20 shadow-none"
+                      ? "border-2 border-blue-600 ring-2 ring-blue-500/20 shadow-none"
                       : "border-slate-200 hover:border-slate-300 shadow-none"
                   }`}
                   style={{ borderRadius: "12px" }}
@@ -577,7 +616,7 @@ export default function StudioWorkflow() {
                       }}
                     />
                     {isSelected && (
-                      <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-pink-500 text-white flex items-center justify-center shadow-xs z-10">
+                      <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-500 text-white flex items-center justify-center shadow-xs z-10">
                         <Check size={11} strokeWidth={3} />
                       </div>
                     )}
@@ -601,7 +640,7 @@ export default function StudioWorkflow() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 mb-4">
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <span className="w-6 h-6 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 text-white text-[11px] font-bold flex items-center justify-center flex-shrink-0">
+                <span className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 text-white text-[11px] font-bold flex items-center justify-center flex-shrink-0">
                   6
                 </span>
                 <h3 className="text-sm sm:text-base font-bold text-slate-900">Choose Pose</h3>
@@ -615,7 +654,7 @@ export default function StudioWorkflow() {
             <button
               type="button"
               onClick={() => setPoseModalOpen(true)}
-              className="inline-flex items-center gap-1.5 text-xs font-bold text-pink-600 hover:text-pink-700 bg-pink-50 hover:bg-pink-100/80 px-3 py-1.5 rounded-lg border border-pink-200/70 transition-colors cursor-pointer shrink-0 self-start sm:self-auto"
+              className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100/80 px-3 py-1.5 rounded-lg border border-blue-200/70 transition-colors cursor-pointer shrink-0 self-start sm:self-auto"
             >
               <span>View All</span>
               <ChevronRight size={13} />
@@ -633,7 +672,7 @@ export default function StudioWorkflow() {
                   onClick={() => setSelectedCustomPose(p.id)}
                   className={`group relative rounded-xl border transition-all duration-200 cursor-pointer flex flex-col items-center bg-white text-left p-2.5 ${
                     isSelected
-                      ? "border-pink-500 ring-2 ring-pink-500/20 shadow-none bg-white"
+                      ? "border-blue-600 ring-2 ring-blue-500/20 shadow-none bg-white"
                       : "border-slate-200 hover:border-slate-300 shadow-none"
                   }`}
                   style={{ borderRadius: "12px" }}
@@ -650,9 +689,9 @@ export default function StudioWorkflow() {
                       }}
                     />
 
-                    {/* Small circular badge, top-right corner of the image, pink background with white checkmark */}
+                    {/* Small circular badge, top-right corner of the image, blue background with white checkmark */}
                     {isSelected && (
-                      <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-pink-500 text-white flex items-center justify-center shadow-xs z-10">
+                      <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-500 text-white flex items-center justify-center shadow-xs z-10">
                         <Check size={11} strokeWidth={3} />
                       </div>
                     )}
@@ -683,8 +722,8 @@ export default function StudioWorkflow() {
                 onClick={() => setPlatform(p.id)}
                 className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 text-sm font-semibold transition-all ${
                   platform === p.id
-                    ? "border-pink-500 bg-pink-50 text-slate-900"
-                    : "border-slate-100 text-slate-600 hover:border-purple-200"
+                    ? "border-blue-600 bg-blue-50 text-slate-900"
+                    : "border-slate-100 text-slate-600 hover:border-blue-200"
                 }`}
               >
                 <span
@@ -694,7 +733,7 @@ export default function StudioWorkflow() {
                   {p.letter}
                 </span>
                 {p.label}
-                {platform === p.id && <Check size={12} className="text-pink-500" strokeWidth={3} />}
+                {platform === p.id && <Check size={12} className="text-blue-600" strokeWidth={3} />}
               </button>
             ))}
           </div>
@@ -710,11 +749,11 @@ export default function StudioWorkflow() {
                 onClick={() => setRatio(r.id)}
                 className={`flex flex-col items-center px-4 py-3 rounded-xl border-2 text-sm transition-all min-w-[80px] ${
                   ratio === r.id
-                    ? "border-pink-500 bg-pink-50"
-                    : "border-slate-100 hover:border-purple-200"
+                    ? "border-blue-600 bg-blue-50"
+                    : "border-slate-100 hover:border-blue-200"
                 }`}
               >
-                <span className={`text-sm font-bold ${ratio === r.id ? "text-pink-600" : "text-slate-700"}`}>{r.label}</span>
+                <span className={`text-sm font-bold ${ratio === r.id ? "text-blue-600" : "text-slate-700"}`}>{r.label}</span>
                 <span className="text-[9px] text-slate-400 mt-0.5">{r.sub}</span>
               </button>
             ))}
@@ -734,13 +773,13 @@ export default function StudioWorkflow() {
                 onClick={() => setResolution(r.id)}
                 className={`flex items-center gap-2 px-5 py-2.5 rounded-xl border-2 text-sm font-bold transition-all ${
                   resolution === r.id
-                    ? "border-pink-500 bg-pink-50 text-pink-700"
-                    : "border-slate-100 text-slate-600 hover:border-purple-200"
+                    ? "border-blue-600 bg-blue-50 text-blue-700"
+                    : "border-slate-100 text-slate-600 hover:border-blue-200"
                 }`}
               >
-                {r.id === "4K" && <Star size={13} className={resolution === "4K" ? "text-pink-500" : "text-slate-400"} />}
+                {r.id === "4K" && <Star size={13} className={resolution === "4K" ? "text-blue-600" : "text-slate-400"} />}
                 {r.label}
-                <span className={`text-[10px] font-medium ${resolution === r.id ? "text-pink-500" : "text-slate-400"}`}>
+                <span className={`text-[10px] font-medium ${resolution === r.id ? "text-blue-600" : "text-slate-400"}`}>
                   {r.credits} credits
                 </span>
               </button>
@@ -751,7 +790,7 @@ export default function StudioWorkflow() {
           <div className="flex items-center justify-between bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 mb-4">
             <div className="flex flex-col gap-0.5">
               <p className="text-sm font-bold text-slate-700">
-                <span className="text-pink-600">{credits} Credits</span> required
+                <span className="text-blue-600">{credits} Credits</span> required
               </p>
               <p className="text-xs text-slate-400">You have 100 credits · {Math.floor(100 / credits)} generation{Math.floor(100 / credits) !== 1 ? "s" : ""}</p>
             </div>
@@ -764,7 +803,7 @@ export default function StudioWorkflow() {
           <button
             onClick={handleGenerate}
             disabled={generating}
-            className="w-full flex items-center justify-center gap-2.5 px-8 py-4 bg-gradient-to-r from-pink-600 to-purple-600 text-white font-bold text-base rounded-2xl shadow-lg shadow-purple-200 hover:opacity-90 transition-all disabled:opacity-70"
+            className="w-full flex items-center justify-center gap-2.5 px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-base rounded-2xl shadow-lg shadow-blue-500/25 active:scale-[0.98] transition-all disabled:opacity-70"
           >
             <Sparkles size={18} />
             {generating ? "Generating…" : "✨ Generate Catalogue"}
@@ -783,7 +822,7 @@ export default function StudioWorkflow() {
                 className="p-6"
               >
                 <p className="text-sm font-bold text-slate-700 mb-4 flex items-center gap-2">
-                  <Sparkles size={14} className="text-pink-500" /> Your Catalogue is Ready
+                  <Sparkles size={14} className="text-blue-600" /> Your Catalogue is Ready
                 </p>
                 <div className="grid grid-cols-3 gap-4">
                   {["/catalogue/brand_main.jpg", "/catalogue/lookbook_main.jpg", "/catalogue/social_main.jpg"].map((src, i) => (
@@ -802,8 +841,8 @@ export default function StudioWorkflow() {
               >
                 {/* 3D folder illustration */}
                 <div className="relative w-24 h-24 mb-6">
-                  <div className="w-24 h-20 bg-gradient-to-br from-purple-100 to-pink-100 rounded-2xl border-2 border-purple-200/60 absolute bottom-0" />
-                  <div className="w-16 h-4 bg-gradient-to-r from-purple-200 to-pink-200 rounded-t-xl absolute top-0 left-0 border-2 border-t border-purple-200/60" />
+                  <div className="w-24 h-20 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-2xl border-2 border-blue-200/60 absolute bottom-0" />
+                  <div className="w-16 h-4 bg-gradient-to-r from-blue-200 to-indigo-200 rounded-t-xl absolute top-0 left-0 border-2 border-t border-blue-200/60" />
                   <div className="absolute -top-3 right-0 w-14 h-16 bg-white border-2 border-slate-200 rounded-xl shadow-md flex items-center justify-center rotate-6">
                     <ImageIcon size={20} className="text-slate-300" />
                   </div>

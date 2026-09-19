@@ -43,9 +43,9 @@ function Navbar({ launchingRef, setIsFormOpen }) {
           </Link>
           <Link to="/pricing" className="hover:text-[#1D8DB2] transition-colors">Pricing</Link>
           <Link to="/contact" className="hover:text-[#1D8DB2] transition-colors">Contact</Link>
-          <Link to="/blogs" className="hover:text-amber-500 transition-colors font-semibold text-amber-600">Blog</Link>
+          <Link to="/blogs" className="hover:text-blue-700 transition-colors font-semibold text-blue-600">Blog</Link>
           <Link to="/catalogue-showcase" className="hover:text-[#1D8DB2] transition-colors font-bold text-[#0891B2]">Catalogue Showcase</Link>
-          <Link to="/virtual-try-on" className="hover:text-[#1D8DB2] transition-colors font-bold text-rose-500">Virtual Try-On</Link>
+          <Link to="/virtual-try-on" className="hover:text-[#1D8DB2] transition-colors font-bold text-blue-600">Virtual Try-On</Link>
         </div>
 
         {/* Desktop Buttons */}
@@ -107,9 +107,9 @@ function Navbar({ launchingRef, setIsFormOpen }) {
             <Link to="/docs/api" className="text-[#4A91FD] font-semibold px-2" onClick={() => setIsMenuOpen(false)}>⚡ API Reference</Link>
             <Link to="/pricing" className="text-gray-700 font-semibold px-2" onClick={() => setIsMenuOpen(false)}>Pricing</Link>
             <Link to="/contact" className="text-gray-700 font-semibold px-2" onClick={() => setIsMenuOpen(false)}>Contact</Link>
-            <Link to="/blogs" className="text-amber-600 font-bold px-2" onClick={() => setIsMenuOpen(false)}>✍️ Blog</Link>
+            <Link to="/blogs" className="text-blue-600 font-bold px-2" onClick={() => setIsMenuOpen(false)}>✍️ Blog</Link>
             <Link to="/catalogue-showcase" className="text-[#0891B2] font-bold px-2" onClick={() => setIsMenuOpen(false)}>🎨 Catalogue Showcase</Link>
-            <Link to="/virtual-try-on" className="text-rose-500 font-bold px-2" onClick={() => setIsMenuOpen(false)}>👗 Virtual Try-On</Link>
+            <Link to="/virtual-try-on" className="text-blue-600 font-bold px-2" onClick={() => setIsMenuOpen(false)}>👗 Virtual Try-On</Link>
           </div>
 
           <div className="flex flex-col gap-3 w-full mt-4 border-t border-gray-200 pt-4">

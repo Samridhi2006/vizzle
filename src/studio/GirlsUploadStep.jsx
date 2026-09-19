@@ -69,7 +69,7 @@ export default function GirlsUploadStep({ garmentLabel = 'Garment', garmentId = 
       {/* ── Step Header ── */}
       <div className="mb-4">
         <div className="flex items-center gap-2 mb-1">
-          <span className="w-6 h-6 rounded-full bg-[#D82E78] text-white text-[11px] font-bold flex items-center justify-center flex-shrink-0">
+          <span className="w-6 h-6 rounded-full bg-blue-600 text-white text-[11px] font-bold flex items-center justify-center flex-shrink-0">
             3
           </span>
           <h3 className="text-sm sm:text-base font-bold text-slate-900">Upload Garment Image</h3>
@@ -92,10 +92,10 @@ export default function GirlsUploadStep({ garmentLabel = 'Garment', garmentId = 
                 flex-1 rounded-xl border transition-all duration-200
                 flex flex-col items-center justify-center text-center p-6 sm:p-8 relative min-h-[250px]
                 ${preview
-                  ? 'border-pink-400 bg-white ring-2 ring-pink-500/10 cursor-default'
+                  ? 'border-blue-400 bg-white ring-2 ring-blue-500/10 cursor-default'
                   : dragging
-                    ? 'border-pink-400 bg-pink-50/40 cursor-copy'
-                    : 'border-slate-200/80 bg-white hover:border-pink-300 hover:bg-pink-50/20 cursor-pointer'
+                    ? 'border-blue-400 bg-blue-50/40 cursor-copy'
+                    : 'border-slate-200/80 bg-white hover:border-blue-300 hover:bg-blue-50/20 cursor-pointer'
                 }
               `}
             >
@@ -143,7 +143,7 @@ export default function GirlsUploadStep({ garmentLabel = 'Garment', garmentId = 
                       e.stopPropagation();
                       inputRef.current?.click();
                     }}
-                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700 hover:text-pink-600 transition-colors mt-3.5 cursor-pointer"
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700 hover:text-blue-600 transition-colors mt-3.5 cursor-pointer"
                   >
                     <ImageIcon size={14} className="text-slate-600" />
                     <span>Browse</span>

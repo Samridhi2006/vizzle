@@ -72,12 +72,12 @@ export default function BillingPage() {
               key={name}
               className={`rounded-xl border-2 p-5 shadow-sm flex flex-col relative ${
                 popular
-                  ? "bg-[#1D8DB2] border-[#1D8DB2] shadow-lg shadow-[#1D8DB2]/30"
+                  ? "bg-blue-600 border-blue-600 shadow-lg shadow-blue-500/30"
                   : "bg-white border-gray-100"
               }`}
             >
               {popular && (
-                <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[10px] font-bold text-[#1D8DB2] bg-white px-3 py-0.5 rounded-full whitespace-nowrap border border-[#1D8DB2]/30">
+                <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[10px] font-bold text-blue-600 bg-white px-3 py-0.5 rounded-full whitespace-nowrap border border-blue-200 font-bold">
                   Best Value
                 </span>
               )}
@@ -85,7 +85,7 @@ export default function BillingPage() {
               <p className={`text-[11px] mb-2 ${popular ? "text-white/70" : "text-gray-400"}`}>{subtitle}</p>
               <p className={`text-2xl font-black ${popular ? "text-white" : "text-gray-900"}`}>{price}</p>
               <p className={`text-xs mb-1 ${popular ? "text-white/70" : "text-gray-400"}`}>/ {tryons.toLocaleString()} Try-Ons</p>
-              <p className={`text-[11px] font-semibold mb-4 ${popular ? "text-white/90" : "text-[#1D8DB2]"}`}>{perUnit}</p>
+              <p className={`text-[11px] font-semibold mb-4 ${popular ? "text-white/90" : "text-blue-600"}`}>{perUnit}</p>
               <ul className="space-y-2 mb-5 flex-1">
                 {features.map(f => (
                   <li key={f} className="flex items-start gap-2 text-xs">
@@ -96,7 +96,7 @@ export default function BillingPage() {
               </ul>
               <button className={`w-full py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-1.5 transition-all ${
                 popular
-                  ? "bg-white text-[#1D8DB2] hover:bg-white/90"
+                  ? "bg-white text-blue-600 hover:bg-white/90"
                   : "bg-gray-900 text-white hover:bg-gray-800"
               }`}>
                 Buy Now <ArrowRight size={13} />

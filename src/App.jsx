@@ -27,6 +27,8 @@ import ProductsPage from "./dashboard/pages/ProductsPage";
 import AnalyticsPage from "./dashboard/pages/AnalyticsPage";
 import BillingPage from "./dashboard/pages/BillingPage";
 import IntegrationPage from "./dashboard/pages/IntegrationPage";
+import MotionStudioPage from "./dashboard/pages/MotionStudioPage";
+import CreationsPage from "./dashboard/pages/CreationsPage";
 
 function App() {
   return (
@@ -60,8 +62,10 @@ function App() {
             <Route path="/dashboard" element={<DashboardLayout />}>
               {/* Default: redirect /dashboard → /dashboard/studio */}
               <Route index element={<Navigate to="/dashboard/studio" replace />} />
-              <Route path="studio"      element={<StudioDashboardPage />} />
-              <Route path="overview"    element={<OverviewPage />} />
+              <Route path="studio"         element={<StudioDashboardPage />} />
+              <Route path="motion-studio"  element={<MotionStudioPage />} />
+              <Route path="creations"      element={<CreationsPage />} />
+              <Route path="overview"       element={<OverviewPage />} />
               <Route path="stores"      element={<StoresPage />} />
               <Route path="products"    element={<ProductsPage />} />
               <Route path="analytics"   element={<AnalyticsPage />} />

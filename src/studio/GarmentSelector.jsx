@@ -62,7 +62,7 @@ export default function GarmentSelector({ selectedId, onSelect }) {
         <button
           type="button"
           onClick={() => setIsModalOpen(true)}
-          className="inline-flex items-center gap-1.5 text-xs font-bold text-pink-600 hover:text-pink-700 bg-pink-50 hover:bg-pink-100/80 px-3 py-1 rounded-lg border border-pink-200/70 transition-colors cursor-pointer shrink-0 self-start sm:self-auto"
+          className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100/80 px-3 py-1 rounded-lg border border-blue-200/70 transition-colors cursor-pointer shrink-0 self-start sm:self-auto"
         >
           <Grid size={12} />
           <span>View All (38)</span>
@@ -81,7 +81,7 @@ export default function GarmentSelector({ selectedId, onSelect }) {
               onClick={() => onSelect(garment.id)}
               className={`group relative rounded-2xl border transition-all duration-200 cursor-pointer flex flex-col items-center bg-[#FAFAFC] hover:bg-white text-left ${
                 isSelected
-                  ? 'border-pink-500 ring-2 ring-pink-500/20 shadow-md bg-white'
+                  ? 'border-2 border-blue-600 ring-2 ring-blue-100 shadow-md shadow-blue-500/20 bg-white'
                   : 'border-slate-200 hover:border-slate-300 shadow-xs'
               }`}
             >
@@ -100,7 +100,7 @@ export default function GarmentSelector({ selectedId, onSelect }) {
 
               {/* Selected checkmark badge top-right */}
               {isSelected && (
-                <div className="absolute top-2.5 right-2.5 w-5 h-5 rounded-full bg-pink-500 text-white flex items-center justify-center shadow-xs">
+                <div className="absolute top-2.5 right-2.5 w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-xs">
                   <Check size={11} strokeWidth={3} />
                 </div>
               )}
