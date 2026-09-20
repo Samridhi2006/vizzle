@@ -70,7 +70,7 @@ export default function BrandIdentitySection() {
         width: '600px',
         height: '600px',
         borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(251,191,36,0.06) 0%, transparent 70%)',
+        background: 'radial-gradient(circle, rgba(37,99,235,0.06) 0%, transparent 70%)',
         pointerEvents: 'none',
       }} />
       <div style={{

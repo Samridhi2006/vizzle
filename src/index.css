@@ -373,5 +373,101 @@ body {
     max-width: 280px !important;
     margin: 0 auto 36px !important;
   }
+
+  /* Pricing category tabs */
+  .vz-pricing-tabs {
+    flex-direction: column !important;
+    width: 100% !important;
+    max-width: 320px !important;
+    border-radius: 18px !important;
+    padding: 6px !important;
+    gap: 6px !important;
+  }
+  .vz-pricing-tabs button {
+    width: 100% !important;
+    justify-content: center !important;
+    padding: 10px 14px !important;
+    font-size: 12px !important;
+    border-radius: 12px !important;
+    min-height: 44px !important;
+  }
+
+  /* Compact WhatsApp float circle on small screens */
+  .vz-whatsapp-float {
+    bottom: 16px !important;
+    right: 14px !important;
+    padding: 12px !important;
+    border-radius: 50% !important;
+    width: 48px !important;
+    height: 48px !important;
+    min-width: 48px !important;
+    min-height: 48px !important;
+    justify-content: center !important;
+    align-items: center !important;
+    box-shadow: 0 4px 16px rgba(37, 211, 102, 0.45) !important;
+  }
+  .vz-whatsapp-float .vz-whatsapp-text {
+    display: none !important;
+  }
+
+  /* Robust word breaking to prevent text overflow at 360px */
+  h1, h2, h3, p, span, :is(a), button {
+    overflow-wrap: break-word;
+  }
+}
+
+
+/* ── Motion Studio: Ken Burns pan animations (cinematic slow-zoom) ─── */
+@keyframes kenBurnsUp {
+  0%   { transform: scale(1.04) translateY(0%) translateX(0%); }
+  50%  { transform: scale(1.09) translateY(-2%) translateX(0.5%); }
+  100% { transform: scale(1.12) translateY(-4%) translateX(-0.5%); }
+}
+@keyframes kenBurnsDown {
+  0%   { transform: scale(1.04) translateY(0%) translateX(0%); }
+  50%  { transform: scale(1.09) translateY(2%) translateX(-0.5%); }
+  100% { transform: scale(1.12) translateY(4%) translateX(0.5%); }
+}
+.motion-pan-up {
+  animation: kenBurnsUp 7s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
+  transform-origin: center center;
+  will-change: transform;
+}
+.motion-pan-down {
+  animation: kenBurnsDown 7s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
+  transform-origin: center center;
+  will-change: transform;
+}
+
+/* ── Motion Studio: blue scan-line shimmer ─────────────────────────── */
+@keyframes scanLine {
+  0%   { top: -5%;  opacity: 0.7; }
+  80%  { opacity: 0.4; }
+  100% { top: 105%; opacity: 0; }
+}
+.motion-scan {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.motion-scan::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0%, rgba(59,130,246,0.7) 30%, rgba(37,99,235,0.9) 50%, rgba(59,130,246,0.7) 70%, transparent 100%);
+  animation: scanLine 2.4s linear infinite;
+  pointer-events: none;
+}
+
+/* ── Motion Studio: border glow pulse ──────────────────────────────── */
+@keyframes motionGlowPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.15), 0 4px 20px rgba(59, 130, 246, 0.2); }
+  50%       { box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12), 0 8px 30px rgba(59, 130, 246, 0.35); }
+}
+.motion-selected-glow,
+.motion-selected-glow-blue {
+  animation: motionGlowPulse 2.5s ease-in-out infinite;
 }
 

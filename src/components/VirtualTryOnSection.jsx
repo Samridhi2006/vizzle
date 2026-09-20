@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, Sparkles, Upload, Loader2, RefreshCw } from 'lucide-react';
+import { ArrowRight, Sparkles, Upload, Loader2 } from 'lucide-react';
 import { useModal, FIELD_PRESETS } from '../context/ModalContext';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'https://dashboard.vizzle.in';
@@ -144,7 +144,7 @@ function SlotUploader({ label, previewUrl, busy, onPick }) {
   );
 }
 
-function TryOnDemo() {
+function TryOnDemo({ onGenerate }) {
   const [personUrl, setPersonUrl] = useState(null);
   const [garmentUrl, setGarmentUrl] = useState(null);
   const [garmentType, setGarmentType] = useState(GARMENT_TYPES[0]);
@@ -189,7 +189,7 @@ function TryOnDemo() {
     }
   }
 
-  const canGenerate = personUrl && garmentUrl && !generating && !uploadingSlot;
+  const canGenerate = personUrl && garmentUrl && !uploadingSlot && !generating;
 
   return (
     <div
@@ -200,83 +200,68 @@ function TryOnDemo() {
         padding: '24px',
       }}
     >
-      {resultUrl ? (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-          <div style={{
-            borderRadius: '14px', overflow: 'hidden', height: '340px',
-            background: '#0F172A', display: 'flex', alignItems: 'center', justifyContent: 'center',
-          }}>
-            <img src={resultUrl} alt="Your virtual try-on result" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-          </div>
-          <button
-            onClick={() => { setResultUrl(null); }}
-            style={{
-              display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-              background: '#fff', border: '1px solid rgba(8,145,178,0.35)', color: '#0891B2',
-              fontWeight: 700, fontSize: '13.5px', padding: '11px 20px', borderRadius: '999px', cursor: 'pointer',
-            }}
-          >
-            <RefreshCw size={14} /> Try another combination
-          </button>
+      <div style={{ display: 'flex', gap: '14px', marginBottom: '16px' }}>
+        <SlotUploader
+          label="1. Your Photo"
+          previewUrl={personUrl}
+          busy={uploadingSlot === 'person'}
+          onPick={(file) => handlePick('person', file)}
+        />
+        <SlotUploader
+          label="2. Garment Photo"
+          previewUrl={garmentUrl}
+          busy={uploadingSlot === 'garment'}
+          onPick={(file) => handlePick('garment', file)}
+        />
+      </div>
+
+      <label style={{ fontSize: '12px', fontWeight: 700, color: '#0F172A', display: 'block', marginBottom: '6px' }}>
+        Garment Type
+      </label>
+      <select
+        value={garmentType}
+        onChange={(e) => setGarmentType(e.target.value)}
+        style={{
+          width: '100%', padding: '10px 12px', borderRadius: '8px',
+          border: '1px solid rgba(226,232,240,0.9)', fontSize: '13.5px',
+          fontWeight: 600, color: '#0F172A', marginBottom: '16px', background: '#fff',
+        }}
+      >
+        {GARMENT_TYPES.map((g) => <option key={g} value={g}>{g}</option>)}
+      </select>
+
+      <button
+        onClick={handleGenerate}
+        disabled={!canGenerate}
+        style={{
+          width: '100%',
+          display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+          background: canGenerate ? 'linear-gradient(135deg, #0891B2 0%, #0D9488 100%)' : '#CBD5E1',
+          color: '#fff', fontWeight: 700, fontSize: '14.5px', padding: '14px', borderRadius: '999px',
+          border: 'none', cursor: canGenerate ? 'pointer' : 'not-allowed',
+          transition: 'background 0.2s, box-shadow 0.2s',
+          boxShadow: canGenerate ? '0 4px 18px rgba(8,145,178,0.28)' : 'none',
+        }}
+      >
+        {generating ? <><Loader2 size={16} className="animate-spin" /> Generating…</> : <>Generate My Try-On <ArrowRight size={15} /></>}
+      </button>
+
+      {generating && slowHint && (
+        <div style={{ marginTop: '12px', fontSize: '12.5px', color: '#64748B', fontWeight: 600 }}>
+          Warming up the AI model — this can take up to a minute.
         </div>
-      ) : (
-        <>
-          <div style={{ display: 'flex', gap: '14px', marginBottom: '16px' }}>
-            <SlotUploader
-              label="1. Your Photo"
-              previewUrl={personUrl}
-              busy={uploadingSlot === 'person'}
-              onPick={(file) => handlePick('person', file)}
-            />
-            <SlotUploader
-              label="2. Garment Photo"
-              previewUrl={garmentUrl}
-              busy={uploadingSlot === 'garment'}
-              onPick={(file) => handlePick('garment', file)}
-            />
-          </div>
+      )}
 
-          <label style={{ fontSize: '12px', fontWeight: 700, color: '#0F172A', display: 'block', marginBottom: '6px' }}>
-            Garment Type
-          </label>
-          <select
-            value={garmentType}
-            onChange={(e) => setGarmentType(e.target.value)}
-            style={{
-              width: '100%', padding: '10px 12px', borderRadius: '8px',
-              border: '1px solid rgba(226,232,240,0.9)', fontSize: '13.5px',
-              fontWeight: 600, color: '#0F172A', marginBottom: '16px', background: '#fff',
-            }}
-          >
-            {GARMENT_TYPES.map((g) => <option key={g} value={g}>{g}</option>)}
-          </select>
+      {error && (
+        <div style={{ marginTop: '12px', fontSize: '12.5px', color: '#DC2626', fontWeight: 600 }}>
+          {error}
+        </div>
+      )}
 
-          <button
-            onClick={handleGenerate}
-            disabled={!canGenerate}
-            style={{
-              width: '100%',
-              display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-              background: canGenerate ? 'linear-gradient(135deg, #0891B2 0%, #0D9488 100%)' : '#CBD5E1',
-              color: '#fff', fontWeight: 700, fontSize: '14.5px', padding: '14px', borderRadius: '999px',
-              border: 'none', cursor: canGenerate ? 'pointer' : 'not-allowed',
-            }}
-          >
-            {generating ? <><Loader2 size={16} className="animate-spin" /> Generating…</> : <>Generate My Try-On <ArrowRight size={15} /></>}
-          </button>
-
-          {generating && slowHint && (
-            <div style={{ marginTop: '12px', fontSize: '12.5px', color: '#64748B', fontWeight: 600 }}>
-              Warming up the AI model — this can take up to a minute.
-            </div>
-          )}
-
-          {error && (
-            <div style={{ marginTop: '12px', fontSize: '12.5px', color: '#DC2626', fontWeight: 600 }}>
-              {error}
-            </div>
-          )}
-        </>
+      {resultUrl && (
+        <div style={{ marginTop: '16px', borderRadius: '14px', overflow: 'hidden' }}>
+          <img src={resultUrl} alt="Try-on result" style={{ width: '100%', borderRadius: '14px' }} />
+        </div>
       )}
     </div>
   );
@@ -422,7 +407,7 @@ export default function VirtualTryOnSection() {
             overflow: 'hidden',
           }}
         >
-          <TryOnDemo />
+          <TryOnDemo onGenerate={() => openModal('Generate My Virtual Try-On', FIELD_PRESETS.all)} />
         </motion.div>
 
       </div>

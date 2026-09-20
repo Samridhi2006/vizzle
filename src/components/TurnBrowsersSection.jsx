@@ -193,9 +193,9 @@ export default function TurnBrowsersSection() {
           {/* Announcement pill */}
           <div style={{
             display: 'inline-block',
-            background: 'rgba(255,251,235,0.85)',
+            background: 'rgba(239,246,255,0.9)',
             color: '#1E293B',
-            border: '1px solid rgba(251,191,36,0.4)',
+            border: '1px solid rgba(59,130,246,0.3)',
             borderRadius: '999px',
             padding: '6px 16px',
             fontSize: '11.5px',

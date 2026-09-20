@@ -130,8 +130,8 @@ function FAQItem({ faq, isOpen, onToggle }) {
         </span>
         <div style={{
           width: '28px', height: '28px', borderRadius: '50%',
-          background: isOpen ? '#FFF1F2' : '#F1F5F9',
-          color: isOpen ? '#F43F5E' : '#64748B',
+          background: isOpen ? '#EFF6FF' : '#F1F5F9',
+          color: isOpen ? '#2563EB' : '#64748B',
           display: 'flex', alignItems: 'center',
           justifyContent: 'center', flexShrink: 0,
           transition: 'background 0.25s ease, color 0.25s ease',

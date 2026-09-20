@@ -90,12 +90,12 @@ const TRYON_PLANS = [
   {
     icon: <RocketIcon />,
     name: "Starter Pack",
-    subtitle: "Perfect for Small Businesses",
-    price: "₹800",
-    volume: "50 try-ons | 5 videos",
-    perPhoto: "₹16 per Try-On image",
-    perVideo: "₹160 per video",
-    features: ["Standard AI Models", "Standard Backgrounds", "Single Try-On Generation", "Basic Garment Fitting", "Email Support"],
+    subtitle: "Perfect for Startups",
+    price: "₹1,000",
+    volume: "160 Try-Ons",
+    perPhoto: "₹6.25 per Try-On",
+    perVideo: null,
+    features: ["160 AI Try-Ons", "Instant Priority Processing", "Pay Only for Successful Try-Ons", "White Label Integration", "Website & Shopify Integration", "Standard AI Quality"],
     featured: false,
     cta: "Buy Now",
   },
@@ -103,11 +103,11 @@ const TRYON_PLANS = [
     icon: <ChartIcon />,
     name: "Growth Pack",
     subtitle: "Most Popular Choice",
-    price: "₹2,000",
-    volume: "150 try-ons | 20 videos",
-    perPhoto: "₹13.33 per Try-On image",
-    perVideo: "₹100 per video",
-    features: ["Standard AI Models", "Standard Backgrounds", "Bulk Try-On Generation", "Advanced Garment Fitting", "Email Support"],
+    price: "₹2,500",
+    volume: "450 Try-Ons",
+    perPhoto: "₹5.56 per Try-On",
+    perVideo: null,
+    features: ["450 AI Try-Ons", "Instant Priority Processing", "Pay Only for Successful Try-Ons", "White Label Integration", "Website & Shopify Integration", "Standard AI Quality"],
     featured: true,
     badge: "Best Value",
     cta: "Buy Now",
@@ -116,11 +116,11 @@ const TRYON_PLANS = [
     icon: <StarIcon />,
     name: "Pro Pack",
     subtitle: "Best for Growing Businesses",
-    price: "₹4,500",
-    volume: "380 try-ons | 45 videos",
-    perPhoto: "₹11.84 per Try-On image",
-    perVideo: "₹100 per video",
-    features: ["Standard AI Models", "Standard Backgrounds", "Bulk Try-On Generation", "Advanced Garment Fitting", "Priority Support"],
+    price: "₹5,000",
+    volume: "960 Try-Ons",
+    perPhoto: "₹5.21 per Try-On",
+    perVideo: null,
+    features: ["960 AI Try-Ons", "Instant Priority Processing", "Pay Only for Successful Try-Ons", "White Label Integration", "Website & Shopify Integration", "Standard AI Quality"],
     featured: false,
     cta: "Buy Now",
   },
@@ -128,17 +128,17 @@ const TRYON_PLANS = [
     icon: <CrownIcon />,
     name: "Enterprise Pack",
     subtitle: "Enterprises & High Volume",
-    price: "₹9,000",
-    volume: "900 try-ons | 100 videos",
-    perPhoto: "₹10 per Try-On image",
-    perVideo: "₹90 per video",
-    features: ["Standard AI Models", "Custom Backgrounds", "Bulk Try-On Generation", "Premium Garment Fitting", "Dedicated Support"],
+    price: "₹10,000",
+    volume: "2,000 Try-Ons",
+    perPhoto: "₹5.00 per Try-On",
+    perVideo: null,
+    features: ["2,000 AI Try-Ons", "Instant Priority Processing", "Pay Only for Successful Try-Ons", "White Label Integration", "Website & Shopify Integration", "Standard AI Quality"],
     featured: false,
     cta: "Buy Now",
   },
 ];
 
-const DOT_COLORS = ["#F97316", "#22C55E", "#3B82F6", "#A855F7", "#F43F5E"];
+const DOT_COLORS = ["#2563EB", "#0284C7", "#3B82F6", "#60A5FA", "#0EA5E9"];
 
 function PlanCard({ plan, index }) {
   const { openModal } = useModal();
@@ -147,13 +147,13 @@ function PlanCard({ plan, index }) {
       initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: index * 0.07 }}
-      whileHover={{ y: -2, boxShadow: plan.featured ? "0 12px 48px rgba(249,115,22,0.2)" : "0 8px 32px rgba(0,0,0,0.1)" }}
+      whileHover={{ y: -2, boxShadow: plan.featured ? "0 12px 48px rgba(37,99,235,0.18)" : "0 8px 32px rgba(0,0,0,0.1)" }}
       style={{
         position: "relative",
         background: "#fff",
         borderRadius: "16px",
-        border: plan.featured ? "2px solid #F97316" : "1.5px solid #E8E8E8",
-        boxShadow: plan.featured ? "0 8px 40px rgba(249,115,22,0.13)" : "0 2px 16px rgba(0,0,0,0.05)",
+        border: plan.featured ? "2px solid #2563EB" : "1.5px solid #E8E8E8",
+        boxShadow: plan.featured ? "0 8px 40px rgba(37,99,235,0.12)" : "0 2px 16px rgba(0,0,0,0.05)",
         padding: "28px 24px 24px",
         display: "flex",
         flexDirection: "column",
@@ -163,9 +163,9 @@ function PlanCard({ plan, index }) {
       {plan.featured && plan.badge && (
         <div style={{
           position: "absolute", top: "-13px", left: "50%", transform: "translateX(-50%)",
-          background: "#F97316", color: "#fff", fontSize: "10px", fontWeight: 800,
-          letterSpacing: "0.06em", textTransform: "uppercase", padding: "3px 12px",
-          borderRadius: "20px", whiteSpace: "nowrap",
+          background: "#2563EB", color: "#fff", fontSize: "10px", fontWeight: 800,
+          letterSpacing: "0.07em", textTransform: "uppercase", padding: "4px 14px",
+          borderRadius: "20px", whiteSpace: "nowrap", boxShadow: "0 2px 8px rgba(37,99,235,0.25)",
         }}>
           {plan.badge}
         </div>
@@ -173,10 +173,10 @@ function PlanCard({ plan, index }) {
       <div style={{ display: "flex", alignItems: "flex-start", gap: "12px", marginBottom: "20px" }}>
         <div style={{
           width: "40px", height: "40px", borderRadius: "10px",
-          background: plan.featured ? "#FFF7ED" : "#F8F9FA",
-          border: plan.featured ? "1.5px solid #FED7AA" : "1.5px solid #E8E8E8",
+          background: plan.featured ? "#EFF6FF" : "#F8F9FA",
+          border: plan.featured ? "1.5px solid #BFDBFE" : "1.5px solid #E8E8E8",
           display: "flex", alignItems: "center", justifyContent: "center",
-          color: plan.featured ? "#F97316" : "#555", flexShrink: 0,
+          color: plan.featured ? "#2563EB" : "#555", flexShrink: 0,
         }}>
           {plan.icon}
         </div>
@@ -190,7 +190,7 @@ function PlanCard({ plan, index }) {
         <span style={{ fontSize: "12px", color: "#888", marginLeft: "6px" }}>/ {plan.volume}</span>
       </div>
       <div style={{ fontSize: "12px", color: "#555", marginBottom: "2px" }}>{plan.perPhoto}</div>
-      <div style={{ fontSize: "12px", color: "#555", marginBottom: "20px" }}>{plan.perVideo}</div>
+      {plan.perVideo && <div style={{ fontSize: "12px", color: "#555", marginBottom: "20px" }}>{plan.perVideo}</div>}
       <div style={{ borderTop: "1px solid #F0F0F0", marginBottom: "18px" }} />
       <div>
         <div style={{ fontSize: "11px", fontWeight: 700, color: "#888", letterSpacing: "0.05em", textTransform: "uppercase", marginBottom: "12px" }}>
@@ -283,8 +283,8 @@ function Pricing() {
           </p>
         </div>
 
-        <div style={{ display: "flex", justifyContent: "center", marginBottom: "48px", padding: "0 24px" }}>
-          <div style={{
+        <div className="vz-pricing-tabs-wrap" style={{ display: "flex", justifyContent: "center", marginBottom: "48px", padding: "0 16px" }}>
+          <div className="vz-pricing-tabs" style={{
             display: "inline-flex", background: "#fff", borderRadius: "50px", padding: "5px",
             boxShadow: "0 2px 12px rgba(0,0,0,0.08)", border: "1px solid #E8E8E8",
             gap: "4px", fontFamily: "'Plus Jakarta Sans', Inter, sans-serif",
@@ -310,8 +310,9 @@ function Pricing() {
                 fontSize: "13px", fontWeight: 700, fontFamily: "inherit",
                 cursor: "pointer", transition: "all 0.2s ease",
                 display: "flex", alignItems: "center", gap: "7px",
-                background: activeTab === "tryon" ? "#111" : "transparent",
+                background: activeTab === "tryon" ? "#2563EB" : "transparent",
                 color: activeTab === "tryon" ? "#fff" : "#666",
+                boxShadow: activeTab === "tryon" ? "0 2px 12px rgba(37,99,235,0.25)" : "none",
               }}
             >
               <Video size={14} />

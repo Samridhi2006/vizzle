@@ -6,7 +6,8 @@ export default function SignInPage() {
 
   return (
     <div className="min-h-screen bg-[#0E0C0A] flex items-center justify-center p-4">
-      <SignInModal isOpen={true} onClose={() => navigate(-1)} />
+      <SignInModal isOpen={true} onClose={() => navigate('/studio')} />
     </div>
   );
 }
+

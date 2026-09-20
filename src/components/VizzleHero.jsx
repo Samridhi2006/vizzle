@@ -51,11 +51,11 @@ const SLIDES = [
   {
     id: 1,
     badge: 'AI VIRTUAL TRY-ON',
-    badgeColor: '#c2410c',
-    badgeBg: 'rgba(254, 237, 232, 0.95)',
-    badgeBorder: 'rgba(251, 146, 60, 0.35)',
-    ctaBg: 'linear-gradient(90deg, #f43f5e 0%, #fb923c 100%)',
-    ctaShadow: 'rgba(244, 63, 94, 0.35)',
+    badgeColor: '#1d4ed8',
+    badgeBg: 'rgba(239, 246, 255, 0.95)',
+    badgeBorder: 'rgba(59, 130, 246, 0.35)',
+    ctaBg: 'linear-gradient(90deg, #2563eb 0%, #4f46e5 100%)',
+    ctaShadow: 'rgba(37, 99, 235, 0.35)',
     headingJSX: (
       <>
         Try Before You Buy with{' '}
@@ -283,8 +283,8 @@ function Slide2() {
         height: '32px',
         borderRadius: '50%',
         background: 'rgba(255,255,255,0.95)',
-        border: '1px solid rgba(251,146,60,0.35)',
-        boxShadow: '0 2px 8px rgba(251,146,60,0.25)',
+        border: '1px solid rgba(59,130,246,0.35)',
+        boxShadow: '0 2px 8px rgba(37,99,235,0.25)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -292,7 +292,7 @@ function Slide2() {
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
           <path
             d="M5 18C5 13.2 8.2 9.2 13.8 9V4.5L22 11.5L13.8 18.5V14C9.5 14 6.8 16 5 18Z"
-            fill="#f97316"
+            fill="#2563eb"
           />
         </svg>
       </div>
@@ -522,7 +522,20 @@ function VizzleNavbar() {
         className="vz-hamburger"
         onClick={() => setMenuOpen(!menuOpen)}
         aria-label="Toggle menu"
-        style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '8px', display: 'none' }}
+        style={{
+          background: 'none',
+          border: 'none',
+          cursor: 'pointer',
+          padding: '10px',
+          width: '44px',
+          height: '44px',
+          minWidth: '44px',
+          minHeight: '44px',
+          display: 'none',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexDirection: 'column',
+        }}
       >
         <div style={{ width: 22, height: 2, background: '#0f172a', marginBottom: 5, transition: 'transform 0.2s', transform: menuOpen ? 'rotate(45deg) translate(5px,5px)' : 'none' }} />
         <div style={{ width: 22, height: 2, background: '#0f172a', marginBottom: 5, opacity: menuOpen ? 0 : 1, transition: 'opacity 0.2s' }} />
@@ -696,7 +709,7 @@ function VizzleHeroSection({ setIsFormOpen }) {
           }
           .vz-nav-links { display: none; }
           .vz-nav-cta   { display: none; }
-          .vz-hamburger { display: flex !important; flex-direction: column; justify-content: center; }
+          .vz-hamburger { display: flex !important; flex-direction: column; justify-content: center; align-items: center; width: 44px; height: 44px; min-width: 44px; min-height: 44px; }
           .vz-mobile-menu {
             display: block;
             position: absolute;

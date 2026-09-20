@@ -11,7 +11,7 @@ const FAQS = [
   {
     id: 2,
     q: 'How fast is  Vizzle team to reply to enquiries?',
-    a: "We respond to all queries within a day, usually. Or you can directly contact us through phone or WhatsApp with your urgent queries on time-sensitive work such as product launches, trade show deployments, or any work which requires immediate help or attention. Phone No. +91 7729883692. We know there's a world of fashion out there and like to ensure there's no waiting around when you require your assistance.",
+    a: "We respond to all queries within a day, usually. Or you can directly contact us through phone or WhatsApp with your urgent queries on time-sensitive work such as product launches, trade show deployments, or any work which requires immediate help or attention. Phone No. +91 8310247975. We know there's a world of fashion out there and like to ensure there's no waiting around when you require your assistance.",
   },
   {
     id: 3,
@@ -51,7 +51,7 @@ function FAQItem({ item, index, isOpen, onToggle }) {
         </span>
 
         <div
-          className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition-colors duration-200 ${isOpen ? 'bg-rose-50 text-rose-500' : 'bg-slate-50 text-slate-500'
+          className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition-colors duration-200 ${isOpen ? 'bg-blue-50 text-blue-600' : 'bg-slate-50 text-slate-500'
             }`}
         >
           {isOpen ? (

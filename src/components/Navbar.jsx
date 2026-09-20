@@ -25,11 +25,11 @@ function Navbar({ launchingRef, setIsFormOpen }) {
       <nav className="container mx-auto flex items-center justify-between h-[6.5rem] px-4 sm:px-1 2xl:px-16">
         
         {/* Logo */}
-        <Link to="/">
+        <Link to="/" className="shrink-0">
           <img
             src="/logo.png"
             alt="Vizzle logo"
-            className="w-[175px] md:w-[200px] transition-all duration-500"
+            className="w-[140px] sm:w-[175px] md:w-[200px] transition-all duration-500"
           />
         </Link>
 
@@ -43,9 +43,9 @@ function Navbar({ launchingRef, setIsFormOpen }) {
           </Link>
           <Link to="/pricing" className="hover:text-[#1D8DB2] transition-colors">Pricing</Link>
           <Link to="/contact" className="hover:text-[#1D8DB2] transition-colors">Contact</Link>
-          <Link to="/blogs" className="hover:text-amber-500 transition-colors font-semibold text-amber-600">Blog</Link>
+          <Link to="/blogs" className="hover:text-blue-700 transition-colors font-semibold text-blue-600">Blog</Link>
           <Link to="/catalogue-showcase" className="hover:text-[#1D8DB2] transition-colors font-bold text-[#0891B2]">Catalogue Showcase</Link>
-          <Link to="/virtual-try-on" className="hover:text-[#1D8DB2] transition-colors font-bold text-rose-500">Virtual Try-On</Link>
+          <Link to="/virtual-try-on" className="hover:text-[#1D8DB2] transition-colors font-bold text-blue-600">Virtual Try-On</Link>
         </div>
 
         {/* Desktop Buttons */}
@@ -78,18 +78,19 @@ function Navbar({ launchingRef, setIsFormOpen }) {
         </div>
 
         {/* Mobile Menu Icon */}
-        <div className="sm:hidden relative w-10 h-10 z-50">
-          {!isMenuOpen ? (
-            <Bars3Icon
-              className="w-10 h-10 cursor-pointer text-blue-950"
-              onClick={() => setIsMenuOpen(true)}
-            />
-          ) : (
-            <XMarkIcon
-              className="w-10 h-10 cursor-pointer text-blue-950"
-              onClick={() => setIsMenuOpen(false)}
-            />
-          )}
+        <div className="sm:hidden relative z-50 flex items-center">
+          <button
+            type="button"
+            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="w-11 h-11 flex items-center justify-center rounded-xl text-blue-950 hover:bg-black/5 transition-colors cursor-pointer"
+          >
+            {!isMenuOpen ? (
+              <Bars3Icon className="w-8 h-8" />
+            ) : (
+              <XMarkIcon className="w-8 h-8" />
+            )}
+          </button>
         </div>
 
         {/* Mobile Menu */}
@@ -107,9 +108,9 @@ function Navbar({ launchingRef, setIsFormOpen }) {
             <Link to="/docs/api" className="text-[#4A91FD] font-semibold px-2" onClick={() => setIsMenuOpen(false)}>⚡ API Reference</Link>
             <Link to="/pricing" className="text-gray-700 font-semibold px-2" onClick={() => setIsMenuOpen(false)}>Pricing</Link>
             <Link to="/contact" className="text-gray-700 font-semibold px-2" onClick={() => setIsMenuOpen(false)}>Contact</Link>
-            <Link to="/blogs" className="text-amber-600 font-bold px-2" onClick={() => setIsMenuOpen(false)}>✍️ Blog</Link>
+            <Link to="/blogs" className="text-blue-600 font-bold px-2" onClick={() => setIsMenuOpen(false)}>✍️ Blog</Link>
             <Link to="/catalogue-showcase" className="text-[#0891B2] font-bold px-2" onClick={() => setIsMenuOpen(false)}>🎨 Catalogue Showcase</Link>
-            <Link to="/virtual-try-on" className="text-rose-500 font-bold px-2" onClick={() => setIsMenuOpen(false)}>👗 Virtual Try-On</Link>
+            <Link to="/virtual-try-on" className="text-blue-600 font-bold px-2" onClick={() => setIsMenuOpen(false)}>👗 Virtual Try-On</Link>
           </div>
 
           <div className="flex flex-col gap-3 w-full mt-4 border-t border-gray-200 pt-4">

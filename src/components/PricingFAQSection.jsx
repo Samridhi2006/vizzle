@@ -100,8 +100,8 @@ function FAQItem({ item, index, isOpen, onToggle }) {
             width: "28px",
             height: "28px",
             borderRadius: "50%",
-            background: isOpen ? "#fff1f2" : "#f8fafc",
-            color: isOpen ? "#f43f5e" : "#64748b",
+            background: isOpen ? "#eff6ff" : "#f8fafc",
+            color: isOpen ? "#2563eb" : "#64748b",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -177,7 +177,7 @@ export default function PricingFAQSection() {
         }}
       >
         AI Catalogue Creation —{" "}
-        <span style={{ color: "#f43f5e" }}>FAQs</span>
+        <span style={{ color: "#2563EB" }}>FAQs</span>
       </motion.h2>
 
       {/* Accordion list */}

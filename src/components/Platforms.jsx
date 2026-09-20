@@ -57,7 +57,7 @@ const PLATFORMS = [
 const TRUST = [
   { icon: Zap,         label: 'Quick Setup',        color: '#2563EB', bg: '#EFF6FF', border: '#BFDBFE' },
   { icon: ShieldCheck, label: 'Secure & Reliable',   color: '#16A34A', bg: '#F0FDF4', border: '#BBF7D0' },
-  { icon: Puzzle,      label: 'Developer Friendly',  color: '#D97706', bg: '#FFFBEB', border: '#FDE68A' },
+  { icon: Puzzle,      label: 'Developer Friendly',  color: '#2563EB', bg: '#EFF6FF', border: '#BFDBFE' },
   { icon: Headphones,  label: '24/7 Support',        color: '#7C3AED', bg: '#F5F3FF', border: '#DDD6FE' },
 ];
 
@@ -224,12 +224,14 @@ export default function Platforms() {
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.08 }}
             style={{
-              fontSize: 'clamp(2rem, 4.5vw, 3.25rem)',
+              fontSize: 'clamp(1.6rem, 5vw, 3.25rem)',
               fontWeight: 900,
               color: '#0F172A',
               letterSpacing: '-0.035em',
-              lineHeight: 1.1,
+              lineHeight: 1.15,
               margin: '0 0 16px',
+              wordWrap: 'break-word',
+              overflowWrap: 'break-word',
             }}
           >
             Works Everywhere You Do

@@ -39,14 +39,14 @@ const CATEGORIES = [
     label: 'Ethnic & Couture',
     sub: 'Draped & Traditional',
     src: '/vz_thumb_lilac_saree.jpg',
-    accent: '#D97706',
+    accent: '#2563EB',
   },
   {
     id: 6,
     label: 'Jewellery',
     sub: 'High Fashion Accessories',
     src: '/vz_jewellery_pearl.jpg',
-    accent: '#B45309',
+    accent: '#1D4ED8',
   },
   {
     id: 7,

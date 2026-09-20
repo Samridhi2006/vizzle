@@ -110,12 +110,12 @@ export default function Contact() {
               <div className="flex items-center gap-3">
                 <Phone className="w-5 h-5 text-slate-900 shrink-0" />
                 <a
-                  href="https://wa.me/917729883692?text=Hi%20Vizzle%2C%20I%20would%20like%20to%20know%20more%20about%20your%20services"
+                  href="https://wa.me/918310247975?text=Hi%20Vizzle%2C%20I%20would%20like%20to%20know%20more%20about%20your%20services"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-sm sm:text-base font-semibold text-slate-900 hover:text-cyan-600 transition-colors"
                 >
-                  +91 7729883692
+                  +91 8310247975
                 </a>
               </div>
             </div>
