@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Timer, TrendingDown, Ruler } from 'lucide-react';
 
 // ─── Card Data ────────────────────────────────────────────────────────────────
 const CARDS = [
@@ -66,9 +66,9 @@ const CARDS = [
 ];
 
 const STATS = [
-  { emoji: '⚡', value: '10X', label: 'Faster Production', desc: 'Create high-quality visuals in minutes' },
-  { emoji: '🎯', value: '80%', label: 'Cost Reduction', desc: 'Cut production costs by up to 80%' },
-  { emoji: '🪄', value: '100%', label: 'Design Accuracy', desc: 'Consistent colours, fit, and styling every time' },
+  { icon: Timer,        value: '10X',  label: 'Faster Production', desc: 'Create high-quality visuals in minutes' },
+  { icon: TrendingDown, value: '80%',  label: 'Cost Reduction',    desc: 'Cut production costs by up to 80%' },
+  { icon: Ruler,        value: '100%', label: 'Design Accuracy',   desc: 'Consistent colours, fit, and styling every time' },
 ];
 
 // ─── Single Card ──────────────────────────────────────────────────────────────
@@ -224,13 +224,32 @@ function StatsBanner() {
         className="vz-showcase-stats-row"
         style={{
           display: 'flex',
-          gap: '48px',
+          gap: '32px',
           flexShrink: 0,
+          alignItems: 'flex-start',
         }}
       >
         {STATS.map((stat, i) => (
-          <div key={i} style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '22px', marginBottom: '2px' }}>{stat.emoji}</div>
+          <div key={i} style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', flex: '1 1 0' }}>
+            {/* Icon container */}
+            <div
+              aria-hidden="true"
+              style={{
+                width: '48px',
+                height: '48px',
+                borderRadius: '12px',
+                background: 'rgba(56,189,248,0.12)',
+                border: '1px solid rgba(255,255,255,0.08)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginBottom: '12px',
+                flexShrink: 0,
+              }}
+            >
+              <stat.icon size={24} strokeWidth={1.75} color="#38BDF8" />
+            </div>
+            {/* Value */}
             <div style={{
               fontSize: 'clamp(1.5rem, 3vw, 2rem)',
               fontWeight: 900,
@@ -240,10 +259,12 @@ function StatsBanner() {
             }}>
               {stat.value}
             </div>
-            <div style={{ fontSize: '12px', fontWeight: 700, color: '#fff', marginTop: '4px' }}>
+            {/* Label */}
+            <div style={{ fontSize: '12px', fontWeight: 700, color: '#fff', marginTop: '4px', whiteSpace: 'nowrap' }}>
               {stat.label}
             </div>
-            <div style={{ fontSize: '11px', color: '#64748B', marginTop: '2px', maxWidth: '120px' }}>
+            {/* Description */}
+            <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.7)', marginTop: '4px', maxWidth: '120px', lineHeight: 1.5 }}>
               {stat.desc}
             </div>
           </div>

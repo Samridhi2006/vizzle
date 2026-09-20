@@ -17,6 +17,7 @@ import VirtualTryOnPage from "./pages/VirtualTryOnPage";
 import BlogsPage from "./pages/BlogsPage";
 import SignInPage from "./pages/SignInPage";
 import AdminPanelPage from "./pages/AdminPanelPage";
+import TermsOfServicePage from "./pages/TermsOfServicePage";
 
 // Dashboard — nested route layout
 import DashboardLayout from "./dashboard/DashboardLayout";
@@ -39,6 +40,8 @@ function App() {
             {/* ── Public / Marketing ── */}
             <Route path="/" element={<AppLayout />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/privacy" element={<PrivacyPolicy />} />
+            <Route path="/terms" element={<TermsOfServicePage />} />
             <Route path="/form" element={<Form />} />
             <Route path="/greeting" element={<Greeting />} />
             <Route path="/admin" element={<Admin />} />

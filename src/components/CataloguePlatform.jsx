@@ -283,32 +283,6 @@ export default function CataloguePhotoshootSection() {
         textAlign: 'center',
         marginBottom: '56px',
       }}>
-        {/* Pill badge */}
-        <motion.div
-          initial={{ opacity: 0, y: -12 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '7px',
-            padding: '7px 18px',
-            borderRadius: '999px',
-            background: 'rgba(8,145,178,0.08)',
-            border: '1px solid rgba(8,145,178,0.22)',
-            fontSize: '11px',
-            fontWeight: 800,
-            color: '#0891B2',
-            letterSpacing: '0.08em',
-            textTransform: 'uppercase',
-            marginBottom: '24px',
-          }}
-        >
-          <span>⚡</span>
-          All-In-One AI Fashion Studio
-        </motion.div>
-
         {/* H2 */}
         <motion.h2
           initial={{ opacity: 0, y: 16 }}

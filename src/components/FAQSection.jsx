@@ -193,7 +193,7 @@ export default function FAQSection() {
             margin: '0 auto',
             lineHeight: 1.7,
           }}>
-            Everything you want to know about AI catalogue photoshoots and virtual try-on
+            Everything you want to know about AI catalogue photoshoots and <span style={{ whiteSpace: 'nowrap' }}>virtual try-on</span>
           </p>
         </motion.div>
 
