@@ -1,0 +1,15 @@
+﻿// src/data/menGarments.ts
+import type { GarmentItem } from "./womenGarments";
+
+export const MEN_GARMENTS: GarmentItem[] = [
+  { id:"full-sleeve-shirt", label:"Full Sleeve Shirt", category:"formals", categoryLabel:"Formal Wear", displayStyle:"flat-lay", img:"/garments/men/full_sleeve_shirt.jpg", description:"Crisp white poplin full-sleeve button-down shirt with spread collar.", tags:["poplin","white","formal","button-down"], isPopular:true },
+  { id:"kurta", label:"Kurta", category:"ethnic", categoryLabel:"Ethnic Wear", displayStyle:"flat-lay", img:"/garments/men/kurta.jpg", description:"Ivory cotton hand-embroidered Lucknawi kurta with chikankari detailing.", tags:["cotton","chikankari","ethnic","festive"], isPopular:true },
+  { id:"sherwani-pyjama", label:"Sherwani & Pyjama", category:"ethnic", categoryLabel:"Ethnic Wear", displayStyle:"flat-lay", img:"/garments/men/sherwani.jpg", description:"Royal navy silk-blend structured sherwani with gold zardozi and churidar.", tags:["sherwani","silk","zardozi","wedding","festive"], isPopular:true },
+  { id:"suit", label:"Suit", category:"formals", categoryLabel:"Formal Wear", displayStyle:"flat-lay", img:"/garments/men/suit.jpg", description:"Charcoal grey wool-blend single-breasted two-piece suit.", tags:["charcoal","wool","formal","two-piece"], isPopular:true },
+  { id:"vest", label:"Vest", category:"casual", categoryLabel:"Casual Wear", displayStyle:"flat-lay", img:"/garments/men/vest.jpg", description:"Navy suede sleeveless vest with button placket.", tags:["vest","suede","sleeveless","casual"] },
+  { id:"half-sleeve-shirt", label:"Half Sleeve Shirt", category:"casual", categoryLabel:"Casual Wear", displayStyle:"flat-lay", img:"/garments/men/half_sleeve_shirt.jpg", description:"Classic Oxford cotton half-sleeve button-down shirt.", tags:["oxford","cotton","casual","half-sleeve"] },
+  { id:"full-sleeve-tshirt", label:"Full Sleeve T-shirt", category:"casual", categoryLabel:"Casual Wear", displayStyle:"flat-lay", img:"/garments/men/full_sleeve_tshirt.jpg", description:"Heavyweight crew-neck long-sleeve cotton t-shirt.", tags:["heavyweight","cotton","crewneck","casual"] },
+  { id:"half-sleeve-tshirt", label:"Half Sleeve T-shirt", category:"casual", categoryLabel:"Casual Wear", displayStyle:"flat-lay", img:"/garments/men/half_sleeve_tshirt.jpg", description:"Essential washed pique-knit short-sleeve crew-neck t-shirt.", tags:["pique","crewneck","essential","half-sleeve"], isPopular:true },
+  { id:"polo", label:"Polo", category:"casual", categoryLabel:"Casual Wear", displayStyle:"flat-lay", img:"/garments/men/polo.jpg", description:"Classic pique cotton polo shirt with ribbed collar and two-button placket.", tags:["polo","pique","collar","placket","casual"] },
+  { id:"sweatshirt", label:"Sweatshirt", category:"casual", categoryLabel:"Casual Wear", displayStyle:"flat-lay", img:"/garments/men/sweatshirt.jpg", description:"Heavyweight fleece crew-neck pullover sweatshirt.", tags:["fleece","crewneck","pullover","streetwear","hoodie"] },
+];

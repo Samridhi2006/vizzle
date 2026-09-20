@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -7,6 +7,12 @@ import Header from "@/components/layout/Header";
 import { useAuthStore } from "@/store/auth.store";
 import { useUIStore } from "@/store/ui.store";
 import { cn } from "@/lib/client/utils";
+
+// ─── DEV BYPASS ──────────────────────────────────────────────────────────────
+// In development, skip auth so you can work on the UI without a real DB/login.
+// Remove this flag (or set to false) before deploying.
+const DEV_BYPASS_AUTH = process.env.NODE_ENV === "development";
+// ─────────────────────────────────────────────────────────────────────────────
 
 export default function DashboardLayout({
   children,
@@ -17,32 +23,26 @@ export default function DashboardLayout({
   const token = useAuthStore((state) => state.token);
   const sidebarOpen = useUIStore((state) => state.sidebarOpen);
 
-  // Wait for Zustand persist to hydrate from localStorage before checking auth.
-  // Without this, `token` is null on the first render (SSR/hydration),
-  // causing an immediate redirect to /login even when the user IS logged in.
-  const [hydrated, setHydrated] = useState(false);
+  const [hydrated, setHydrated] = useState(DEV_BYPASS_AUTH); // skip wait in dev
+
   useEffect(() => {
-    // Zustand's persist rehydrates synchronously on the client in a microtask.
-    // Deferring by one tick ensures the store is populated before we check.
+    if (DEV_BYPASS_AUTH) return; // no auth needed in dev
     const unsub = useAuthStore.persist.onFinishHydration(() => {
       setHydrated(true);
     });
-
-    // If already hydrated (e.g. navigating between pages), resolve immediately
     if (useAuthStore.persist.hasHydrated()) {
       setHydrated(true);
     }
-
     return () => unsub();
   }, []);
 
   useEffect(() => {
+    if (DEV_BYPASS_AUTH) return; // skip redirect in dev
     if (hydrated && !token) {
       router.replace("/login");
     }
   }, [hydrated, token, router]);
 
-  // Render nothing until hydration is complete to avoid flash
   if (!hydrated) return null;
 
   return (

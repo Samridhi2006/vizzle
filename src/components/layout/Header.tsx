@@ -1,14 +1,18 @@
-"use client";
+﻿"use client";
 import { usePathname } from "next/navigation";
 import { useAuthStore } from "@/store/auth.store";
 
 const titles: Record<string, { title: string; sub: string }> = {
-  "/dashboard": { title: "Overview", sub: "Welcome back" },
-  "/dashboard/stores": { title: "Stores", sub: "Manage your storefronts and API keys" },
-  "/dashboard/products": { title: "Products", sub: "Manage your garment catalog" },
-  "/dashboard/analytics": { title: "Analytics", sub: "Try-on metrics and performance" },
-  "/dashboard/docs": { title: "Integration Guide", sub: "Embed the try-on widget in your storefront" },
-  "/dashboard/admin": { title: "Admin Overview", sub: "Platform-wide statistics" },
+  "/dashboard":               { title: "Overview",            sub: "Welcome back" },
+  "/dashboard/studio":        { title: "AI Studio",           sub: "Create catalogue images with virtual try-on" },
+  "/dashboard/motion-studio": { title: "Motion Studio",       sub: "Generate cinematic AI fashion videos" },
+  "/dashboard/creations":     { title: "My Creations",        sub: "View and manage generated catalogues and videos" },
+  "/dashboard/stores":        { title: "Stores",              sub: "Manage your storefronts and API keys" },
+  "/dashboard/products":      { title: "Products",            sub: "Manage your garment catalog" },
+  "/dashboard/analytics":     { title: "Analytics",           sub: "Try-on metrics and performance" },
+  "/dashboard/billing":       { title: "Credits & Billing",   sub: "Manage your credit balance and plans" },
+  "/dashboard/docs":          { title: "Integration Guide",   sub: "Embed the try-on widget in your storefront" },
+  "/dashboard/admin":         { title: "Admin Overview",      sub: "Platform-wide statistics" },
 };
 
 export default function Header() {
