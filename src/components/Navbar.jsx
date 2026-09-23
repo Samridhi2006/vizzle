@@ -1,4 +1,4 @@
-﻿/* eslint-disable react/prop-types */
+/* eslint-disable react/prop-types */
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useModal } from "../context/ModalContext";
@@ -27,8 +27,9 @@ const PRIMARY_LINKS = [
 const MORE_LINKS = [
   { label: "Blog",               to: "/blogs",              emoji: "✍️" },
   { label: "Catalogue Showcase", to: "/catalogue-showcase", emoji: "🎨" },
-  { label: "Virtual Try-On",     to: "/virtual-try-on",     emoji: "👗" },
+  { label: "Virtual Try-On",     to: "/ai-trial-room",      emoji: "👗" },
   { label: "Contact",            to: "/contact",            emoji: "📬" },
+
 ];
 
 /* ─── NavLink helper ─────────────────────────────────── */

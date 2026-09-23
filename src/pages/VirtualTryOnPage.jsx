@@ -52,9 +52,18 @@ export default function VirtualTryOnPage() {
         <div style={{ width: 1, height: 20, background: "#E2E8F0" }} />
         <img src="/viz.png" alt="Vizzle" style={{ height: 28, width: "auto" }} />
         <div style={{ marginLeft: "auto", display: "flex", gap: 8 }}>
-          <span style={{ background: "linear-gradient(135deg,#2563EB,#4F46E5)", color: "#fff", borderRadius: 999, padding: "4px 14px", fontSize: 11, fontWeight: 700 }}>Virtual Try-On</span>
+          <Link
+            to="/ai-trial-room"
+            style={{ background: "linear-gradient(135deg,#2563EB,#4F46E5)", color: "#fff", borderRadius: 999, padding: "7px 18px", fontSize: 12, fontWeight: 700, textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 6, boxShadow: "0 4px 14px rgba(37,99,235,0.25)", transition: "opacity 0.2s" }}
+            onMouseEnter={e => e.currentTarget.style.opacity = "0.88"}
+            onMouseLeave={e => e.currentTarget.style.opacity = "1"}
+          >
+            <Sparkles size={13} strokeWidth={2} />
+            Virtual Try-On
+          </Link>
         </div>
       </div>
+
 
       <div style={{ maxWidth: 1200, margin: "0 auto", padding: "60px 24px 80px" }}>
 
