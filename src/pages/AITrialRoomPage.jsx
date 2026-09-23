@@ -73,7 +73,7 @@ const MOCK_RESULTS = [
 ];
 
 const MAX_FREE_TRIALS = 3;
-const STORAGE_KEY     = "vizzle_trial_count";
+const STORAGE_KEY     = "vizzle_trial_count_v2";
 
 /* ─── Garment Type Card ──────────────────────────────────────────── */
 function GarmentCard({ item, selected, onSelect }) {
@@ -481,7 +481,7 @@ export default function AITrialRoomPage() {
           <div style={{ width: 1, height: 18, background: "#E2E8F0", flexShrink: 0 }} />
           <img src="/viz.png" alt="Vizzle" style={{ height: 28, width: "auto", flexShrink: 0 }} />
           <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center" }}>
-            <span style={{ fontSize: 14, fontWeight: 800, color: "#0F172A", letterSpacing: "-0.02em" }}>AI Trial Room</span>
+            <span style={{ fontSize: 14, fontWeight: 800, color: "#0F172A", letterSpacing: "-0.02em" }}>Try On</span>
             <button onClick={() => alert("Tutorial coming soon!")} style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 10, fontWeight: 600, color: BLUE, background: "none", border: "none", cursor: "pointer", padding: 0 }}>
               <Play size={8} fill={BLUE} /> Watch Tutorial
             </button>
