@@ -76,6 +76,7 @@ const FORM_FIELDS = [
   "image_size",
   "extraction_image_size",
   "default_fit_type",
+  "default_garment_type",
   "studio_extraction_prompt",
   "studio_shoot_prompt",
   "studio_qa_prompt",
@@ -1102,7 +1103,16 @@ function SettingsDashboard({ auth, onLogout, onAuthExpired }) {
             >
               <Segmented options={options.image_sizes} value={form.extraction_image_size} onChange={set("extraction_image_size")} />
             </Field>
-            <Field label="Default garment fit" htmlFor="fit" help="Used when a try-on request doesn't specify a fit.">
+            <Field label="Default target garment" htmlFor="default-garment" help="Used when a try-on API request doesn't send garment_type.">
+              <select id="default-garment" className={`${inputClass} sm:max-w-xs`} value={form.default_garment_type} onChange={(e) => set("default_garment_type")(e.target.value)}>
+                {options.garment_types.map((g) => (
+                  <option key={g} value={g}>
+                    {g}
+                  </option>
+                ))}
+              </select>
+            </Field>
+            <Field label="Default garment fit" htmlFor="fit" help="Used when a try-on API request doesn't send fit_type.">
               <select id="fit" className={`${inputClass} sm:max-w-xs`} value={form.default_fit_type} onChange={(e) => set("default_fit_type")(e.target.value)}>
                 {options.fit_types.map((f) => (
                   <option key={f} value={f}>
