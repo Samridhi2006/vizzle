@@ -69,6 +69,10 @@ const MODEL_NOTES = {
 const FORM_FIELDS = [
   "model",
   "text_model",
+  "pipeline_mode",
+  "single_prompt",
+  "thinking_level",
+  "use_background_mode",
   "extraction_prompt",
   "tryon_prompt",
   "enable_garment_extraction",
@@ -963,9 +967,98 @@ function SettingsDashboard({ auth, onLogout, onAuthExpired }) {
           <Card
             id="pipeline"
             icon={Workflow}
-            title="Pipeline & prompts"
-            description="Two-stage pipeline: extract a clean garment first, then dress the customer in it."
+            title="Try-on pipeline & prompts"
+            description="How the virtual try-on API turns a customer photo and a garment photo into the result."
           >
+            <div className="grid sm:grid-cols-2 gap-3">
+              {[
+                {
+                  id: "single",
+                  title: "Single call",
+                  badge: "Recommended",
+                  sub: "One Gemini generation with both photos (newgeminicode.py). About ₹6 per try-on at 1K.",
+                },
+                {
+                  id: "two_stage",
+                  title: "Two-stage",
+                  sub: "Extract a clean garment first, then try it on (workingcode.py). Two generations, about 2× cost and time.",
+                },
+              ].map((m) => (
+                <button
+                  key={m.id}
+                  type="button"
+                  onClick={() => set("pipeline_mode")(m.id)}
+                  className={`text-left rounded-xl border-2 px-4 py-3 transition ${
+                    form.pipeline_mode === m.id ? "border-[#2563EB] bg-blue-50/50" : "border-slate-200 hover:border-slate-300"
+                  }`}
+                >
+                  <div className="flex items-center gap-2 text-sm font-semibold text-slate-900">
+                    {m.title}
+                    {m.badge && <span className="rounded bg-emerald-50 px-1.5 py-0.5 text-[10px] font-bold uppercase text-emerald-700">{m.badge}</span>}
+                    {form.pipeline_mode === m.id && <CheckCircle2 size={15} className="ml-auto text-[#2563EB]" />}
+                  </div>
+                  <div className="mt-1 text-xs text-slate-500 leading-relaxed">{m.sub}</div>
+                </button>
+              ))}
+            </div>
+
+            <div className="mt-5">
+              <Toggle
+                checked={!!form.use_background_mode}
+                onChange={set("use_background_mode")}
+                label="Background mode (recommended)"
+                description="Gemini runs the job as a stored background interaction and the backend polls for the result, so a dropped connection can't lose an image you've already paid for. Falls back to a normal call automatically if Google rejects it."
+              />
+            </div>
+
+            {form.pipeline_mode === "single" ? (
+              <div className="mt-6 pt-5 border-t border-slate-100">
+                <div className="flex flex-col sm:flex-row sm:items-stretch gap-2 mb-5">
+                  {[
+                    { icon: User, title: "Customer photo", sub: "Image 1 — face, body, pose, background", tone: "bg-slate-50 border-slate-200 text-slate-700" },
+                    { icon: Shirt, title: "+ Garment photo", sub: "Image 2 — product shot or worn by a model", tone: "bg-slate-50 border-slate-200 text-slate-700" },
+                    { icon: Sparkles, title: "1 Gemini call", sub: "Dress the customer in the garment", tone: "bg-indigo-50 border-indigo-200 text-[#4338ca]" },
+                    { icon: CheckCircle2, title: "Result", sub: "Uploaded to Cloudinary", tone: "bg-emerald-50 border-emerald-200 text-emerald-700" },
+                  ].map((st, i) => (
+                    <div key={st.title} className="contents">
+                      {i > 0 && <ArrowRight size={14} className="shrink-0 self-center text-slate-300 hidden sm:block" />}
+                      <div className={`flex-1 min-w-[120px] rounded-xl border px-3 py-2.5 ${st.tone}`}>
+                        <div className="flex items-center gap-1.5 text-xs font-semibold"><st.icon size={13} /> {st.title}</div>
+                        <div className="text-[11px] opacity-80 mt-0.5">{st.sub}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <Field
+                  label="Thinking level"
+                  htmlFor="thinking"
+                  help="How much the model reasons before drawing. 'minimal' is fastest and cheapest (as in newgeminicode.py)."
+                >
+                  <select
+                    id="thinking"
+                    className={`${inputClass} sm:max-w-[200px]`}
+                    value={form.thinking_level}
+                    onChange={(e) => set("thinking_level")(e.target.value)}
+                  >
+                    {(options.thinking_levels || ["minimal", "low", "medium", "high"]).map((t) => (
+                      <option key={t} value={t}>{t}</option>
+                    ))}
+                  </select>
+                </Field>
+                <p className="text-xs text-slate-500 mb-3 leading-relaxed">
+                  Sent after the two photos, each preceded by its fixed role label (IMAGE 1 = customer, IMAGE 2 = garment only).
+                </p>
+                <PromptEditor
+                  label="Single-call try-on prompt"
+                  value={form.single_prompt}
+                  defaultValue={defaults.single_prompt}
+                  onChange={set("single_prompt")}
+                  placeholders={["garment_type", "fit_type"]}
+                  rows={18}
+                />
+              </div>
+            ) : (
+            <div className="mt-6 pt-5 border-t border-slate-100">
             <PipelineDiagram extractionEnabled={form.enable_garment_extraction} />
 
             <div className="mt-6 pt-5 border-t border-slate-100">
@@ -1010,6 +1103,8 @@ function SettingsDashboard({ auth, onLogout, onAuthExpired }) {
                 rows={16}
               />
             </div>
+            </div>
+            )}
           </Card>
 
           {/* AI Studio pipeline */}
