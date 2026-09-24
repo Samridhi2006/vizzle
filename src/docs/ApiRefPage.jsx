@@ -84,7 +84,7 @@ const EP = {
 <li><code>X-RateLimit-Reset</code> — Unix timestamp (seconds) when the rate limit window resets</li>
 </ul>`,
     code: {
-      curl: `# 402 Insufficient Credits:\n{\n  "error": "Insufficient credits. Balance: Rs0. Required: Rs2.50"\n}\n\n# 422 AI Moderation rejection:\n{\n  "error": "Image rejected: content policy violation"\n}`,
+      curl: `# 402 Insufficient Credits:\n{\n  "error": "Insufficient credits. Balance: Rs0. Required: Rs10.00"\n}\n\n# 422 AI Moderation rejection:\n{\n  "error": "Image rejected: content policy violation"\n}`,
       python: `from vizzle import VizzleClient, VizzleError, InsufficientCreditsError\n\nclient = VizzleClient(api_key="vzk_YOUR_KEY")\ntry:\n    result = client.tryon("prod_123", "https://...")\nexcept InsufficientCreditsError:\n    print("Top up credits in the Dashboard")\nexcept VizzleError as e:\n    print(f"API error: {e}")`,
       javascript: `const res = await fetch("/api/v1/tryon", { method: "POST", headers, body });\nif (!res.ok) {\n  const { error } = await res.json();\n  if (res.status === 402) console.error("Insufficient credits:", error);\n  else if (res.status === 422) console.error("Moderation rejected:", error);\n  else throw new Error(error);\n}`,
     },
@@ -96,8 +96,8 @@ const EP = {
     type: 'guide',
     content: `<h4>Credit costs</h4>
 <table><thead><tr><th>Endpoint</th><th>Cost per call</th></tr></thead><tbody>
-<tr><td>POST /api/v1/tryon</td><td>Rs 2.50</td></tr>
-<tr><td>POST /api/v1/generate-video</td><td>Rs 5.00</td></tr>
+<tr><td>POST /api/v1/tryon</td><td>Rs 10.00</td></tr>
+<tr><td>POST /api/v1/generate-video</td><td>Rs 15.00</td></tr>
 <tr><td>POST /api/v1/upload</td><td>Free</td></tr>
 <tr><td>GET status endpoints</td><td>Free</td></tr>
 </tbody></table>
@@ -117,7 +117,7 @@ const EP = {
   'tryon-start': {
     title: 'Start Try-On',
     subtitle: 'Initiate an asynchronous virtual garment try-on. Returns a prediction ID immediately — poll for results.',
-    type: 'endpoint', method: 'POST', endpoint: '/api/v1/tryon', cost: 'Rs 2.50 per call',
+    type: 'endpoint', method: 'POST', endpoint: '/api/v1/tryon', cost: 'Rs 10.00 per call',
     params: [
       { name: 'product_id',     type: 'string',  required: true,  desc: 'Your product identifier (must exist in this store)' },
       { name: 'user_photo_url', type: 'string',  required: true,  desc: 'Publicly accessible URL of the person photo (JPEG / PNG / WebP)' },
@@ -159,7 +159,7 @@ const EP = {
   'video-start': {
     title: 'Start Video Generation',
     subtitle: 'Animate a try-on result image into a short fashion video. Returns a prediction ID — poll for the MP4 URL.',
-    type: 'endpoint', method: 'POST', endpoint: '/api/v1/generate-video', cost: 'Rs 5.00 per call',
+    type: 'endpoint', method: 'POST', endpoint: '/api/v1/generate-video', cost: 'Rs 15.00 per call',
     params: [
       { name: 'image_url',   type: 'string',  required: true,  desc: 'URL of the try-on output image (or any fashion photo)' },
       { name: 'motion_type', type: 'string',  required: false, desc: '"subtle_walk" | "pose_showcase" | "gentle_turn" — default: "subtle_walk"' },
@@ -170,7 +170,7 @@ const EP = {
     errorResponses: [
       { code: '400', desc: 'Invalid fps value (must be 24) or duration out of range' },
       { code: '401', desc: 'Invalid or missing API key' },
-      { code: '402', desc: 'Insufficient credits (costs Rs 5.00)' },
+      { code: '402', desc: 'Insufficient credits (costs Rs 15.00)' },
     ],
     code: {
       curl: `curl -X POST https://dashboard.vizzle.in/api/v1/generate-video \\\n  -H "x-api-key: vzk_9114d52b..." \\\n  -H "Content-Type: application/json" \\\n  -H "Origin: https://your-store.com" \\\n  -d '{\n    "image_url": "https://cdn.vizzle.in/vizzle/output.jpg",\n    "motion_type": "subtle_walk",\n    "duration": 4,\n    "fps": 24\n  }'`,
