@@ -583,6 +583,9 @@ const EMAIL_EVENTS = [
   ["Credits exhausted", "Wallet can't pay for one more image (once per top-up)", "Customer"],
   ["Plan expiring", "At each reminder day before the plan's end date", "Customer"],
   ["Plan ended", "The day after a plan expires — access is paused", "Customer + admin"],
+  ["Try-on receipt", "Every successful try-on, video or AI Studio image — with the result link", "Customer"],
+  ["Daily usage summary", "Each morning, for stores that used anything the previous day (IST)", "Customer"],
+  ["Monthly usage report", "On the 1st, for the previous month — usage, spend, balance and plan end date", "Customer"],
 ];
 
 const STATUS_CHIP = {
@@ -751,6 +754,9 @@ function SettingsDashboard({ auth, onLogout, onAuthExpired }) {
       .split(",")
       .map((d) => parseInt(d, 10))
       .filter((d) => d > 0),
+    notify_tryon_receipts: !!platform.notify_tryon_receipts,
+    notify_daily_summary: !!platform.notify_daily_summary,
+    notify_monthly_report: !!platform.notify_monthly_report,
   });
 
   const handleSave = async () => {
@@ -1435,6 +1441,26 @@ function SettingsDashboard({ auth, onLogout, onAuthExpired }) {
                     onChange={setP("emails_enabled")}
                     label="Send transactional emails"
                     description="Turn off to pause every email below (they're logged as skipped)."
+                  />
+                </div>
+                <div className="mb-5 grid sm:grid-cols-3 gap-x-5 gap-y-3">
+                  <Toggle
+                    checked={!!platform.notify_tryon_receipts}
+                    onChange={setP("notify_tryon_receipts")}
+                    label="Try-on receipts"
+                    description="One email per successful try-on, video or Studio image."
+                  />
+                  <Toggle
+                    checked={!!platform.notify_daily_summary}
+                    onChange={setP("notify_daily_summary")}
+                    label="Daily usage summary"
+                    description="Sent each morning for the previous day's usage."
+                  />
+                  <Toggle
+                    checked={!!platform.notify_monthly_report}
+                    onChange={setP("notify_monthly_report")}
+                    label="Monthly usage report"
+                    description="Sent on the 1st for the previous month."
                   />
                 </div>
                 <div className="grid sm:grid-cols-3 gap-x-5">

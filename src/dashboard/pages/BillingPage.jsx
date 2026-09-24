@@ -5,34 +5,38 @@ const PLANS = [
   {
     name: "Starter Pack",
     subtitle: "Perfect for Startups",
-    price: "₹1,000",
+    price: "₹1,500",
     tryons: 160,
-    perUnit: "₹6.25 per Try-On",
+    perUnit: "₹9.38 per Try-On",
+    perVideo: "₹10 per Video Try-On",
     features: ["160 AI Try-Ons", "Instant Priority Processing", "Pay Only for Successful Try-Ons", "White Label Integration", "Website & Shopify Integration", "Standard AI Quality"],
   },
   {
     name: "Growth Pack",
     subtitle: "Most Popular Choice",
-    price: "₹2,500",
-    tryons: 450,
-    perUnit: "₹5.56 per Try-On",
-    features: ["450 AI Try-Ons", "Instant Priority Processing", "Pay Only for Successful Try-Ons", "White Label Integration", "Website & Shopify Integration", "Standard AI Quality"],
+    price: "₹3,500",
+    tryons: 400,
+    perUnit: "₹8.75 per Try-On",
+    perVideo: "₹10 per Video Try-On",
+    features: ["400 AI Try-Ons", "Instant Priority Processing", "Pay Only for Successful Try-Ons", "White Label Integration", "Website & Shopify Integration", "Standard AI Quality"],
     popular: true,
   },
   {
     name: "Pro Pack",
     subtitle: "Best for Growing Businesses",
-    price: "₹5,000",
-    tryons: 960,
-    perUnit: "₹5.21 per Try-On",
-    features: ["960 AI Try-Ons", "Instant Priority Processing", "Pay Only for Successful Try-Ons", "White Label Integration", "Website & Shopify Integration", "Standard AI Quality"],
+    price: "₹7,500",
+    tryons: 900,
+    perUnit: "₹8.33 per Try-On",
+    perVideo: "₹10 per Video Try-On",
+    features: ["900 AI Try-Ons", "Instant Priority Processing", "Pay Only for Successful Try-Ons", "White Label Integration", "Website & Shopify Integration", "Standard AI Quality"],
   },
   {
     name: "Enterprise Pack",
     subtitle: "Enterprises & High Volume",
-    price: "₹10,000",
+    price: "₹15,000",
     tryons: 2000,
-    perUnit: "₹5.00 per Try-On",
+    perUnit: "₹7.50 per Try-On",
+    perVideo: "₹10 per Video Try-On",
     features: ["2,000 AI Try-Ons", "Instant Priority Processing", "Pay Only for Successful Try-Ons", "White Label Integration", "Website & Shopify Integration", "Standard AI Quality"],
   },
 ];
@@ -67,7 +71,7 @@ export default function BillingPage() {
       <div>
         <p className="text-sm font-bold text-gray-700 mb-3">Top Up Credits</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-3">
-          {PLANS.map(({ name, subtitle, price, tryons, perUnit, features, popular }) => (
+          {PLANS.map(({ name, subtitle, price, tryons, perUnit, perVideo, features, popular }) => (
             <div
               key={name}
               className={`rounded-xl border-2 p-5 shadow-sm flex flex-col relative ${
@@ -85,7 +89,8 @@ export default function BillingPage() {
               <p className={`text-[11px] mb-2 ${popular ? "text-white/70" : "text-gray-400"}`}>{subtitle}</p>
               <p className={`text-2xl font-black ${popular ? "text-white" : "text-gray-900"}`}>{price}</p>
               <p className={`text-xs mb-1 ${popular ? "text-white/70" : "text-gray-400"}`}>/ {tryons.toLocaleString()} Try-Ons</p>
-              <p className={`text-[11px] font-semibold mb-4 ${popular ? "text-white/90" : "text-blue-600"}`}>{perUnit}</p>
+              <p className={`text-[11px] font-semibold mb-0.5 ${popular ? "text-white/90" : "text-blue-600"}`}>{perUnit}</p>
+              <p className={`text-[11px] font-semibold mb-4 ${popular ? "text-white/90" : "text-blue-600"}`}>{perVideo}</p>
               <ul className="space-y-2 mb-5 flex-1">
                 {features.map(f => (
                   <li key={f} className="flex items-start gap-2 text-xs">
