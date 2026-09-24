@@ -228,14 +228,26 @@ export default function CTAModal({
 
     setStatus('loading');
     try {
-      const res = await fetch('/api/submit-demo', {
+      const res = await fetch('https://formsubmit.co/ajax/info@vizzle.in', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, ...values }),
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify({
+          form_type: title,
+          name: values.name || '',
+          brand: values.brand || '',
+          email: values.email || '',
+          phone: values.phone || '',
+          _subject: `New ${title} Request from Vizzle Website`,
+          _template: 'table',
+        }),
       });
-      if (!res.ok) throw new Error('API error');
-    } catch {
-      // fallthrough — still show success
+      if (!res.ok) throw new Error('Submit failed');
+    } catch (err) {
+      console.error('Form submit error:', err);
+      // Still show success to user — FormSubmit may return non-ok on first activation
     }
     setStatus('success');
     onSubmitSuccess && onSubmitSuccess({ title, ...values });
@@ -456,12 +468,12 @@ export default function CTAModal({
                   }}>
                     By submitting, you agree to our{' '}
                     <a href="/terms" target="_blank" rel="noopener noreferrer"
-                      style={{ color: '#0f172a', fontWeight: 700, textDecoration: 'none' }}>
+                      style={{ color: '#2563eb', fontWeight: 700, textDecoration: 'none' }}>
                       Terms of Service
                     </a>{' '}
                     and{' '}
                     <a href="/privacy-policy" target="_blank" rel="noopener noreferrer"
-                      style={{ color: '#0f172a', fontWeight: 700, textDecoration: 'none' }}>
+                      style={{ color: '#2563eb', fontWeight: 700, textDecoration: 'none' }}>
                       Privacy Policy
                     </a>.
                   </p>

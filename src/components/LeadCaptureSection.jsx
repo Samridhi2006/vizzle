@@ -61,9 +61,29 @@ export default function LeadCaptureSection() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setStatus('loading');
-    // Simulate API call
-    await new Promise(res => setTimeout(res, 1500));
-    setStatus('success');
+    try {
+      const res = await fetch('https://formsubmit.co/ajax/info@vizzle.in', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify({
+          name: form.name,
+          brand: form.brand,
+          email: form.email,
+          phone: form.phone,
+          _subject: 'New Demo Request from Vizzle Landing Page',
+          _template: 'table',
+        }),
+      });
+      if (!res.ok) throw new Error('Submit failed');
+      setStatus('success');
+    } catch (err) {
+      console.error('Form submit error:', err);
+      setStatus('idle');
+      alert('Something went wrong. Please try again or email us at info@vizzle.in');
+    }
   };
 
   return (
@@ -235,11 +255,11 @@ export default function LeadCaptureSection() {
                       <><Loader2 size={15} style={{ animation: 'spin 1s linear infinite' }} />Submitting...</>
                     ) : 'Submit'}
                   </button>
-                  <p style={{ textAlign: 'center', fontSize: '11px', color: '#94A3B8', marginTop: '12px', lineHeight: 1.6 }}>
+                  <p style={{ textAlign: 'center', fontSize: '11.5px', color: '#94A3B8', marginTop: '12px', lineHeight: 1.6 }}>
                     By submitting, you agree to our{' '}
-                    <a href="/terms" style={{ color: '#64748B', textDecoration: 'underline' }}>Terms of Service</a>{' '}
+                    <a href="/terms" target="_blank" rel="noopener noreferrer" style={{ color: '#2563eb', fontWeight: 700, textDecoration: 'none' }}>Terms of Service</a>{' '}
                     and{' '}
-                    <a href="/privacy" style={{ color: '#64748B', textDecoration: 'underline' }}>Privacy Policy</a>.
+                    <a href="/privacy" target="_blank" rel="noopener noreferrer" style={{ color: '#2563eb', fontWeight: 700, textDecoration: 'none' }}>Privacy Policy</a>.
                   </p>
                 </form>
               </>
@@ -462,11 +482,11 @@ export default function LeadCaptureSection() {
                     </button>
 
                     {/* Legal */}
-                    <p style={{ textAlign: 'center', fontSize: '11px', color: '#94A3B8', marginTop: '14px', lineHeight: 1.6 }}>
+                    <p style={{ textAlign: 'center', fontSize: '11.5px', color: '#94A3B8', marginTop: '14px', lineHeight: 1.6 }}>
                       By submitting, you agree to our{' '}
-                      <a href="/terms" style={{ color: '#64748B', textDecoration: 'underline' }}>Terms of Service</a>{' '}
+                      <a href="/terms" target="_blank" rel="noopener noreferrer" style={{ color: '#2563eb', fontWeight: 700, textDecoration: 'none' }}>Terms of Service</a>{' '}
                       and{' '}
-                      .
+                      <a href="/privacy" target="_blank" rel="noopener noreferrer" style={{ color: '#2563eb', fontWeight: 700, textDecoration: 'none' }}>Privacy Policy</a>.
                     </p>
                   </form>
                 </>

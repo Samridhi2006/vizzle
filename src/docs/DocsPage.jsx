@@ -36,7 +36,7 @@ function DocsPage() {
         : wordpressContent;
 
   return (
-    <div className="vizzle-docs-container pt-28">
+    <div className="vizzle-docs-container" style={{ paddingTop: "80px" }}>
       <Navbar />
       <StepNavigation 
         activeStep={activeStep} 

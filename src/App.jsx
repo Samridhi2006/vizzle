@@ -14,9 +14,11 @@ import Contact from "./components/Contact";
 import Pricing from "./components/Pricing";
 import CatalogueShowcasePage from "./pages/CatalogueShowcasePage";
 import VirtualTryOnPage from "./pages/VirtualTryOnPage";
+import AITrialRoomPage from "./pages/AITrialRoomPage";
 import BlogsPage from "./pages/BlogsPage";
 import SignInPage from "./pages/SignInPage";
 import AdminPanelPage from "./pages/AdminPanelPage";
+import TermsOfServicePage from "./pages/TermsOfServicePage";
 
 // Dashboard — nested route layout
 import DashboardLayout from "./dashboard/DashboardLayout";
@@ -39,6 +41,8 @@ function App() {
             {/* ── Public / Marketing ── */}
             <Route path="/" element={<AppLayout />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/privacy" element={<PrivacyPolicy />} />
+            <Route path="/terms" element={<TermsOfServicePage />} />
             <Route path="/form" element={<Form />} />
             <Route path="/greeting" element={<Greeting />} />
             <Route path="/admin" element={<Admin />} />
@@ -49,6 +53,7 @@ function App() {
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/catalogue-showcase" element={<CatalogueShowcasePage />} />
             <Route path="/virtual-try-on" element={<VirtualTryOnPage />} />
+            <Route path="/ai-trial-room" element={<AITrialRoomPage />} />
             <Route path="/blogs" element={<BlogsPage />} />
 
             {/* ── Legacy sign-in routes → eliminated, direct modal on landing ── */}

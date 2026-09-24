@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 
@@ -38,6 +39,7 @@ const BLOGS = [
 // ─── Single Blog Card ─────────────────────────────────────────────────────────
 function BlogCard({ blog, index }) {
   return (
+    <Link to="/blogs" style={{ textDecoration: 'none', display: 'block' }}>
     <motion.article
       initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
@@ -142,21 +144,29 @@ function BlogCard({ blog, index }) {
         </p>
 
         {/* Learn More link */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '4px',
-          fontSize: '13px',
-          fontWeight: 700,
-          color: '#0F172A',
-          marginTop: 'auto',
-          transition: 'color 0.2s ease',
-        }}>
+        <Link
+          to="/blogs"
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '4px',
+            fontSize: '13px',
+            fontWeight: 700,
+            color: '#0F172A',
+            marginTop: 'auto',
+            textDecoration: 'none',
+            cursor: 'pointer',
+            transition: 'color 0.2s ease',
+          }}
+          onMouseEnter={e => { e.currentTarget.style.color = '#0891B2'; }}
+          onMouseLeave={e => { e.currentTarget.style.color = '#0F172A'; }}
+        >
           Learn More
           <ArrowRight size={13} strokeWidth={2.5} />
-        </div>
+        </Link>
       </div>
     </motion.article>
+    </Link>
   );
 }
 

@@ -26,7 +26,7 @@ export default function Contact() {
     setIsSubmitting(true);
 
     try {
-      await fetch("https://formsubmit.co/ajax/support@vizzle.in", {
+      await fetch("https://formsubmit.co/ajax/info@vizzle.in", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -277,11 +277,11 @@ export default function Contact() {
                 {/* Legal Disclaimer */}
                 <p className="text-xs text-slate-500 text-center mt-5">
                   By submitting, you agree to our{" "}
-                  <Link to="/privacy-policy" className="font-semibold text-slate-700 hover:underline">
+                  <Link to="/terms" target="_blank" rel="noopener noreferrer" className="font-bold text-blue-600 hover:text-blue-700 no-underline">
                     Terms of Service
                   </Link>{" "}
                   and{" "}
-                  <Link to="/privacy-policy" className="font-semibold text-slate-700 hover:underline">
+                  <Link to="/privacy" target="_blank" rel="noopener noreferrer" className="font-bold text-blue-600 hover:text-blue-700 no-underline">
                     Privacy Policy
                   </Link>
                 </p>
