@@ -86,10 +86,15 @@ const CATALOGUE_PLANS = [
   },
 ];
 
+// Try-On cards open the dashboard's checkout (sign-up → store → Razorpay).
+// Pack ids must match vizzle-api-platform/src/lib/packs.ts.
+const DASHBOARD_URL = import.meta.env.VITE_API_BASE_URL || "https://dashboard.vizzle.in";
+
 const TRYON_PLANS = [
   {
     icon: <RocketIcon />,
     name: "Starter Pack",
+    pack: "starter",
     subtitle: "Perfect for Startups",
     price: "₹1,500",
     volume: "160 Try-Ons",
@@ -102,6 +107,7 @@ const TRYON_PLANS = [
   {
     icon: <ChartIcon />,
     name: "Growth Pack",
+    pack: "growth",
     subtitle: "Most Popular Choice",
     price: "₹3,500",
     volume: "400 Try-Ons",
@@ -115,6 +121,7 @@ const TRYON_PLANS = [
   {
     icon: <StarIcon />,
     name: "Pro Pack",
+    pack: "pro",
     subtitle: "Best for Growing Businesses",
     price: "₹7,500",
     volume: "900 Try-Ons",
@@ -127,6 +134,7 @@ const TRYON_PLANS = [
   {
     icon: <CrownIcon />,
     name: "Enterprise Pack",
+    pack: "enterprise",
     subtitle: "Enterprises & High Volume",
     price: "₹15,000",
     volume: "2,000 Try-Ons",
@@ -207,7 +215,11 @@ function PlanCard({ plan, index }) {
       </div>
       <div style={{ flex: 1 }} />
       <button
-        onClick={() => openModal({ title: "Request Brand Access", fieldKeys: ["name", "brand", "email", "phone"] })}
+        onClick={() =>
+          plan.pack
+            ? window.location.assign(`${DASHBOARD_URL}/checkout?pack=${plan.pack}`)
+            : openModal({ title: "Request Brand Access", fieldKeys: ["name", "brand", "email", "phone"] })
+        }
         onMouseEnter={e => (e.currentTarget.style.background = "#333")}
         onMouseLeave={e => (e.currentTarget.style.background = "#111")}
         style={{

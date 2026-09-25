@@ -1,9 +1,13 @@
 import { CreditCard, Zap, Check, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
+// "Buy Now" opens the dashboard checkout (pack ids match vizzle-api-platform/src/lib/packs.ts).
+const DASHBOARD_URL = import.meta.env.VITE_API_BASE_URL || "https://dashboard.vizzle.in";
+
 const PLANS = [
   {
     name: "Starter Pack",
+    pack: "starter",
     subtitle: "Perfect for Startups",
     price: "₹1,500",
     tryons: 160,
@@ -13,6 +17,7 @@ const PLANS = [
   },
   {
     name: "Growth Pack",
+    pack: "growth",
     subtitle: "Most Popular Choice",
     price: "₹3,500",
     tryons: 400,
@@ -23,6 +28,7 @@ const PLANS = [
   },
   {
     name: "Pro Pack",
+    pack: "pro",
     subtitle: "Best for Growing Businesses",
     price: "₹7,500",
     tryons: 900,
@@ -32,6 +38,7 @@ const PLANS = [
   },
   {
     name: "Enterprise Pack",
+    pack: "enterprise",
     subtitle: "Enterprises & High Volume",
     price: "₹15,000",
     tryons: 2000,
@@ -71,7 +78,7 @@ export default function BillingPage() {
       <div>
         <p className="text-sm font-bold text-gray-700 mb-3">Top Up Credits</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-3">
-          {PLANS.map(({ name, subtitle, price, tryons, perUnit, perVideo, features, popular }) => (
+          {PLANS.map(({ name, pack, subtitle, price, tryons, perUnit, perVideo, features, popular }) => (
             <div
               key={name}
               className={`rounded-xl border-2 p-5 shadow-sm flex flex-col relative ${
@@ -99,7 +106,7 @@ export default function BillingPage() {
                   </li>
                 ))}
               </ul>
-              <button className={`w-full py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-1.5 transition-all ${
+              <button onClick={() => window.location.assign(`${DASHBOARD_URL}/checkout?pack=${pack}`)} className={`w-full py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-1.5 transition-all ${
                 popular
                   ? "bg-white text-blue-600 hover:bg-white/90"
                   : "bg-gray-900 text-white hover:bg-gray-800"
