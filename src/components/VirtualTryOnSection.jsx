@@ -333,8 +333,13 @@ const SECTION_CSS = `
   @keyframes vz-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
   .vz-tryon-btn-primary:hover { background: linear-gradient(135deg, #1D4ED8 0%, #1E40AF 100%) !important; box-shadow: 0 10px 40px rgba(37,99,235,0.5) !important; transform: translateY(-2px); }
   @media (max-width: 1024px) {
-    .vz-tryon-grid { grid-template-columns: 1fr !important; }
-    .vz-tryon-card-inner { padding: 36px 24px !important; }
+    .vz-tryon-grid { grid-template-columns: 1fr !important; gap: 36px !important; }
+    .vz-tryon-card-inner { padding: 40px 28px !important; }
+    .vz-tryon-heading { font-size: 2rem !important; }
+    .vz-tryon-img-card { margin: 0 auto; max-width: 480px; }
+  }
+  @media (max-width: 640px) {
+    .vz-tryon-card-inner { padding: 32px 20px !important; }
   }
 `;
 
@@ -345,7 +350,7 @@ export default function VirtualTryOnSection() {
     <section
       id="virtual-try-on"
       style={{
-        padding: '16px 24px 72px',
+        padding: '24px 24px 80px',
         background: 'linear-gradient(180deg, #F8FAFF 0%, #FAFBFF 100%)',
         fontFamily: "'Plus Jakarta Sans', Inter, sans-serif",
       }}
@@ -359,7 +364,6 @@ export default function VirtualTryOnSection() {
           margin: '0 auto',
           background: '#fff',
           borderRadius: '32px',
-          overflow: 'hidden',
           padding: '64px 72px',
           boxShadow: '0 2px 40px rgba(37,99,235,0.07), 0 1px 4px rgba(0,0,0,0.04)',
           border: '1px solid rgba(226,232,240,0.7)',
@@ -382,8 +386,8 @@ export default function VirtualTryOnSection() {
           className="vz-tryon-grid"
           style={{
             display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: '56px',
+            gridTemplateColumns: '5fr 7fr',
+            gap: '48px',
             alignItems: 'center',
             position: 'relative',
           }}
@@ -412,14 +416,18 @@ export default function VirtualTryOnSection() {
             </div>
 
             {/* Headline */}
-            <h2 style={{
-              fontSize: 'clamp(2rem, 3.5vw, 3.1rem)',
-              fontWeight: 900,
-              color: '#0F172A',
-              letterSpacing: '-0.04em',
-              lineHeight: 1.13,
-              margin: '0 0 22px',
-            }}>
+            <h2
+              className="vz-tryon-heading"
+              style={{
+                fontSize: 'clamp(1.85rem, 2.8vw, 2.75rem)',
+                fontWeight: 900,
+                color: '#0F172A',
+                letterSpacing: '-0.035em',
+                lineHeight: 1.18,
+                margin: '0 0 20px',
+                maxWidth: '420px',
+              }}
+            >
               Let Your Customers{' '}
               <span style={{
                 background: `linear-gradient(135deg, ${BLUE} 0%, #4F46E5 100%)`,
@@ -428,8 +436,7 @@ export default function VirtualTryOnSection() {
                 backgroundClip: 'text',
               }}>
                 Try It On
-              </span>{' '}
-              Before They Buy
+              </span>{' '}Before They Buy
             </h2>
 
             {/* Body copy */}
@@ -482,18 +489,29 @@ export default function VirtualTryOnSection() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.75, delay: 0.15 }}
-            style={{ position: 'relative' }}
+            className="vz-tryon-img-card"
+            style={{
+              position: 'relative',
+              width: '100%',
+              background: '#fff',
+              borderRadius: '28px',
+              border: '1px solid rgba(226,232,240,0.8)',
+              boxShadow: '0 8px 40px rgba(37,99,235,0.08), 0 2px 12px rgba(0,0,0,0.06)',
+              padding: '20px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
           >
             <img
               src="/virtual_tryon_smart_mirror.jpg"
-              alt="AI Virtual Try-On smart mirror showing a woman virtually dressed in a bridal lehenga"
+              alt="AI Virtual Try-On smart mirror — woman seeing herself in a green lehenga"
               style={{
                 width: '100%',
                 height: 'auto',
                 display: 'block',
-                borderRadius: '28px',
-                boxShadow: '0 32px 80px rgba(0,0,0,0.14), 0 8px 24px rgba(0,0,0,0.08)',
-                objectFit: 'cover',
+                objectFit: 'contain',
+                borderRadius: '12px',
               }}
             />
           </motion.div>
