@@ -449,9 +449,12 @@
 }
 
 .logo img {
-  width: 24px;
-  height: 24px;
-  border-radius: 0.25rem;
+  width: auto !important;
+  height: 40px !important;
+  max-width: none !important;
+  border-radius: 0;
+  object-fit: contain;
+  display: block;
 }
 
 .logo {
