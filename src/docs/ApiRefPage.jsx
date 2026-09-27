@@ -7,7 +7,7 @@ const API_GROUPS = [
     id: 'intro', label: 'Getting Started',
     items: [
       { id: 'authentication', label: 'Authentication',      tag: null },
-      { id: 'errors',         label: 'Errors & Rate Limits', tag: null },
+      { id: 'errors',         label: 'Errors',            tag: null },
       { id: 'credits',        label: 'Credits & Billing',   tag: null },
     ],
   },
@@ -53,7 +53,7 @@ const EP = {
   },
 
   errors: {
-    title: 'Errors & Rate Limits',
+    title: 'Errors',
     subtitle: 'Vizzle uses standard HTTP status codes and consistent JSON error envelopes.',
     type: 'guide',
     content: `<h4>Error envelope</h4><pre><code>{ "error": "Human-readable message here" }</code></pre>
@@ -66,23 +66,8 @@ const EP = {
 <tr><td>404</td><td>Product not found for this store</td></tr>
 <tr><td>413</td><td>Photo exceeds 10 MB limit</td></tr>
 <tr><td>422</td><td>Image rejected by AI moderation</td></tr>
-<tr><td>429</td><td>Rate limit exceeded — back off and retry</td></tr>
 <tr><td>500</td><td>Internal server error — contact support</td></tr>
-</tbody></table>
-<h4>Rate limits (Tier-based)</h4>
-<p>Rate limits are determined by your store&apos;s activated <strong>One-Time Setup Plan</strong>:</p>
-<table><thead><tr><th>Setup Tier</th><th>Hourly Limit</th><th>Daily Limit</th></tr></thead><tbody>
-<tr><td><strong>Basic</strong></td><td>100 req / hour</td><td>1,000 req / day</td></tr>
-<tr><td><strong>Gold</strong></td><td>300 req / hour</td><td>3,000 req / day</td></tr>
-<tr><td><strong>Premium</strong></td><td>1,500 req / hour</td><td>15,000 req / day</td></tr>
-<tr><td><strong>Enterprise</strong></td><td>Custom SLA</td><td>Custom SLA</td></tr>
-</tbody></table>
-<p style="margin-top: 10px; font-size: 0.85rem; color: #64748b;">Every response includes standard quota tracking headers:</p>
-<ul>
-<li><code>X-RateLimit-Limit</code> — Total requests allowed in your current hourly window</li>
-<li><code>X-RateLimit-Remaining</code> — Remaining requests available before reset</li>
-<li><code>X-RateLimit-Reset</code> — Unix timestamp (seconds) when the rate limit window resets</li>
-</ul>`,
+</tbody></table>`,
     code: {
       curl: `# 402 Insufficient Credits:\n{\n  "error": "Insufficient credits. Please top up your credit pack in the Dashboard."\n}\n\n# 422 AI Moderation rejection (free — no credits deducted):\n{\n  "error": "Image rejected: content policy violation"\n}`,
       python: `from vizzle import VizzleClient, VizzleError, InsufficientCreditsError\n\nclient = VizzleClient(api_key="vzk_YOUR_KEY")\ntry:\n    result = client.tryon("prod_123", "https://...")\nexcept InsufficientCreditsError:\n    print("Top up credits in the Dashboard")\nexcept VizzleError as e:\n    print(f"API error: {e}")`,
