@@ -28,13 +28,20 @@ Create your Vizzle account and get started for free.
 
 ---
 
-## Step 2: One-Time Setup & Store Activation
+## Step 2: Top Up with a Credit Pack
 
-To start using Vizzle Virtual Try-On, stores must first complete a **One-Time Setup Plan** to activate their storefront and set API rate limits.
+To start running Virtual Try-Ons, top up your store wallet with a prepaid credit pack. Credits are deducted only for successful Try-Ons.
+
+| Pack | Price | Try-Ons | Rate per Try-On |
+|------|-------|---------|----------------|
+| **Starter** | ₹1,000 | 160 Try-Ons | ₹6.25 |
+| **Growth** ⭐ Best Value | ₹2,500 | 450 Try-Ons | ₹5.56 |
+| **Pro** | ₹5,000 | 960 Try-Ons | ₹5.21 |
+| **Enterprise** | ₹10,000 | 2,000 Try-Ons | ₹5.00 |
 
 1. Log in to your **Vizzle Dashboard** at [dashboard.vizzle.in](https://dashboard.vizzle.in).
-2. Go to **Billing** and select your store's One-Time Setup Plan (**Basic ₹2,000** for 100 req/hr up to **Premium ₹15,000** for 1,500 req/hr).
-3. Once activated, top up your store wallet with prepaid credits to start generating (**₹2.50 per Try-On** and **₹5.00 per AI Video**).
+2. Go to **Billing** and select a prepaid credit pack that suits your volume.
+3. Pay via Razorpay (UPI, cards, net banking). Packs never expire.
 
 > **Tip:** Photo uploads and AI safety moderation checks are completely free!
 
