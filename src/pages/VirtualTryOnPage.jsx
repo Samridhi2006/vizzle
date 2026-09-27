@@ -157,10 +157,20 @@ export default function VirtualTryOnPage() {
             </div>
 
             <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-              <button style={{ background: "linear-gradient(135deg,#2563EB,#4F46E5)", color: "#fff", border: "none", borderRadius: 12, padding: "14px 28px", fontSize: 13, fontWeight: 700, cursor: "pointer", boxShadow: "0 4px 14px rgba(37,99,235,0.25)" }}>
+              <button
+                onClick={() => openModal('Request Brand Access', FIELD_PRESETS.all)}
+                style={{ background: "linear-gradient(135deg,#2563EB,#4F46E5)", color: "#fff", border: "none", borderRadius: 12, padding: "14px 28px", fontSize: 13, fontWeight: 700, cursor: "pointer", boxShadow: "0 4px 14px rgba(37,99,235,0.25)", transition: "opacity 0.2s" }}
+                onMouseEnter={e => (e.currentTarget.style.opacity = "0.88")}
+                onMouseLeave={e => (e.currentTarget.style.opacity = "1")}
+              >
                 Start Your Free Trial →
               </button>
-              <button style={{ background: "#fff", color: "#334155", border: "1.5px solid #E2E8F0", borderRadius: 12, padding: "14px 28px", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>
+              <button
+                onClick={() => openModal('Book a Free Demo', FIELD_PRESETS.all)}
+                style={{ background: "#fff", color: "#334155", border: "1.5px solid #E2E8F0", borderRadius: 12, padding: "14px 28px", fontSize: 13, fontWeight: 700, cursor: "pointer", transition: "border-color 0.2s, color 0.2s" }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = "#2563EB"; e.currentTarget.style.color = "#2563EB"; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = "#E2E8F0"; e.currentTarget.style.color = "#334155"; }}
+              >
                 See Live Demo
               </button>
             </div>

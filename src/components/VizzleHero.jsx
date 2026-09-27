@@ -515,6 +515,32 @@ function VizzleNavbar() {
         >
           Sign In
         </button>
+
+        {/* Play Store Icon */}
+        <a
+          href="https://play.google.com/store/apps/details?id=app.vercel.vizzle_pwa.twa"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Download on Google Play"
+          aria-label="Download Vizzle on Google Play"
+          style={{
+            width: '38px', height: '38px', borderRadius: '10px',
+            border: '1.5px solid #e2e8f0',
+            display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+            background: '#fff', textDecoration: 'none', flexShrink: 0,
+            transition: 'border-color 0.18s, box-shadow 0.18s',
+            boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
+          }}
+          onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#01875f'; e.currentTarget.style.boxShadow = '0 2px 8px rgba(1,135,95,0.18)'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#e2e8f0'; e.currentTarget.style.boxShadow = '0 1px 4px rgba(0,0,0,0.06)'; }}
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3.18 23.76c.3.17.64.24.98.21l11.64-11.64L12.14 8.7 3.18 23.76z" fill="#EA4335"/>
+            <path d="M20.46 10.28l-3.02-1.72-3.46 3.46 3.46 3.46 3.04-1.74c.87-.5.87-1.96-.02-2.46z" fill="#FBBC04"/>
+            <path d="M3.18.24C2.84.21 2.5.28 2.2.45 1.45.9 1 1.72 1 2.6v18.8c0 .88.45 1.7 1.2 2.15.3.17.64.24.98.21l.12-.07L14.76 12 3.3.31 3.18.24z" fill="#4285F4"/>
+            <path d="M3.3.31l11.46 11.7 3.68-3.68L5.1.27C4.47-.1 3.74-.06 3.18.24L3.3.31z" fill="#34A853"/>
+          </svg>
+        </a>
       </div>
 
       {/* Hamburger — mobile only */}
@@ -582,6 +608,25 @@ function VizzleNavbar() {
             >
               Sign In
             </button>
+            <a
+              href="https://play.google.com/store/apps/details?id=app.vercel.vizzle_pwa.twa"
+              target="_blank" rel="noopener noreferrer"
+              style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                padding: '10px 20px', borderRadius: '999px',
+                border: '1.5px solid #e2e8f0', background: '#fff',
+                fontSize: '14px', fontWeight: 600, color: '#374151',
+                textDecoration: 'none', textAlign: 'center',
+              }}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3.18 23.76c.3.17.64.24.98.21l11.64-11.64L12.14 8.7 3.18 23.76z" fill="#EA4335"/>
+                <path d="M20.46 10.28l-3.02-1.72-3.46 3.46 3.46 3.46 3.04-1.74c.87-.5.87-1.96-.02-2.46z" fill="#FBBC04"/>
+                <path d="M3.18.24C2.84.21 2.5.28 2.2.45 1.45.9 1 1.72 1 2.6v18.8c0 .88.45 1.7 1.2 2.15.3.17.64.24.98.21l.12-.07L14.76 12 3.3.31 3.18.24z" fill="#4285F4"/>
+                <path d="M3.3.31l11.46 11.7 3.68-3.68L5.1.27C4.47-.1 3.74-.06 3.18.24L3.3.31z" fill="#34A853"/>
+              </svg>
+              Download on Google Play
+            </a>
           </div>
         </div>
       )}
