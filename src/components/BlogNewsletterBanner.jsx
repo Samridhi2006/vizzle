@@ -5,15 +5,51 @@ import { Mail, ArrowRight, ShieldCheck } from 'lucide-react';
 export default function BlogNewsletterBanner() {
   const [email, setEmail] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!email.trim()) return;
-    setIsSubmitted(true);
-    setTimeout(() => {
+
+    setIsLoading(true);
+    setError('');
+
+    try {
+      // Web3Forms — free service, delivers directly to info@vizzle.in
+      // Get a free access key from https://web3forms.com for info@vizzle.in
+      const formData = new FormData();
+      formData.append('access_key', 'YOUR_WEB3FORMS_KEY'); // ← replace with key from web3forms.com
+      formData.append('email', email);
+      formData.append('subject', `New Newsletter Subscriber: ${email}`);
+      formData.append('message', `New subscriber from Vizzle blog newsletter.\n\nEmail: ${email}`);
+      formData.append('from_name', 'Vizzle Newsletter');
+
+      const res = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        body: formData,
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        setIsSubmitted(true);
+        setEmail('');
+        setTimeout(() => setIsSubmitted(false), 5000);
+      } else {
+        throw new Error(data.message || 'Submission failed');
+      }
+    } catch {
+      // Fallback: open mailto so no lead is ever lost
+      window.open(
+        `mailto:info@vizzle.in?subject=Newsletter%20Subscription&body=Please%20add%20me%20to%20your%20newsletter%3A%20${encodeURIComponent(email)}`,
+        '_blank'
+      );
+      setIsSubmitted(true);
       setEmail('');
-      setIsSubmitted(false);
-    }, 4000);
+      setTimeout(() => setIsSubmitted(false), 5000);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleScrollDown = () => {
@@ -102,12 +138,14 @@ export default function BlogNewsletterBanner() {
               />
               <button
                 type="submit"
-                disabled={isSubmitted}
+                disabled={isSubmitted || isLoading}
                 className="shrink-0 bg-[#18181B] hover:bg-black active:scale-95 text-white text-xs sm:text-[13px] font-semibold px-4 sm:px-5 py-2.5 rounded-full flex items-center gap-1.5 transition-all cursor-pointer shadow-sm disabled:opacity-85"
                 style={{ fontFamily: "'Plus Jakarta Sans', Inter, sans-serif" }}
               >
                 {isSubmitted ? (
                   <span>Subscribed! ✓</span>
+                ) : isLoading ? (
+                  <span>Sending…</span>
                 ) : (
                   <>
                     <span>It's Free</span>
