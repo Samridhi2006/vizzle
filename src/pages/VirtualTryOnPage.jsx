@@ -50,7 +50,7 @@ export default function VirtualTryOnPage() {
           Back to Home
         </Link>
         <div style={{ width: 1, height: 20, background: "#E2E8F0" }} />
-        <img src="/viz.png" alt="Vizzle" style={{ height: 36, width: "auto", objectFit: "contain", display: "block" }} />
+        <img src="/logo.png" alt="Vizzle" style={{ height: 44, width: "auto", objectFit: "contain", display: "block" }} />
         <div style={{ marginLeft: "auto", display: "flex", gap: 8 }}>
           <Link
             to="/ai-trial-room"

@@ -479,7 +479,7 @@ export default function AITrialRoomPage() {
             <ArrowLeft size={13} strokeWidth={2.5} /> Back
           </Link>
           <div style={{ width: 1, height: 18, background: "#E2E8F0", flexShrink: 0 }} />
-          <img src="/viz.png" alt="Vizzle" style={{ height: 36, width: "auto", objectFit: "contain", display: "block", flexShrink: 0 }} />
+          <img src="/logo.png" alt="Vizzle" style={{ height: 44, width: "auto", objectFit: "contain", display: "block", flexShrink: 0 }} />
           <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center" }}>
             <span style={{ fontSize: 14, fontWeight: 800, color: "#0F172A", letterSpacing: "-0.02em" }}>Try On</span>
             <button onClick={() => alert("Tutorial coming soon!")} style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 10, fontWeight: 600, color: BLUE, background: "none", border: "none", cursor: "pointer", padding: 0 }}>
