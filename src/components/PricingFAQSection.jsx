@@ -21,7 +21,7 @@ const FAQS = [
   },
   {
     q: "How much does AI Catalogue Creation cost?",
-    a: "AI Catalogue Creation is available for just ₹60 per catalogue photo on a Pay-As-You-Go basis.",
+    a: "AI Catalogue Creation is available for just ₹10 per catalogue photo on a Pay-As-You-Go basis.",
   },
   {
     q: "Is there a monthly subscription?",
