@@ -221,7 +221,7 @@ export default function BlogsPage() {
           Back to Home
         </Link>
         <div style={{ width: "1px", height: "20px", background: "#E2E8F0" }} />
-        <img src="/viz.png" alt="Vizzle" style={{ height: "28px", width: "auto" }} />
+        <img src="/viz.png" alt="Vizzle" style={{ height: "35px", width: "auto" }} />
       </div>
 
       <main style={{ flex: 1, paddingTop: "48px", paddingBottom: "80px" }}>

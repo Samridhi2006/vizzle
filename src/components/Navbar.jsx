@@ -170,7 +170,7 @@ function Navbar() {
 
         {/* ── Logo ── */}
         <Link to="/" aria-label="Vizzle home" style={{ flexShrink: 0, display: "flex", alignItems: "center" }}>
-          <img src="/logo.png" alt="Vizzle" style={{ height: "40px", width: "auto" }} />
+          <img src="/logo.png" alt="Vizzle" style={{ height: "50px", width: "auto" }} />
         </Link>
 
         {/* ── Primary Nav (desktop ≥1024px) ── */}

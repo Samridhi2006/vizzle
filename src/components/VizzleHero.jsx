@@ -470,7 +470,7 @@ function VizzleNavbar() {
         <img
           src="/logo.png"
           alt="Vizzle"
-          style={{ height: '40px', width: 'auto' }}
+          style={{ height: '50px', width: 'auto' }}
           onError={(e) => { e.target.style.display = 'none'; }}
         />
         <div>

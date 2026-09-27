@@ -325,7 +325,7 @@ export default function CatalogueShowcasePage() {
           Back to Home
         </Link>
         <div style={{ width: '1px', height: '20px', background: '#E2E8F0' }} />
-        <img src="/viz.png" alt="Vizzle" style={{ height: '28px', width: 'auto' }} />
+        <img src="/viz.png" alt="Vizzle" style={{ height: '35px', width: 'auto' }} />
       </div>
 
       <div style={{ maxWidth: '1380px', margin: '0 auto', padding: '56px 24px 80px' }}>
