@@ -470,12 +470,12 @@ function VizzleNavbar() {
         <img
           src="/logo.png"
           alt="Vizzle"
-          style={{ height: '50px', width: 'auto' }}
+          style={{ height: '40px', width: 'auto', objectFit: 'contain', display: 'block' }}
           onError={(e) => { e.target.style.display = 'none'; }}
         />
         <div>
-          <div style={{ fontSize: '17px', fontWeight: 900, color: '#0f172a', letterSpacing: '-0.02em', lineHeight: 1.2 }}>Vizzle</div>
-          <div style={{ fontSize: '9.5px', fontWeight: 600, color: '#94a3b8', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Visualize Your Style</div>
+          <div style={{ fontSize: '18px', fontWeight: 900, color: '#0f172a', letterSpacing: '-0.025em', lineHeight: 1.15 }}>Vizzle</div>
+          <div style={{ fontSize: '9px', fontWeight: 600, color: '#94a3b8', letterSpacing: '0.09em', textTransform: 'uppercase' }}>Visualize Your Style</div>
         </div>
       </div>
 

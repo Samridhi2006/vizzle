@@ -168,9 +168,12 @@ function Navbar() {
         padding: "0 24px", display: "flex", alignItems: "center", gap: "32px",
       }}>
 
-        {/* ── Logo ── */}
         <Link to="/" aria-label="Vizzle home" style={{ flexShrink: 0, display: "flex", alignItems: "center" }}>
-          <img src="/logo.png" alt="Vizzle" style={{ height: "50px", width: "auto" }} />
+          <img
+            src="/logo.png"
+            alt="Vizzle"
+            style={{ height: "40px", width: "auto", objectFit: "contain", display: "block" }}
+          />
         </Link>
 
         {/* ── Primary Nav (desktop ≥1024px) ── */}

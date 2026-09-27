@@ -252,7 +252,7 @@ function HamburgerDrawer({ isOpen, onClose, user, onSignIn, onSignOut }) {
             style={{ position: "fixed", top: 0, right: 0, bottom: 0, width: 300, zIndex: 100, background: "#fff", boxShadow: "-8px 0 40px rgba(0,0,0,0.14)", display: "flex", flexDirection: "column" }}>
             {/* Header */}
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "18px 18px 14px", borderBottom: "1px solid #F1F5F9" }}>
-              <img src="/viz.png" alt="Vizzle" style={{ height: 32, width: "auto" }} />
+              <img src="/viz.png" alt="Vizzle" style={{ height: 32, width: "auto", objectFit: "contain", display: "block" }} />
               <button onClick={onClose} style={{ background: "#F1F5F9", border: "none", width: 32, height: 32, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: "#475569" }}>
                 <X size={15} />
               </button>
@@ -479,7 +479,7 @@ export default function AITrialRoomPage() {
             <ArrowLeft size={13} strokeWidth={2.5} /> Back
           </Link>
           <div style={{ width: 1, height: 18, background: "#E2E8F0", flexShrink: 0 }} />
-          <img src="/viz.png" alt="Vizzle" style={{ height: 35, width: "auto", flexShrink: 0 }} />
+          <img src="/viz.png" alt="Vizzle" style={{ height: 36, width: "auto", objectFit: "contain", display: "block", flexShrink: 0 }} />
           <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center" }}>
             <span style={{ fontSize: 14, fontWeight: 800, color: "#0F172A", letterSpacing: "-0.02em" }}>Try On</span>
             <button onClick={() => alert("Tutorial coming soon!")} style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 10, fontWeight: 600, color: BLUE, background: "none", border: "none", cursor: "pointer", padding: 0 }}>
