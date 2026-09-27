@@ -84,7 +84,7 @@ const EP = {
 <li><code>X-RateLimit-Reset</code> — Unix timestamp (seconds) when the rate limit window resets</li>
 </ul>`,
     code: {
-      curl: `# 402 Insufficient Credits:\n{\n  "error": "Insufficient credits. Balance: Rs0. Required: Rs2.50"\n}\n\n# 422 AI Moderation rejection:\n{\n  "error": "Image rejected: content policy violation"\n}`,
+      curl: `# 402 Insufficient Credits:\n{\n  "error": "Insufficient credits. Please top up your credit pack in the Dashboard."\n}\n\n# 422 AI Moderation rejection (free — no credits deducted):\n{\n  "error": "Image rejected: content policy violation"\n}`,
       python: `from vizzle import VizzleClient, VizzleError, InsufficientCreditsError\n\nclient = VizzleClient(api_key="vzk_YOUR_KEY")\ntry:\n    result = client.tryon("prod_123", "https://...")\nexcept InsufficientCreditsError:\n    print("Top up credits in the Dashboard")\nexcept VizzleError as e:\n    print(f"API error: {e}")`,
       javascript: `const res = await fetch("/api/v1/tryon", { method: "POST", headers, body });\nif (!res.ok) {\n  const { error } = await res.json();\n  if (res.status === 402) console.error("Insufficient credits:", error);\n  else if (res.status === 422) console.error("Moderation rejected:", error);\n  else throw new Error(error);\n}`,
     },
@@ -92,32 +92,32 @@ const EP = {
 
   credits: {
     title: 'Credits & Billing',
-    subtitle: 'Vizzle uses a prepaid credit system. Credits are deducted per API call.',
+    subtitle: 'Vizzle uses a prepaid credit system. Purchase a credit pack and credits are deducted per successful Try-On.',
     type: 'guide',
-    content: `<h4>Credit costs</h4>
-<table><thead><tr><th>Endpoint</th><th>Cost per call</th></tr></thead><tbody>
-<tr><td>POST /api/v1/tryon</td><td>Rs 2.50</td></tr>
-<tr><td>POST /api/v1/generate-video</td><td>Rs 5.00</td></tr>
-<tr><td>POST /api/v1/upload</td><td>Free</td></tr>
-<tr><td>GET status endpoints</td><td>Free</td></tr>
+    content: `<h4>Prepaid Credit Packs — Virtual Try-On</h4>
+<table><thead><tr><th>Pack</th><th>Price</th><th>Try-Ons Included</th><th>Rate per Try-On</th></tr></thead><tbody>
+<tr><td><strong>Starter</strong></td><td>₹1,000</td><td>160 Try-Ons</td><td>₹6.25</td></tr>
+<tr><td><strong>Growth</strong> ⭐ Best Value</td><td>₹2,500</td><td>450 Try-Ons</td><td>₹5.56</td></tr>
+<tr><td><strong>Pro</strong></td><td>₹5,000</td><td>960 Try-Ons</td><td>₹5.21</td></tr>
+<tr><td><strong>Enterprise</strong></td><td>₹10,000</td><td>2,000 Try-Ons</td><td>₹5.00</td></tr>
 </tbody></table>
 <h4>How it works</h4><ol>
-<li>Credits are deducted <strong>before</strong> the ML call is dispatched</li>
+<li>Credits are deducted <strong>only for successful</strong> Try-Ons — you pay only when the AI delivers a result</li>
 <li>If the ML job fails to <em>start</em>, credits are automatically refunded</li>
 <li>Completed jobs (succeeded or failed by ML) are not refunded</li>
 <li>AI moderation rejections are <strong>free</strong> — no credits deducted</li></ol>
-<h4>Top up</h4><p>Buy credits in the Dashboard under <strong>Billing</strong> using Razorpay (UPI, cards, net banking).</p>`,
+<h4>Top up</h4><p>Buy credit packs in the Dashboard under <strong>Billing</strong> using Razorpay (UPI, cards, net banking). Packs never expire.</p>`,
     code: {
-      curl: `# Check current balance (Dashboard API)\ncurl "https://your-app.vercel.app/api/credits?store_id=STORE_ID" \\\n  -H "Authorization: Bearer JWT_TOKEN"\n\n# Response:\n{\n  "balance": 47.5,\n  "tier": { "tier": "BASIC", "requestsPerHour": 100 },\n  "transactions": [...]\n}`,
-      python: `from vizzle import VizzleClient\n\nclient = VizzleClient(api_key="vzk_YOUR_KEY", base_url="https://dashboard.vizzle.in")\n# Credits are tracked automatically per request`,
-      javascript: `const res = await fetch(\`/api/credits?store_id=\${storeId}\`, {\n  headers: { Authorization: \`Bearer \${jwtToken}\` },\n});\nconst { balance } = await res.json();\nconsole.log("Current balance: Rs", balance);`,
+      curl: `# Check current balance (Dashboard API)\ncurl "https://your-app.vercel.app/api/credits?store_id=STORE_ID" \\\n  -H "Authorization: Bearer JWT_TOKEN"\n\n# Response:\n{\n  "balance": 450,\n  "pack": "Growth",\n  "rate_per_tryon": 5.56,\n  "transactions": [...]\n}`,
+      python: `from vizzle import VizzleClient\n\nclient = VizzleClient(api_key="vzk_YOUR_KEY", base_url="https://dashboard.vizzle.in")\n# Credits are tracked automatically per successful try-on`,
+      javascript: `const res = await fetch(\`/api/credits?store_id=\${storeId}\`, {\n  headers: { Authorization: \`Bearer \${jwtToken}\` },\n});\nconst { balance, pack, rate_per_tryon } = await res.json();\nconsole.log(\`Balance: \${balance} Try-Ons (\${pack} pack @ ₹\${rate_per_tryon}/Try-On)\`);`,
     },
   },
 
   'tryon-start': {
     title: 'Start Try-On',
     subtitle: 'Initiate an asynchronous virtual garment try-on. Returns a prediction ID immediately — poll for results.',
-    type: 'endpoint', method: 'POST', endpoint: '/api/v1/tryon', cost: 'Rs 2.50 per call',
+    type: 'endpoint', method: 'POST', endpoint: '/api/v1/tryon', cost: 'Deducted from your credit pack (₹5.00–₹6.25 per successful Try-On depending on pack)',
     params: [
       { name: 'product_id',     type: 'string',  required: true,  desc: 'Your product identifier (must exist in this store)' },
       { name: 'user_photo_url', type: 'string',  required: true,  desc: 'Publicly accessible URL of the person photo (JPEG / PNG / WebP)' },

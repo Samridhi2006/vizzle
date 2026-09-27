@@ -208,13 +208,16 @@ function PlanCard({ plan, index }) {
       <div style={{ flex: 1 }} />
       <button
         onClick={() => openModal({ title: "Request Brand Access", fieldKeys: ["name", "brand", "email", "phone"] })}
-        onMouseEnter={e => (e.currentTarget.style.background = "#333")}
-        onMouseLeave={e => (e.currentTarget.style.background = "#111")}
+        onMouseEnter={e => (e.currentTarget.style.background = plan.featured ? "#1D4ED8" : "#333")}
+        onMouseLeave={e => (e.currentTarget.style.background = plan.featured ? "#2563EB" : "#111")}
         style={{
           marginTop: "22px", width: "100%", padding: "13px", borderRadius: "10px",
-          border: "none", background: "#111", color: "#fff", fontSize: "13px",
+          border: "none",
+          background: plan.featured ? "#2563EB" : "#111",
+          color: "#fff", fontSize: "13px",
           fontWeight: 700, fontFamily: "inherit", cursor: "pointer",
           letterSpacing: "0.01em", transition: "background 0.2s ease",
+          boxShadow: plan.featured ? "0 4px 16px rgba(37,99,235,0.30)" : "none",
         }}
       >
         {plan.cta}
