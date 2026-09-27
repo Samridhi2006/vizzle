@@ -200,21 +200,31 @@ function Navbar() {
             Sign In
           </button>
 
-          {/* Download App */}
+          {/* Play Store Icon */}
           <a
-            href="https://play.google.com/store/apps/details?id=app.vercel.vizzle_pwa.twa&pcampaignid=web_share"
-            target="_blank" rel="noopener noreferrer"
+            href="https://play.google.com/store/apps/details?id=app.vercel.vizzle_pwa.twa"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Download on Google Play"
+            aria-label="Download Vizzle on Google Play"
             style={{
-              height: "40px", padding: "0 16px", borderRadius: "8px",
-              border: `1.5px solid ${T.brand}`, color: T.brand,
-              fontSize: "14px", fontWeight: 600, whiteSpace: "nowrap",
-              display: "inline-flex", alignItems: "center",
-              background: "transparent", textDecoration: "none", transition: "background .18s, color .18s",
+              height: '40px', width: '40px', borderRadius: '10px',
+              border: `1.5px solid ${T.border}`,
+              display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+              background: 'transparent', textDecoration: 'none',
+              transition: 'border-color .18s, background .18s',
+              flexShrink: 0,
             }}
-            onMouseEnter={e => { e.currentTarget.style.background = T.brandBg; }}
-            onMouseLeave={e => { e.currentTarget.style.background = "transparent"; }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = '#01875f'; e.currentTarget.style.background = 'rgba(1,135,95,0.06)'; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = T.border; e.currentTarget.style.background = 'transparent'; }}
           >
-            Download App
+            {/* Google Play triangle logo */}
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3.18 23.76c.3.17.64.24.98.21l11.64-11.64L12.14 8.7 3.18 23.76z" fill="#EA4335"/>
+              <path d="M20.46 10.28l-3.02-1.72-3.46 3.46 3.46 3.46 3.04-1.74c.87-.5.87-1.96-.02-2.46z" fill="#FBBC04"/>
+              <path d="M3.18.24C2.84.21 2.5.28 2.2.45 1.45.9 1 1.72 1 2.6v18.8c0 .88.45 1.7 1.2 2.15.3.17.64.24.98.21l.12-.07L14.76 12 3.3.31 3.18.24z" fill="#4285F4"/>
+              <path d="M3.3.31l11.46 11.7 3.68-3.68L5.1.27C4.47-.1 3.74-.06 3.18.24L3.3.31z" fill="#34A853"/>
+            </svg>
           </a>
 
           {/* Integrate Us — primary CTA */}
@@ -289,16 +299,24 @@ function Navbar() {
               }}
             >Sign In</button>
             <a
-              href="https://play.google.com/store/apps/details?id=app.vercel.vizzle_pwa.twa&pcampaignid=web_share"
+              href="https://play.google.com/store/apps/details?id=app.vercel.vizzle_pwa.twa"
               target="_blank" rel="noopener noreferrer"
               style={{
                 width: "100%", height: "44px", borderRadius: "8px",
-                border: `1.5px solid ${T.brand}`, background: "transparent",
-                fontSize: "14px", fontWeight: 600, color: T.brand,
+                border: `1.5px solid #e5e7eb`, background: "transparent",
+                fontSize: "14px", fontWeight: 600, color: "#1f2937",
                 display: "flex", alignItems: "center", justifyContent: "center",
-                textDecoration: "none", boxSizing: "border-box",
+                gap: "8px", textDecoration: "none", boxSizing: "border-box",
               }}
-            >Download App</a>
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3.18 23.76c.3.17.64.24.98.21l11.64-11.64L12.14 8.7 3.18 23.76z" fill="#EA4335"/>
+                <path d="M20.46 10.28l-3.02-1.72-3.46 3.46 3.46 3.46 3.04-1.74c.87-.5.87-1.96-.02-2.46z" fill="#FBBC04"/>
+                <path d="M3.18.24C2.84.21 2.5.28 2.2.45 1.45.9 1 1.72 1 2.6v18.8c0 .88.45 1.7 1.2 2.15.3.17.64.24.98.21l.12-.07L14.76 12 3.3.31 3.18.24z" fill="#4285F4"/>
+                <path d="M3.3.31l11.46 11.7 3.68-3.68L5.1.27C4.47-.1 3.74-.06 3.18.24L3.3.31z" fill="#34A853"/>
+              </svg>
+              Download on Google Play
+            </a>
             <a
               href="https://dashboard.vizzle.in"
               target="_blank" rel="noopener noreferrer"
