@@ -1,6 +1,6 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, Sparkles, Upload, Loader2, CheckCircle2, ImagePlus } from 'lucide-react';
+import { ArrowRight, Sparkles, Upload, Loader2, CheckCircle2, X, ChevronDown } from 'lucide-react';
 import { useModal, FIELD_PRESETS } from '../context/ModalContext';
 
 /* ─── Brand tokens ──────────────────────────────────────────────────── */
@@ -14,18 +14,56 @@ const BLUE_BORDER= 'rgba(37,99,235,0.28)';
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'https://dashboard.vizzle.in';
 const WIDGET_API_KEY = import.meta.env.VITE_WIDGET_API_KEY;
 
-const GARMENT_TYPES = [
-  'Saree', 'Kurti', 'Lehenga', 'Anarkali', 'Salwar Kameez',
-  'Western Dress', 'Shirt', 'T-shirt', 'Coat', 'Jacket',
-  'Jumpsuit', 'Jeans', 'Trousers', 'Skirt',
+/* ─── Women's Garment Type Dataset (image-mapped) ──────────────────── */
+const GARMENT_TYPES_VISUAL = [
+  // Dresses
+  { id: 'Mini Frock',           img: '/garments/women/mini_frock.jpg',       category: 'Dresses' },
+  { id: 'Knee Length Frock',    img: '/garments/women/long_frock.jpg',        category: 'Dresses' },
+  { id: 'Long Frock',           img: '/garments/women/long_frock.jpg',        category: 'Dresses' },
+  { id: 'Cocktail',             img: '/garments/women/cocktail.jpg',          category: 'Dresses' },
+  { id: 'Jumpsuit',             img: '/step1_jumpsuit_flatlay.jpg',            category: 'Dresses' },
+  // Ethnic
+  { id: 'Saree',                img: '/garments/women/saree.jpg',             category: 'Ethnic' },
+  { id: 'Kurti',                img: '/garments/women/kurti.jpg',             category: 'Ethnic' },
+  { id: 'Anarkali',             img: '/garments/women/anarkali.jpg',          category: 'Ethnic' },
+  { id: 'Kurti & Pyjama',       img: '/brand_seated_wrap.jpg',                category: 'Ethnic' },
+  { id: 'Co-Ord Set',           img: '/showcase/western_beige_coord.jpg',     category: 'Ethnic' },
+  // Tops & Shirts
+  { id: 'Full Sleeve Shirt',    img: '/garments/women/full_sleeve_shirt.jpg', category: 'Tops' },
+  { id: 'Half Sleeve Shirt',    img: '/garments/women/half_sleeve_shirt.jpg', category: 'Tops' },
+  { id: 'Full Sleeve T-shirt',  img: '/garments/women/full_sleeve_tshirt.jpg',category: 'Tops' },
+  { id: 'Half Sleeve T-shirt',  img: '/garments/women/half_sleeve_tshirt.jpg',category: 'Tops' },
+  { id: 'Top',                  img: '/garments/women/top.jpg',               category: 'Tops' },
+  { id: 'Crop Top',             img: '/garments/women/crop_top.jpg',          category: 'Tops' },
+  { id: 'Hoodie',               img: '/vz_flatlay_hoodie.jpg',                category: 'Tops' },
+  { id: 'Sweatshirt',           img: '/vz_flatlay_hoodie.jpg',                category: 'Tops' },
+  // Outerwear
+  { id: 'Blazer',               img: '/garments/women/blazer.jpg',            category: 'Outerwear' },
+  { id: 'Jacket',               img: '/showcase/western_leather_jacket.jpg',  category: 'Outerwear' },
+  { id: 'Suit',                 img: '/garments/women/suit.jpg',              category: 'Outerwear' },
+  // Bottoms
+  { id: 'Jean',                 img: '/garments/women/jean.jpg',              category: 'Bottoms' },
+  { id: 'Baggy Jean',           img: '/gallery/col5_female_denim.jpg',        category: 'Bottoms' },
+  { id: 'Trouser',              img: '/brand_vest_trousers.jpg',              category: 'Bottoms' },
+  { id: 'Long Skirt',           img: '/brand_floral_saree.jpg',               category: 'Bottoms' },
+  { id: 'Mini Skirt',           img: '/brand_chocolate_dress.jpg',            category: 'Bottoms' },
+  { id: 'Track',                img: '/garments/women/jean.jpg',              category: 'Bottoms' },
+  { id: 'Short',                img: '/gallery/col5_female_denim.jpg',        category: 'Bottoms' },
 ];
 
 const GARMENT_TYPE_TO_API_VALUE = {
-  'Saree': 'saree', 'Kurti': 'kurti', 'Lehenga': 'lehenga',
-  'Anarkali': 'anarkali', 'Salwar Kameez': 'salwar_kameez',
-  'Western Dress': 'dress', 'Shirt': 'shirt', 'T-shirt': 't-shirt',
-  'Coat': 'coat', 'Jacket': 'jacket', 'Jumpsuit': 'jumpsuit',
-  'Jeans': 'jeans', 'Trousers': 'trousers', 'Skirt': 'skirt',
+  'Saree': 'saree', 'Kurti': 'kurti', 'Anarkali': 'anarkali',
+  'Kurti & Pyjama': 'kurti', 'Co-Ord Set': 'dress',
+  'Mini Frock': 'dress', 'Knee Length Frock': 'dress', 'Long Frock': 'dress',
+  'Cocktail': 'dress', 'Jumpsuit': 'jumpsuit',
+  'Full Sleeve Shirt': 'shirt', 'Half Sleeve Shirt': 'shirt',
+  'Full Sleeve T-shirt': 't-shirt', 'Half Sleeve T-shirt': 't-shirt',
+  'Top': 't-shirt', 'Crop Top': 't-shirt',
+  'Hoodie': 'coat', 'Sweatshirt': 'coat',
+  'Blazer': 'coat', 'Jacket': 'jacket', 'Suit': 'coat',
+  'Jean': 'jeans', 'Baggy Jean': 'jeans', 'Trouser': 'trousers',
+  'Long Skirt': 'skirt', 'Mini Skirt': 'skirt',
+  'Track': 'trousers', 'Short': 'trousers',
 };
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
@@ -43,14 +81,14 @@ async function uploadPhoto(file) {
   return data.url;
 }
 
-async function generateTryOn({ personUrl, garmentUrl, garmentType }) {
+async function generateTryOn({ personUrl, garmentUrl, garmentType, apiValue }) {
   const startRes = await fetch(`${API_BASE}/api/v1/tryon`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'x-api-key': WIDGET_API_KEY },
     body: JSON.stringify({
       product_id: garmentUrl,
       user_photo_url: personUrl,
-      garment_type: GARMENT_TYPE_TO_API_VALUE[garmentType] ?? 'auto_detect',
+      garment_type: apiValue ?? GARMENT_TYPE_TO_API_VALUE[garmentType] ?? 'auto_detect',
       use_vision: true,
     }),
   });
@@ -150,11 +188,150 @@ function SlotUploader({ label, step, previewUrl, busy, onPick }) {
   );
 }
 
+/* ─── Garment Type Picker Modal ────────────────────────────────────── */
+const GARMENT_CATEGORIES_FILTER = ['All', 'Ethnic', 'Dresses', 'Tops', 'Outerwear', 'Bottoms'];
+
+function GarmentTypeModal({ selected, onSelect, onClose }) {
+  const [filter, setFilter] = useState('All');
+
+  const filtered = filter === 'All'
+    ? GARMENT_TYPES_VISUAL
+    : GARMENT_TYPES_VISUAL.filter(g => g.category === filter);
+
+  // Close on Escape
+  useEffect(() => {
+    const handler = (e) => { if (e.key === 'Escape') onClose(); };
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
+  }, [onClose]);
+
+  return (
+    <div
+      style={{
+        position: 'fixed', inset: 0, zIndex: 9999,
+        background: 'rgba(15,23,42,0.55)', backdropFilter: 'blur(4px)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        padding: '16px',
+      }}
+      onClick={e => { if (e.target === e.currentTarget) onClose(); }}
+    >
+      <div style={{
+        background: '#fff', borderRadius: '20px',
+        width: '100%', maxWidth: '860px',
+        maxHeight: '88vh', display: 'flex', flexDirection: 'column',
+        boxShadow: '0 32px 80px rgba(0,0,0,0.22)',
+        overflow: 'hidden',
+        fontFamily: "'Plus Jakarta Sans', Inter, sans-serif",
+      }}>
+        {/* Header */}
+        <div style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          padding: '20px 24px 16px', borderBottom: '1px solid #F1F5F9',
+          flexShrink: 0,
+        }}>
+          <span style={{ fontSize: '16px', fontWeight: 800, color: '#0F172A' }}>
+            Select Your Garment Type
+          </span>
+          <button
+            onClick={onClose}
+            style={{
+              width: 32, height: 32, borderRadius: 8, border: 'none',
+              background: '#F1F5F9', cursor: 'pointer', display: 'flex',
+              alignItems: 'center', justifyContent: 'center', color: '#64748B',
+            }}
+          >
+            <X size={16} />
+          </button>
+        </div>
+
+        {/* Category filter pills */}
+        <div style={{
+          display: 'flex', gap: 8, padding: '12px 24px',
+          borderBottom: '1px solid #F1F5F9', overflowX: 'auto', flexShrink: 0,
+        }}>
+          {GARMENT_CATEGORIES_FILTER.map(cat => (
+            <button
+              key={cat}
+              onClick={() => setFilter(cat)}
+              style={{
+                padding: '5px 14px', borderRadius: '999px', fontSize: '12px',
+                fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap', border: 'none',
+                background: filter === cat ? BLUE : '#F1F5F9',
+                color: filter === cat ? '#fff' : '#475569',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+
+        {/* Image grid */}
+        <div style={{
+          overflowY: 'auto', padding: '20px 24px',
+          display: 'grid',
+          gridTemplateColumns: 'repeat(5, 1fr)',
+          gap: '12px',
+        }}>
+          {filtered.map(garment => {
+            const isSelected = garment.id === selected;
+            return (
+              <button
+                key={garment.id}
+                onClick={() => { onSelect(garment.id); onClose(); }}
+                style={{
+                  background: isSelected ? '#EFF6FF' : '#F8FAFC',
+                  border: isSelected ? `2px solid ${BLUE}` : '1.5px solid #E2E8F0',
+                  borderRadius: '12px', cursor: 'pointer', padding: '10px 8px 8px',
+                  display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6,
+                  boxShadow: isSelected ? `0 4px 16px rgba(37,99,235,0.18)` : 'none',
+                  transition: 'all 0.15s ease',
+                  position: 'relative',
+                }}
+                onMouseEnter={e => { if (!isSelected) { e.currentTarget.style.borderColor = '#93C5FD'; e.currentTarget.style.background = '#F0F9FF'; }}}
+                onMouseLeave={e => { if (!isSelected) { e.currentTarget.style.borderColor = '#E2E8F0'; e.currentTarget.style.background = '#F8FAFC'; }}}
+              >
+                {isSelected && (
+                  <div style={{
+                    position: 'absolute', top: 6, right: 6,
+                    width: 18, height: 18, borderRadius: '50%',
+                    background: BLUE, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}>
+                    <CheckCircle2 size={12} color="#fff" strokeWidth={2.5} />
+                  </div>
+                )}
+                <div style={{
+                  width: '100%', aspectRatio: '3/4', overflow: 'hidden',
+                  borderRadius: 8, background: '#F1F5F9',
+                }}>
+                  <img
+                    src={garment.img}
+                    alt={garment.id}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                    onError={e => { e.currentTarget.style.display = 'none'; }}
+                  />
+                </div>
+                <span style={{
+                  fontSize: '10.5px', fontWeight: 700, color: isSelected ? BLUE : '#334155',
+                  textAlign: 'center', lineHeight: 1.3,
+                }}>
+                  {garment.id}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ─── Try-On Demo Widget ────────────────────────────────────────────── */
 function TryOnDemo() {
   const [personUrl,    setPersonUrl]    = useState(null);
   const [garmentUrl,   setGarmentUrl]   = useState(null);
-  const [garmentType,  setGarmentType]  = useState(GARMENT_TYPES[0]);
+  const [garmentType,  setGarmentType]  = useState(GARMENT_TYPES_VISUAL[0].id);
+  const [showPicker,   setShowPicker]   = useState(false);
   const [uploadingSlot, setUploadingSlot] = useState(null);
   const [generating,   setGenerating]   = useState(false);
   const [slowHint,     setSlowHint]     = useState(false);
@@ -183,7 +360,7 @@ function TryOnDemo() {
     setResultUrl(null);
     const hintTimer = setTimeout(() => setSlowHint(true), 12_000);
     try {
-      const outputUrl = await generateTryOn({ personUrl, garmentUrl, garmentType });
+      const outputUrl = await generateTryOn({ personUrl, garmentUrl, garmentType, apiValue: GARMENT_TYPE_TO_API_VALUE[garmentType] ?? 'auto_detect' });
       setResultUrl(outputUrl);
     } catch (err) {
       setError(err.message || 'Something went wrong. Please try again.');
@@ -240,7 +417,7 @@ function TryOnDemo() {
         />
       </div>
 
-      {/* Garment type selector */}
+      {/* Garment type visual picker trigger */}
       <div>
         <label style={{
           fontSize: '11.5px', fontWeight: 700, color: '#334155',
@@ -248,19 +425,44 @@ function TryOnDemo() {
         }}>
           Garment Type
         </label>
-        <select
-          value={garmentType}
-          onChange={(e) => setGarmentType(e.target.value)}
+        <button
+          onClick={() => setShowPicker(true)}
           style={{
             width: '100%', padding: '10px 14px', borderRadius: '12px',
             border: `1.5px solid #E2E8F0`, fontSize: '13px',
             fontWeight: 600, color: '#0F172A', background: '#F8FAFF',
-            outline: 'none', cursor: 'pointer', appearance: 'auto',
+            cursor: 'pointer', display: 'flex', alignItems: 'center',
+            justifyContent: 'space-between', gap: 8,
+            transition: 'border-color 0.15s',
           }}
+          onMouseEnter={e => e.currentTarget.style.borderColor = '#93C5FD'}
+          onMouseLeave={e => e.currentTarget.style.borderColor = '#E2E8F0'}
         >
-          {GARMENT_TYPES.map((g) => <option key={g} value={g}>{g}</option>)}
-        </select>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div style={{
+              width: 28, height: 36, borderRadius: 6, overflow: 'hidden',
+              background: '#F1F5F9', flexShrink: 0,
+            }}>
+              <img
+                src={GARMENT_TYPES_VISUAL.find(g => g.id === garmentType)?.img || ''}
+                alt={garmentType}
+                style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+              />
+            </div>
+            <span>{garmentType}</span>
+          </div>
+          <ChevronDown size={14} color="#94A3B8" />
+        </button>
       </div>
+
+      {/* Garment Type Modal */}
+      {showPicker && (
+        <GarmentTypeModal
+          selected={garmentType}
+          onSelect={setGarmentType}
+          onClose={() => setShowPicker(false)}
+        />
+      )}
 
       {/* Generate button */}
       <button
