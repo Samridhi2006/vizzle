@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import Footer from "../components/Footer";
-import { ArrowUpRight, Calendar, Tag, ArrowLeft } from "lucide-react";
+import { ArrowUpRight, Calendar, ArrowLeft } from "lucide-react";
 import BlogNewsletterBanner from "../components/BlogNewsletterBanner";
 import BlogFAQSection from "../components/BlogFAQSection";
 import LeadCaptureSection from "../components/LeadCaptureSection";
@@ -226,26 +226,15 @@ export default function BlogsPage() {
 
       <main style={{ flex: 1, paddingTop: "48px", paddingBottom: "80px" }}>
         {/* ── Hero Header ── */}
-        <div style={{ textAlign: "center", maxWidth: "680px", margin: "0 auto 64px", padding: "0 24px" }}>
-          {/* Category badge */}
-          <div style={{
-            display: "inline-flex", alignItems: "center", gap: "6px",
-            background: "#fff", border: "1.5px solid #E2E8F0",
-            borderRadius: "50px", padding: "5px 14px 5px 10px",
-            fontSize: "11.5px", fontWeight: 700, color: "#64748B",
-            marginBottom: "20px", boxShadow: "0 1px 4px rgba(0,0,0,0.05)",
-          }}>
-            <Tag size={12} style={{ color: "#2563EB" }} />
-            VIZZLE JOURNAL
-          </div>
-
+        <div style={{ textAlign: "center", maxWidth: "780px", margin: "0 auto 56px", padding: "0 24px" }}>
           <h1 style={{
-            fontSize: "clamp(2rem, 4vw, 2.8rem)",
+            fontSize: "clamp(1.8rem, 3.5vw, 2.8rem)",
             fontWeight: 900,
             color: "#0F172A",
             letterSpacing: "-0.04em",
             lineHeight: 1.1,
             margin: "0 0 18px",
+            whiteSpace: "nowrap",
           }}>
             Fashion Tech, Fit Science{" "}
             <span style={{ color: "#2563EB" }}>&amp; Trends</span>
