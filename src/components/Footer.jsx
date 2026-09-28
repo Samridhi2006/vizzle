@@ -1,18 +1,17 @@
 /* eslint-disable react/no-unescaped-entities */
+import { Link } from 'react-router-dom';
 import { Mail, Phone, Facebook, Instagram, Youtube, Linkedin, ShoppingBag } from 'lucide-react';
 
 const NAV_COMPANY = [
-  { label: 'About Us', href: '/about' },
-  { label: 'Blog', href: '/blog' },
-  { label: 'Contact', href: '/contact' },
-  { label: 'Careers', href: '/careers' },
+  { label: 'About Us', to: '/' },
+  { label: 'Blog',     to: '/blogs' },
+  { label: 'Contact',  to: '/contact' },
 ];
 
 const NAV_RESOURCES = [
-  { label: 'Documentation', href: '/docs' },
-  { label: 'Case Studies', href: '/case-studies' },
-  { label: 'Support', href: '/support' },
-  { label: 'API Reference', href: '/api-docs' },
+  { label: 'Documentation', to: '/docs' },
+  { label: 'Support',       to: '/contact' },
+  { label: 'API Reference', to: '/docs/api' },
 ];
 
 const SOCIALS = [
@@ -89,14 +88,14 @@ export default function Footer() {
           <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '12px' }}>
             {NAV_COMPANY.map(link => (
               <li key={link.label}>
-                <a
-                  href={link.href}
+                <Link
+                  to={link.to}
                   style={{ fontSize: '13px', color: '#94A3B8', textDecoration: 'none', transition: 'color 0.2s ease' }}
                   onMouseEnter={e => (e.currentTarget.style.color = '#22D3EE')}
                   onMouseLeave={e => (e.currentTarget.style.color = '#94A3B8')}
                 >
                   • {link.label}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>
@@ -110,14 +109,14 @@ export default function Footer() {
           <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '12px' }}>
             {NAV_RESOURCES.map(link => (
               <li key={link.label}>
-                <a
-                  href={link.href}
+                <Link
+                  to={link.to}
                   style={{ fontSize: '13px', color: '#94A3B8', textDecoration: 'none', transition: 'color 0.2s ease' }}
                   onMouseEnter={e => (e.currentTarget.style.color = '#22D3EE')}
                   onMouseLeave={e => (e.currentTarget.style.color = '#94A3B8')}
                 >
                   • {link.label}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>
@@ -230,16 +229,16 @@ export default function Footer() {
           © 2026 Vizzle Private Limited • All Rights Reserved.
         </p>
         <div style={{ display: 'flex', gap: '20px' }}>
-          {[['Terms of Service', '/terms'], ['Privacy Policy', '/privacy']].map(([label, href]) => (
-            <a
+          {[['Terms of Service', '/terms'], ['Privacy Policy', '/privacy']].map(([label, to]) => (
+            <Link
               key={label}
-              href={href}
+              to={to}
               style={{ fontSize: '11.5px', color: '#475569', textDecoration: 'none', transition: 'color 0.2s ease' }}
               onMouseEnter={e => (e.currentTarget.style.color = '#94A3B8')}
               onMouseLeave={e => (e.currentTarget.style.color = '#475569')}
             >
               {label}
-            </a>
+            </Link>
           ))}
         </div>
       </div>
