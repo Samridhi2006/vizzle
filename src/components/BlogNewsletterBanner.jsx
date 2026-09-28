@@ -16,30 +16,33 @@ export default function BlogNewsletterBanner() {
     setError('');
 
     try {
-      // Web3Forms — free service, delivers directly to info@vizzle.in
-      // Get a free access key from https://web3forms.com for info@vizzle.in
-      const formData = new FormData();
-      formData.append('access_key', 'YOUR_WEB3FORMS_KEY'); // ← replace with key from web3forms.com
-      formData.append('email', email);
-      formData.append('subject', `New Newsletter Subscriber: ${email}`);
-      formData.append('message', `New subscriber from Vizzle blog newsletter.\n\nEmail: ${email}`);
-      formData.append('from_name', 'Vizzle Newsletter');
-
-      const res = await fetch('https://api.web3forms.com/submit', {
+      // Uses formsubmit.co — same service as the Contact form, delivers to info@vizzle.in
+      const res = await fetch('https://formsubmit.co/ajax/info@vizzle.in', {
         method: 'POST',
-        body: formData,
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          name: 'Newsletter Subscriber',
+          _subject: `New Newsletter Subscriber: ${email}`,
+          _template: 'table',
+          message: `A new user has subscribed to the Vizzle newsletter.\n\nSubscriber Email: ${email}`,
+        }),
       });
+
       const data = await res.json();
 
-      if (data.success) {
+      if (data.success === 'true' || res.ok) {
         setIsSubmitted(true);
         setEmail('');
         setTimeout(() => setIsSubmitted(false), 5000);
       } else {
-        throw new Error(data.message || 'Submission failed');
+        throw new Error('Submission failed');
       }
     } catch {
-      // Fallback: open mailto so no lead is ever lost
+      // Fallback: open mailto so no subscriber is lost
       window.open(
         `mailto:info@vizzle.in?subject=Newsletter%20Subscription&body=Please%20add%20me%20to%20your%20newsletter%3A%20${encodeURIComponent(email)}`,
         '_blank'
