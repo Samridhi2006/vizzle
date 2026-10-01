@@ -1,4 +1,4 @@
-﻿import { useAuth } from '../context/useAuth';
+import { useAuth } from '../context/useAuth';
 
 export default function StudioTopBar({ 
   pageName = 'Studio', 
@@ -11,13 +11,13 @@ export default function StudioTopBar({
 
   return (
     <header
-      className="flex items-center justify-between bg-white border-b border-gray-200 flex-shrink-0 px-6"
-      style={{ height: '60px' }}
+      className="flex items-center justify-between bg-white border-b border-gray-200 flex-shrink-0 px-4 sm:px-6"
+      style={{ height: '56px' }}
     >
       {/* Left: Breadcrumb */}
       <div>
-        <p className="text-base font-semibold text-gray-900 leading-none">{pageName}</p>
-        <p className="text-xs text-gray-400 mt-1 leading-none">{subtitle}</p>
+        <p className="text-sm sm:text-base font-semibold text-gray-900 leading-none">{pageName}</p>
+        <p className="text-xs text-gray-400 mt-1 leading-none hidden sm:block">{subtitle}</p>
       </div>
 
       {/* Right: User Avatar */}

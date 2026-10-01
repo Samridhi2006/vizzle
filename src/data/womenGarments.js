@@ -1,4 +1,4 @@
-// src/data/womenGarments.js
+﻿// src/data/womenGarments.js
 // Complete audited Women's Garments data specification for Vizzle Studio
 // Gender-validated, asset-verified, and free of cross-gender mismatches.
 
@@ -29,7 +29,7 @@ export const POPULAR_GARMENT_IDS = [
 ];
 
 export const WOMEN_GARMENTS = [
-  // ── 1. Ethnic Flat-Lays ──────────────────────────────────────────────────
+  // â”€â”€ 1. Ethnic Flat-Lays â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   {
     id: 'saree',
     label: 'Saree',
@@ -94,7 +94,7 @@ export const WOMEN_GARMENTS = [
     tags: ['linen', '3-piece', 'modern', 'trousers', 'crop top', 'co-ord'],
   },
 
-  // ── 2. Tops, Shirts & Knitwear ──────────────────────────────────────────
+  // â”€â”€ 2. Tops, Shirts & Knitwear â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   {
     id: 'full-sleeve-shirt',
     label: 'Full Sleeve Shirt',
@@ -178,7 +178,7 @@ export const WOMEN_GARMENTS = [
     tags: ['french terry', 'raglan', 'crewneck', 'lounge', 'sweatshirt'],
   },
 
-  // ── 3. Outerwear & Tailoring ───────────────────────────────────────────
+  // â”€â”€ 3. Outerwear & Tailoring â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   {
     id: 'jacket',
     label: 'Jacket',
@@ -212,7 +212,7 @@ export const WOMEN_GARMENTS = [
     isPopular: true,
   },
 
-  // ── 4. Dresses & Jumpsuits ─────────────────────────────────────────────
+  // â”€â”€ 4. Dresses & Jumpsuits â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   {
     id: 'mini-frock',
     label: 'Mini Frock',
@@ -266,7 +266,7 @@ export const WOMEN_GARMENTS = [
     tags: ['utility', 'boiler suit', 'belted', 'modern', 'jumpsuit'],
   },
 
-  // ── 5. Bottoms, Denims & Innerwear ──────────────────────────────────────
+  // â”€â”€ 5. Bottoms, Denims & Innerwear â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   {
     id: 'jean',
     label: 'Jean',
@@ -349,7 +349,7 @@ export const WOMEN_GARMENTS = [
     tags: ['seamless', 'microfiber', 'intimates', 'basics'],
   },
 
-  // ── 6. Mannequin Draped Displays (Ghost / 3D Studio Form) ───────────────
+  // â”€â”€ 6. Mannequin Draped Displays (Ghost / 3D Studio Form) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   {
     id: 'saree-mannequin',
     label: 'Saree on Mannequin',
@@ -432,9 +432,9 @@ export const WOMEN_GARMENTS = [
   },
 ];
 
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // VALIDATION & INTEGRITY GATEWAY
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 /**
  * Validation checker for studio garment catalog items.

@@ -90,7 +90,7 @@ export default function LeadCaptureSection() {
     <section
       id="contact"
       style={{
-        padding: '0 24px 80px',
+        padding: '0 16px 80px',
         fontFamily: "'Plus Jakarta Sans', Inter, sans-serif",
       }}
     >
@@ -108,29 +108,29 @@ export default function LeadCaptureSection() {
           style={{
             position: 'relative',
             width: '100%',
-            height: '340px',
-            borderRadius: '24px 24px 0 0',
+            height: '450px',
+            borderRadius: '24px',
             overflow: 'hidden',
           }}
         >
           <img
             src="/contact/fashion_studio_bg.jpg"
-            alt="Fashion model in studio"
+            alt="Fashion models in studio"
             style={{
               width: '100%',
               height: '100%',
               objectFit: 'cover',
-              objectPosition: 'top',
+              objectPosition: '10% top',
               display: 'block',
             }}
           />
 
-          {/* Bottom-to-top gradient for text legibility */}
+          {/* Bottom-to-top gradient for text legibility, leaving faces completely clear */}
           <div
             style={{
               position: 'absolute',
               inset: 0,
-              background: 'linear-gradient(to top, rgba(0,0,0,0.74) 0%, rgba(0,0,0,0.18) 55%, transparent 100%)',
+              background: 'linear-gradient(to top, rgba(0,0,0,0.80) 0%, rgba(0,0,0,0.35) 40%, rgba(0,0,0,0) 62%)',
             }}
           />
 
@@ -192,17 +192,15 @@ export default function LeadCaptureSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.55, delay: 0.1 }}
-          style={{ marginTop: '-40px', position: 'relative', zIndex: 10 }}
+          style={{ marginTop: '16px', position: 'relative', zIndex: 10 }}
         >
           <div
             style={{
-              background: 'rgba(255,255,255,0.97)',
-              backdropFilter: 'blur(16px)',
-              WebkitBackdropFilter: 'blur(16px)',
+              background: '#fff',
               borderRadius: '24px',
               padding: '28px 20px 24px',
-              boxShadow: '0 16px 48px rgba(0,0,0,0.18)',
-              border: '1px solid rgba(255,255,255,0.6)',
+              boxShadow: '0 8px 32px rgba(0,0,0,0.10)',
+              border: '1px solid #E2E8F0',
               boxSizing: 'border-box',
             }}
           >

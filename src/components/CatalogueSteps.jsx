@@ -68,10 +68,11 @@ function StepCard({ step, index, isLast }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.5, delay: index * 0.12 }}
+      className="vz-cat-step-card"
       style={{ position: 'relative', flex: 1 }}
     >
       {/* Step header */}
-      <div style={{
+      <div className="vz-cat-step-header" style={{
         display: 'flex',
         alignItems: 'center',
         gap: '10px',
@@ -152,6 +153,27 @@ function StepCard({ step, index, isLast }) {
 }
 
 // ─── Main Section ─────────────────────────────────────────────────────────────
+
+const STEPS_CSS = `
+  @media (max-width: 640px) {
+    .vz-cat-steps-row {
+      flex-direction: column !important;
+      align-items: center !important;
+    }
+    .vz-cat-step-card {
+      width: 100% !important;
+      max-width: 320px !important;
+      flex: none !important;
+    }
+    .vz-cat-step-header {
+      justify-content: center !important;
+    }
+    .vz-cat-step-arrow {
+      display: none !important;
+    }
+  }
+`;
+
 export default function CatalogueSteps() {
   return (
     <section
@@ -162,6 +184,7 @@ export default function CatalogueSteps() {
         fontFamily: "'Plus Jakarta Sans', Inter, sans-serif",
       }}
     >
+      <style>{STEPS_CSS}</style>
       <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
 
         {/* ── Header ─────────────────────────────────────────────────── */}
@@ -205,6 +228,7 @@ export default function CatalogueSteps() {
             display: 'flex',
             gap: '24px',
             alignItems: 'flex-start',
+            justifyContent: 'center',
           }}
         >
           {STEPS.map((step, i) => (

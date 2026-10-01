@@ -585,7 +585,7 @@ export default function StudioWorkflow() {
           {/* Studio Backgrounds Header */}
           <div className="mb-3 flex items-center justify-between">
             <p className="text-xs font-bold text-slate-700 tracking-tight">Studio Backgrounds</p>
-            <span className="text-[11px] text-slate-400 font-medium">10 options</span>
+            <span className="text-[11px] text-slate-400 font-medium">{BACKGROUNDS.length} options</span>
           </div>
 
           {/* 5-Column Responsive Grid matching reference */}

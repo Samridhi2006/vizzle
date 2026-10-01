@@ -14,57 +14,57 @@ const BLUE_BORDER= 'rgba(37,99,235,0.28)';
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'https://dashboard.vizzle.in';
 const WIDGET_API_KEY = import.meta.env.VITE_WIDGET_API_KEY;
 
-/* ─── Women's Garment Type Dataset (image-mapped) ──────────────────── */
-const GARMENT_TYPES_VISUAL = [
-  // Dresses
-  { id: 'Mini Frock',           img: '/garments/women/mini_frock.jpg',       category: 'Dresses' },
-  { id: 'Knee Length Frock',    img: '/garments/women/long_frock.jpg',        category: 'Dresses' },
-  { id: 'Long Frock',           img: '/garments/women/long_frock.jpg',        category: 'Dresses' },
-  { id: 'Cocktail',             img: '/garments/women/cocktail.jpg',          category: 'Dresses' },
-  { id: 'Jumpsuit',             img: '/step1_jumpsuit_flatlay.jpg',            category: 'Dresses' },
-  // Ethnic
-  { id: 'Saree',                img: '/garments/women/saree.jpg',             category: 'Ethnic' },
-  { id: 'Kurti',                img: '/garments/women/kurti.jpg',             category: 'Ethnic' },
-  { id: 'Anarkali',             img: '/garments/women/anarkali.jpg',          category: 'Ethnic' },
-  { id: 'Kurti & Pyjama',       img: '/brand_seated_wrap.jpg',                category: 'Ethnic' },
-  { id: 'Co-Ord Set',           img: '/showcase/western_beige_coord.jpg',     category: 'Ethnic' },
-  // Tops & Shirts
-  { id: 'Full Sleeve Shirt',    img: '/garments/women/full_sleeve_shirt.jpg', category: 'Tops' },
-  { id: 'Half Sleeve Shirt',    img: '/garments/women/half_sleeve_shirt.jpg', category: 'Tops' },
-  { id: 'Full Sleeve T-shirt',  img: '/garments/women/full_sleeve_tshirt.jpg',category: 'Tops' },
-  { id: 'Half Sleeve T-shirt',  img: '/garments/women/half_sleeve_tshirt.jpg',category: 'Tops' },
-  { id: 'Top',                  img: '/garments/women/top.jpg',               category: 'Tops' },
-  { id: 'Crop Top',             img: '/garments/women/crop_top.jpg',          category: 'Tops' },
-  { id: 'Hoodie',               img: '/vz_flatlay_hoodie.jpg',                category: 'Tops' },
-  { id: 'Sweatshirt',           img: '/vz_flatlay_hoodie.jpg',                category: 'Tops' },
-  // Outerwear
-  { id: 'Blazer',               img: '/garments/women/blazer.jpg',            category: 'Outerwear' },
-  { id: 'Jacket',               img: '/showcase/western_leather_jacket.jpg',  category: 'Outerwear' },
-  { id: 'Suit',                 img: '/garments/women/suit.jpg',              category: 'Outerwear' },
-  // Bottoms
-  { id: 'Jean',                 img: '/garments/women/jean.jpg',              category: 'Bottoms' },
-  { id: 'Baggy Jean',           img: '/gallery/col5_female_denim.jpg',        category: 'Bottoms' },
-  { id: 'Trouser',              img: '/brand_vest_trousers.jpg',              category: 'Bottoms' },
-  { id: 'Long Skirt',           img: '/brand_floral_saree.jpg',               category: 'Bottoms' },
-  { id: 'Mini Skirt',           img: '/brand_chocolate_dress.jpg',            category: 'Bottoms' },
-  { id: 'Track',                img: '/garments/women/jean.jpg',              category: 'Bottoms' },
-  { id: 'Short',                img: '/gallery/col5_female_denim.jpg',        category: 'Bottoms' },
+/* ─── Women's Garment Type Dataset — 30 items ───────────────────────── */
+const WOMEN_GARMENTS = [
+  // ── Dresses ──────────────────────────────────────────────────────────
+  { id: 'Mini Frock',         label: 'Mini Frock',          img: '/garments/women-picker/mini-frock.jpg',          category: 'Dresses',        api: 'dress'         },
+  { id: 'Knee Length Frock',  label: 'Knee Length Frock',   img: '/garments/women-picker/knee-length-frock.jpg',   category: 'Dresses',        api: 'dress'         },
+  { id: 'Long Frock',         label: 'Long Frock',          img: '/garments/women-picker/long-frock.jpg',          category: 'Dresses',        api: 'dress'         },
+  { id: 'Cocktail',           label: 'Cocktail',            img: '/garments/women-picker/cocktail.jpg',            category: 'Dresses',        api: 'dress'         },
+  { id: 'Jumpsuit',           label: 'Jumpsuit',            img: '/garments/women-picker/jumpsuit.jpg',            category: 'Dresses',        api: 'jumpsuit'      },
+  // ── Ethnic ────────────────────────────────────────────────────────────
+  { id: 'Saree',              label: 'Saree',               img: '/garments/women-picker/saree.jpg',               category: 'Ethnic',         api: 'saree'         },
+  { id: 'Kurti',              label: 'Kurti',               img: '/garments/women-picker/kurti.jpg',               category: 'Ethnic',         api: 'kurti'         },
+  { id: 'Anarkali',           label: 'Anarkali',            img: '/garments/women-picker/anarkali.jpg',            category: 'Ethnic',         api: 'anarkali'      },
+  { id: 'Kurti & Pyjama',     label: 'Kurti & Pyjama',      img: '/garments/women-picker/kurti-pyjama.jpg',        category: 'Ethnic',         api: 'kurti'         },
+  { id: 'Co-Ord Set',         label: 'Co-Ord Set',          img: '/garments/women-picker/co-ord-set.jpg',          category: 'Ethnic',         api: 'dress'         },
+  { id: 'Chudidar',           label: 'Chudidar',            img: '/garments/women-picker/chudidar.jpg',            category: 'Ethnic',         api: 'salwar_kameez' },
+  // ── Tops & Shirts ─────────────────────────────────────────────────────
+  { id: 'Full Sleeve Shirt',  label: 'Full Sleeve Shirt',   img: '/garments/women-picker/full-sleeve-shirt.jpg',   category: 'Tops',           api: 'shirt'         },
+  { id: 'Half Sleeve Shirt',  label: 'Half Sleeve Shirt',   img: '/garments/women-picker/half-sleeve-shirt.jpg',   category: 'Tops',           api: 'shirt'         },
+  { id: 'Full Sleeve T-shirt',label: 'Full Sleeve T-shirt', img: '/garments/women-picker/full-sleeve-tshirt.jpg',  category: 'Tops',           api: 't-shirt'       },
+  { id: 'Half Sleeve T-shirt',label: 'Half Sleeve T-shirt', img: '/garments/women-picker/half-sleeve-tshirt.jpg',  category: 'Tops',           api: 't-shirt'       },
+  { id: 'Top',                label: 'Top',                 img: '/garments/women-picker/top.jpg',                 category: 'Tops',           api: 't-shirt'       },
+  { id: 'Crop Top',           label: 'Crop Top',            img: '/garments/women-picker/crop-top.jpg',            category: 'Tops',           api: 't-shirt'       },
+  { id: 'Hoodie',             label: 'Hoodie',              img: '/garments/women-picker/hoodie.jpg',              category: 'Tops',           api: 'coat'          },
+  { id: 'Sweatshirt',         label: 'Sweatshirt',          img: '/garments/women-picker/sweatshirt.jpg',          category: 'Tops',           api: 'coat'          },
+  // ── Outerwear ─────────────────────────────────────────────────────────
+  { id: 'One Piece Suit',     label: 'One Piece Suit',      img: '/garments/women-picker/one-piece-suit.jpg',      category: 'Outerwear',      api: 'coat'          },
+  { id: 'Two Piece Suit',     label: 'Two Piece Suit',      img: '/garments/women-picker/two-piece-suit.jpg',      category: 'Outerwear',      api: 'coat'          },
+  { id: 'Blazer',             label: 'Blazer',              img: '/garments/women-picker/blazer.jpg',              category: 'Outerwear',      api: 'coat'          },
+  { id: 'Jacket',             label: 'Jacket',              img: '/garments/women-picker/jacket.jpg',              category: 'Outerwear',      api: 'jacket'        },
+  // ── Bottoms ───────────────────────────────────────────────────────────
+  { id: 'Jean',               label: 'Jean',                img: '/garments/women-picker/jean.jpg',                category: 'Bottoms',        api: 'jeans'         },
+  { id: 'Baggy Jean',         label: 'Baggy Jean',          img: '/garments/women-picker/baggy-jean.jpg',          category: 'Bottoms',        api: 'jeans'         },
+  { id: 'Trouser',            label: 'Trouser',             img: '/garments/women-picker/trouser.jpg',             category: 'Bottoms',        api: 'trousers'      },
+  { id: 'Track',              label: 'Track',               img: '/garments/women-picker/track.jpg',               category: 'Bottoms',        api: 'trousers'      },
+  { id: 'Long Skirt',         label: 'Long Skirt',          img: '/garments/women-picker/long-skirt.jpg',          category: 'Bottoms',        api: 'skirt'         },
+  { id: 'Mini Skirt',         label: 'Mini Skirt',          img: '/garments/women-picker/mini-skirt.jpg',          category: 'Bottoms',        api: 'skirt'         },
+  { id: 'Short',              label: 'Short',               img: '/garments/women-picker/short.jpg',               category: 'Bottoms',        api: 'trousers'      },
+  { id: 'Inner Wear',         label: 'Inner Wear',          img: '/garments/women-picker/inner-wear.jpg',          category: 'Bottoms',        api: 't-shirt'       },
+  // ── Mannequin Drapes ──────────────────────────────────────────────────
+  { id: 'Saree on Mannequin', label: 'Saree on Mannequin',  img: '/garments/women-picker/saree-mannequin.jpg',     category: 'Mannequin',      api: 'saree'         },
+  { id: 'Mini Frock on Mannequin',        label: 'Mini Frock on Mannequin',        img: '/garments/women-picker/mini-frock-mannequin.jpg',   category: 'Mannequin', api: 'dress'    },
+  { id: 'Knee Frock on Mannequin',        label: 'Knee Length Frock on Mannequin', img: '/garments/women-picker/knee-frock-mannequin.jpg',   category: 'Mannequin', api: 'dress'    },
+  { id: 'Long Frock on Mannequin',        label: 'Long Frock on Mannequin',        img: '/garments/women-picker/long-frock-mannequin.jpg',   category: 'Mannequin', api: 'dress'    },
+  { id: 'Kurti on Mannequin',             label: 'Kurti on Mannequin',             img: '/garments/women-picker/kurti-mannequin.jpg',        category: 'Mannequin', api: 'kurti'    },
+  { id: 'Kurti & Pyjama on Mannequin',    label: 'Kurti & Pyjama on Mannequin',    img: '/garments/women-picker/kurti-pyjama-mannequin.jpg', category: 'Mannequin', api: 'kurti'    },
+  { id: 'Lehenga on Mannequin',           label: 'Lehenga on Mannequin',           img: '/garments/women-picker/lehenga-mannequin.jpg',      category: 'Mannequin', api: 'lehenga'  },
+  { id: 'Half Saree on Mannequin',        label: 'Half Saree on Mannequin',        img: '/garments/women-picker/half-saree-mannequin.jpg',   category: 'Mannequin', api: 'saree'    },
+  // Assumed labels (from screenshot row 3 of ss2 — partially cut off):
+  { id: 'Cocktail on Mannequin',          label: 'Cocktail on Mannequin',          img: '/garments/women-picker/cocktail-mannequin.jpg',     category: 'Mannequin', api: 'dress'    },
 ];
 
-const GARMENT_TYPE_TO_API_VALUE = {
-  'Saree': 'saree', 'Kurti': 'kurti', 'Anarkali': 'anarkali',
-  'Kurti & Pyjama': 'kurti', 'Co-Ord Set': 'dress',
-  'Mini Frock': 'dress', 'Knee Length Frock': 'dress', 'Long Frock': 'dress',
-  'Cocktail': 'dress', 'Jumpsuit': 'jumpsuit',
-  'Full Sleeve Shirt': 'shirt', 'Half Sleeve Shirt': 'shirt',
-  'Full Sleeve T-shirt': 't-shirt', 'Half Sleeve T-shirt': 't-shirt',
-  'Top': 't-shirt', 'Crop Top': 't-shirt',
-  'Hoodie': 'coat', 'Sweatshirt': 'coat',
-  'Blazer': 'coat', 'Jacket': 'jacket', 'Suit': 'coat',
-  'Jean': 'jeans', 'Baggy Jean': 'jeans', 'Trouser': 'trousers',
-  'Long Skirt': 'skirt', 'Mini Skirt': 'skirt',
-  'Track': 'trousers', 'Short': 'trousers',
-};
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
@@ -189,14 +189,14 @@ function SlotUploader({ label, step, previewUrl, busy, onPick }) {
 }
 
 /* ─── Garment Type Picker Modal ────────────────────────────────────── */
-const GARMENT_CATEGORIES_FILTER = ['All', 'Ethnic', 'Dresses', 'Tops', 'Outerwear', 'Bottoms'];
+const GARMENT_CATEGORIES_FILTER = ['All', 'Ethnic', 'Dresses', 'Tops', 'Outerwear', 'Bottoms', 'Mannequin'];
 
 function GarmentTypeModal({ selected, onSelect, onClose }) {
   const [filter, setFilter] = useState('All');
 
   const filtered = filter === 'All'
-    ? GARMENT_TYPES_VISUAL
-    : GARMENT_TYPES_VISUAL.filter(g => g.category === filter);
+    ? WOMEN_GARMENTS
+    : WOMEN_GARMENTS.filter(g => g.category === filter);
 
   // Close on Escape
   useEffect(() => {
@@ -315,7 +315,7 @@ function GarmentTypeModal({ selected, onSelect, onClose }) {
                   fontSize: '10.5px', fontWeight: 700, color: isSelected ? BLUE : '#334155',
                   textAlign: 'center', lineHeight: 1.3,
                 }}>
-                  {garment.id}
+                  {garment.label}
                 </span>
               </button>
             );
@@ -330,7 +330,7 @@ function GarmentTypeModal({ selected, onSelect, onClose }) {
 function TryOnDemo() {
   const [personUrl,    setPersonUrl]    = useState(null);
   const [garmentUrl,   setGarmentUrl]   = useState(null);
-  const [garmentType,  setGarmentType]  = useState(GARMENT_TYPES_VISUAL[0].id);
+  const [garmentType,  setGarmentType]  = useState(WOMEN_GARMENTS[0].id);
   const [showPicker,   setShowPicker]   = useState(false);
   const [uploadingSlot, setUploadingSlot] = useState(null);
   const [generating,   setGenerating]   = useState(false);
@@ -360,7 +360,12 @@ function TryOnDemo() {
     setResultUrl(null);
     const hintTimer = setTimeout(() => setSlowHint(true), 12_000);
     try {
-      const outputUrl = await generateTryOn({ personUrl, garmentUrl, garmentType, apiValue: GARMENT_TYPE_TO_API_VALUE[garmentType] ?? 'auto_detect' });
+      const outputUrl = await generateTryOn({
+        personUrl,
+        garmentUrl,
+        garmentType,
+        apiValue: WOMEN_GARMENTS.find(g => g.id === garmentType)?.api ?? 'auto_detect',
+      });
       setResultUrl(outputUrl);
     } catch (err) {
       setError(err.message || 'Something went wrong. Please try again.');

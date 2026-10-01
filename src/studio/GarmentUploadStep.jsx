@@ -1,4 +1,4 @@
-﻿import { useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { Check, X, Image as ImageIcon, AlertCircle } from 'lucide-react';
 
 export default function GarmentUploadStep({ garmentLabel = 'Saree', onBodyUpload, onPalluUpload }) {
@@ -80,7 +80,7 @@ export default function GarmentUploadStep({ garmentLabel = 'Saree', onBodyUpload
       {/* ── Two-Column Light Panel Layout ── */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
         {/* ── LEFT COLUMN: Upload Boxes (Stacked Vertically) ── */}
-        <div className="lg:col-span-5 flex flex-col gap-4 justify-between">
+        <div className="lg:col-span-5 flex flex-col gap-4 justify-between min-h-[200px]">
           {/* Card 1: Body */}
           <div
             onClick={() => !bodyPreview && bodyInputRef.current?.click()}
@@ -202,10 +202,11 @@ export default function GarmentUploadStep({ garmentLabel = 'Saree', onBodyUpload
           </div>
         </div>
 
-        {/* ── RIGHT COLUMN: Do's/Don'ts Visual Guide (3 Cards Side by Side) ── */}
-        <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-3.5 items-stretch">
+        {/* ── RIGHT COLUMN: Do's/Don'ts Visual Guide (horizontal scroll on mobile) ── */}
+        <div className="lg:col-span-7">
+          <div className="flex gap-3 overflow-x-auto pb-1 lg:grid lg:grid-cols-3 lg:gap-3.5" style={{ scrollbarWidth: "none" }}>
           {/* Guide Card 1: DO's */}
-          <div className="border border-[#0f7a3d] rounded-xl bg-white p-2.5 flex flex-col justify-between overflow-hidden shadow-xs">
+          <div className="border border-[#0f7a3d] rounded-xl bg-white p-2.5 flex flex-col justify-between overflow-hidden shadow-xs shrink-0 w-[180px] lg:w-auto">
             {/* Header: Green Checkmark Badge + "DO's" Heading */}
             <div className="flex flex-col items-center pt-0.5 pb-2">
               <div className="w-5 h-5 rounded-full bg-[#0f7a3d] text-white flex items-center justify-center shadow-xs mb-1">
@@ -247,7 +248,7 @@ export default function GarmentUploadStep({ garmentLabel = 'Saree', onBodyUpload
           </div>
 
           {/* Guide Card 2: DON'Ts (No Folded Saree) */}
-          <div className="border border-[#d6293e] rounded-xl bg-white p-2.5 flex flex-col justify-between overflow-hidden shadow-xs">
+          <div className="border border-[#d6293e] rounded-xl bg-white p-2.5 flex flex-col justify-between overflow-hidden shadow-xs shrink-0 w-[180px] lg:w-auto">
             {/* Header: Red X Badge + "DON'Ts" Heading */}
             <div className="flex flex-col items-center pt-0.5 pb-2">
               <div className="w-5 h-5 rounded-full bg-[#d6293e] text-white flex items-center justify-center shadow-xs mb-1">
@@ -272,7 +273,7 @@ export default function GarmentUploadStep({ garmentLabel = 'Saree', onBodyUpload
           </div>
 
           {/* Guide Card 3: DON'Ts (No Long Saree) */}
-          <div className="border border-[#d6293e] rounded-xl bg-white p-2.5 flex flex-col justify-between overflow-hidden shadow-xs">
+          <div className="border border-[#d6293e] rounded-xl bg-white p-2.5 flex flex-col justify-between overflow-hidden shadow-xs shrink-0 w-[180px] lg:w-auto">
             {/* Header: Red X Badge + "DON'Ts" Heading */}
             <div className="flex flex-col items-center pt-0.5 pb-2">
               <div className="w-5 h-5 rounded-full bg-[#d6293e] text-white flex items-center justify-center shadow-xs mb-1">
@@ -294,6 +295,7 @@ export default function GarmentUploadStep({ garmentLabel = 'Saree', onBodyUpload
                 No Long Saree
               </div>
             </div>
+          </div>
           </div>
         </div>
       </div>

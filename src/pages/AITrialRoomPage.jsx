@@ -113,8 +113,24 @@ function GarmentCard({ item, selected, onSelect }) {
   );
 }
 
-/* ─── Upload Box ─────────────────────────────────────────────────── */
-function UploadBox({ label, hint, preview, onFile, onClear, onCamera, accent, exampleSrc }) {
+/* ─── Upload Box CSS ─────────────────────────────────────────────────── */
+const UPLOAD_BOX_CSS = `
+  .vz-upload-btn-primary:hover {
+    background: #EFF6FF !important;
+    border-color: #2563EB !important;
+  }
+  .vz-upload-btn-secondary:hover {
+    background: #F8FAFF !important;
+    border-color: #CBD5E1 !important;
+  }
+  .vz-upload-dropzone:hover {
+    border-color: #93C5FD !important;
+    background: #F0F9FF !important;
+  }
+`;
+
+/* ─── Upload Box ──────────────────────────────────────────────────── */
+function UploadBox({ label, hint, preview, onFile, onClear, onCamera, accent }) {
   const inputRef = useRef(null);
   const [dragging, setDragging] = useState(false);
 
@@ -132,61 +148,127 @@ function UploadBox({ label, hint, preview, onFile, onClear, onCamera, accent, ex
   };
 
   return (
-    <div style={{ flex: 1, minWidth: 0 }}>
-      <p style={{ fontSize: 11, fontWeight: 700, color: "#64748B", letterSpacing: "0.07em", textTransform: "uppercase", marginBottom: 8 }}>
+    <div style={{ width: "100%", minWidth: 0 }}>
+      {/* Label */}
+      <p style={{
+        fontSize: 11, fontWeight: 800, color: "#64748B",
+        letterSpacing: "0.08em", textTransform: "uppercase",
+        marginBottom: 10, lineHeight: 1,
+      }}>
         {label}
       </p>
 
       {preview ? (
-        <div style={{ position: "relative", borderRadius: 18, overflow: "hidden", aspectRatio: "3/4", border: `2px solid ${accent}`, boxShadow: `0 4px 20px ${accent}22` }}>
+        /* ── Preview state ── */
+        <div style={{
+          position: "relative", borderRadius: 18, overflow: "hidden",
+          aspectRatio: "3/4",
+          border: `2px solid ${accent}`,
+          boxShadow: `0 4px 20px ${accent}22`,
+        }}>
           <img src={preview} alt={label} style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top", display: "block" }} />
-          <button onClick={onClear} style={{ position: "absolute", top: 8, right: 8, width: 28, height: 28, borderRadius: "50%", background: "rgba(0,0,0,0.6)", border: "none", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: "#fff" }}>
+          {/* Clear button */}
+          <button onClick={onClear} style={{
+            position: "absolute", top: 8, right: 8,
+            width: 28, height: 28, borderRadius: "50%",
+            background: "rgba(0,0,0,0.6)", border: "none",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            cursor: "pointer", color: "#fff",
+          }}>
             <X size={13} />
           </button>
-          <button onClick={() => inputRef.current?.click()} style={{ position: "absolute", bottom: 10, left: "50%", transform: "translateX(-50%)", background: "rgba(0,0,0,0.7)", backdropFilter: "blur(8px)", color: "#fff", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 999, padding: "5px 14px", fontSize: 10, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap" }}>
+          {/* Change button */}
+          <button onClick={() => inputRef.current?.click()} style={{
+            position: "absolute", bottom: 10, left: "50%", transform: "translateX(-50%)",
+            background: "rgba(0,0,0,0.7)", backdropFilter: "blur(8px)",
+            color: "#fff", border: "1px solid rgba(255,255,255,0.2)",
+            borderRadius: 999, padding: "5px 14px",
+            fontSize: 10, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap",
+          }}>
             Change Photo
           </button>
           <input ref={inputRef} type="file" accept="image/*" onChange={handleChange} style={{ display: "none" }} />
         </div>
       ) : (
+        /* ── Empty / dropzone state ── */
         <div
+          className="vz-upload-dropzone"
           onDragOver={e => { e.preventDefault(); setDragging(true); }}
           onDragLeave={() => setDragging(false)}
           onDrop={handleDrop}
           onClick={() => inputRef.current?.click()}
-          style={{ aspectRatio: "3/4", borderRadius: 18, border: `2px dashed ${dragging ? accent : "#CBD5E1"}`, background: dragging ? `${accent}0A` : "#F8FAFF", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 10, cursor: "pointer", transition: "all 0.2s ease", position: "relative", overflow: "hidden" }}
+          style={{
+            borderRadius: 18,
+            border: `2px dashed ${dragging ? accent : "#CBD5E1"}`,
+            background: dragging ? `${accent}0A` : "#F8FAFF",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 10,
+            cursor: "pointer",
+            transition: "all 0.2s ease",
+            padding: "28px 16px",
+            minHeight: 200,
+          }}
         >
-          {/* Faded example photo watermark */}
-          {exampleSrc && (
-            <img
-              src={exampleSrc}
-              alt=""
-              aria-hidden="true"
-              style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "top", opacity: 0.18, pointerEvents: "none", userSelect: "none" }}
-            />
-          )}
-          {/* Light gradient so text is always readable */}
-          {exampleSrc && (
-            <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(248,250,255,0.55) 0%, rgba(248,250,255,0.72) 100%)", pointerEvents: "none" }} />
-          )}
-          {/* Controls (always on top) */}
-          <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 10 }}>
-          <div style={{ width: 48, height: 48, borderRadius: 14, background: `${accent}14`, display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <Upload size={22} color={accent} strokeWidth={1.75} />
+          {/* Upload icon */}
+          <div style={{
+            width: 52, height: 52, borderRadius: 16,
+            background: `${accent}14`,
+            display: "flex", alignItems: "center", justifyContent: "center",
+            flexShrink: 0,
+          }}>
+            <Upload size={24} color={accent} strokeWidth={1.75} />
           </div>
-          <p style={{ fontSize: 12, fontWeight: 700, color: "#334155", margin: 0, textAlign: "center", padding: "0 12px" }}>{hint}</p>
-          <p style={{ fontSize: 10, color: "#94A3B8", margin: 0 }}>or drag & drop</p>
-          <div style={{ display: "flex", gap: 8, marginTop: 2 }}>
-            <button onClick={e => { e.stopPropagation(); inputRef.current?.click(); }} style={{ display: "flex", alignItems: "center", gap: 5, background: "#fff", border: `1.5px solid ${accent}`, borderRadius: 9, padding: "7px 14px", fontSize: 11, fontWeight: 700, color: accent, cursor: "pointer" }}>
-              <Upload size={12} /> Upload
-            </button>
-            <button onClick={e => { e.stopPropagation(); onCamera?.(); }} style={{ display: "flex", alignItems: "center", gap: 5, background: "#fff", border: "1.5px solid #E2E8F0", borderRadius: 9, padding: "7px 14px", fontSize: 11, fontWeight: 700, color: "#475569", cursor: "pointer" }}>
-              <Camera size={12} /> Camera
-            </button>
-          </div>
-          </div>{/* close controls wrapper */}
-        </div>
 
+          {/* Hint text — wraps properly */}
+          <div style={{ textAlign: "center", maxWidth: 160 }}>
+            <p style={{
+              fontSize: 13, fontWeight: 700, color: "#334155",
+              margin: "0 0 4px", lineHeight: 1.4,
+              whiteSpace: "normal", wordBreak: "break-word",
+            }}>{hint}</p>
+            <p style={{ fontSize: 11, color: "#94A3B8", margin: 0, fontWeight: 500 }}>or drag &amp; drop</p>
+          </div>
+
+          {/* Action buttons */}
+          <div
+            onClick={e => e.stopPropagation()}
+            style={{ display: "flex", flexDirection: "row", gap: 8, flexWrap: "wrap", justifyContent: "center", width: "100%" }}
+          >
+            <button
+              className="vz-upload-btn-primary"
+              onClick={e => { e.stopPropagation(); inputRef.current?.click(); }}
+              style={{
+                display: "flex", alignItems: "center", gap: 6,
+                background: "#fff",
+                border: `1.5px solid ${accent}`,
+                borderRadius: 10, padding: "8px 16px",
+                fontSize: 12, fontWeight: 700, color: accent,
+                cursor: "pointer", whiteSpace: "nowrap",
+                transition: "all 0.15s ease",
+              }}
+            >
+              <Upload size={13} /> Upload
+            </button>
+            <button
+              className="vz-upload-btn-secondary"
+              onClick={e => { e.stopPropagation(); onCamera?.(); }}
+              style={{
+                display: "flex", alignItems: "center", gap: 6,
+                background: "#fff",
+                border: "1.5px solid #E2E8F0",
+                borderRadius: 10, padding: "8px 16px",
+                fontSize: 12, fontWeight: 700, color: "#475569",
+                cursor: "pointer", whiteSpace: "nowrap",
+                transition: "all 0.15s ease",
+              }}
+            >
+              <Camera size={13} /> Camera
+            </button>
+          </div>
+        </div>
       )}
       <input ref={inputRef} type="file" accept="image/*" onChange={handleChange} style={{ display: "none" }} />
     </div>
@@ -472,38 +554,38 @@ export default function AITrialRoomPage() {
     <div style={{ minHeight: "100vh", background: "#F8FAFF", fontFamily: "'Plus Jakarta Sans', Inter, sans-serif" }}>
 
       {/* ── Sticky Header ── */}
-      <header style={{ position: "sticky", top: 0, zIndex: 50, background: "rgba(255,255,255,0.97)", backdropFilter: "blur(12px)", borderBottom: "1px solid #F1F5F9", boxShadow: "0 1px 8px rgba(0,0,0,0.05)", height: 64 }}>
-        <div style={{ maxWidth: 1100, margin: "0 auto", height: "100%", padding: "0 20px", display: "flex", alignItems: "center", gap: 14 }}>
-          <Link to="/" style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 11, fontWeight: 600, color: "#64748B", textDecoration: "none", flexShrink: 0 }}
+      <header style={{ position: "sticky", top: 0, zIndex: 50, background: "rgba(255,255,255,0.97)", backdropFilter: "blur(12px)", borderBottom: "1px solid #F1F5F9", boxShadow: "0 1px 8px rgba(0,0,0,0.05)", minHeight: 56 }}>
+        <div style={{ maxWidth: 1100, margin: "0 auto", minHeight: 56, padding: "0 14px", display: "flex", alignItems: "center", gap: 10 }}>
+          <Link to="/" style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 11, fontWeight: 600, color: "#64748B", textDecoration: "none", flexShrink: 0 }}
             onMouseEnter={e => e.currentTarget.style.color = BLUE} onMouseLeave={e => e.currentTarget.style.color = "#64748B"}>
             <ArrowLeft size={13} strokeWidth={2.5} /> Back
           </Link>
           <div style={{ width: 1, height: 18, background: "#E2E8F0", flexShrink: 0 }} />
-          <img src="/logo.png" alt="Vizzle" style={{ height: 44, width: "auto", objectFit: "contain", display: "block", flexShrink: 0 }} />
+          <img src="/logo.png" alt="Vizzle" style={{ height: 36, width: "auto", objectFit: "contain", display: "block", flexShrink: 0 }} />
           <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center" }}>
-            <span style={{ fontSize: 14, fontWeight: 800, color: "#0F172A", letterSpacing: "-0.02em" }}>Try On</span>
+            <span style={{ fontSize: 13, fontWeight: 800, color: "#0F172A", letterSpacing: "-0.02em" }}>Try On</span>
             <button onClick={() => alert("Tutorial coming soon!")} style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 10, fontWeight: 600, color: BLUE, background: "none", border: "none", cursor: "pointer", padding: 0 }}>
               <Play size={8} fill={BLUE} /> Watch Tutorial
             </button>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
             {user && (
-              <div style={{ display: "flex", alignItems: "center", gap: 7, background: BLUE_LIGHT, borderRadius: 999, padding: "5px 12px 5px 5px" }}>
-                <div style={{ width: 24, height: 24, borderRadius: "50%", background: `linear-gradient(135deg,${BLUE},${INDIGO})`, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 10, fontWeight: 800 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 6, background: BLUE_LIGHT, borderRadius: 999, padding: "4px 10px 4px 4px" }}>
+                <div style={{ width: 22, height: 22, borderRadius: "50%", background: `linear-gradient(135deg,${BLUE},${INDIGO})`, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 10, fontWeight: 800 }}>
                   {user.initial}
                 </div>
-                <span style={{ fontSize: 10, fontWeight: 700, color: "#1D4ED8" }}>{user.displayName?.split(" ")[0]}</span>
+                <span style={{ fontSize: 10, fontWeight: 700, color: "#1D4ED8", display: "none", maxWidth: 70, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} className="sm-show">{user.displayName?.split(" ")[0]}</span>
               </div>
             )}
-            <button onClick={() => setDrawerOpen(true)} style={{ width: 36, height: 36, borderRadius: 9, background: "#F1F5F9", border: "1.5px solid #E2E8F0", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: "#334155" }} aria-label="Menu">
-              <Menu size={17} />
+            <button onClick={() => setDrawerOpen(true)} style={{ width: 34, height: 34, borderRadius: 9, background: "#F1F5F9", border: "1.5px solid #E2E8F0", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: "#334155" }} aria-label="Menu">
+              <Menu size={16} />
             </button>
           </div>
         </div>
       </header>
 
       {/* ── Main content ── */}
-      <main style={{ maxWidth: 920, margin: "0 auto", padding: "28px 20px 80px" }}>
+      <main style={{ maxWidth: 920, margin: "0 auto", padding: "20px 14px 80px" }}>
 
         {/* Quota */}
         <div style={{ textAlign: "center", marginBottom: 24 }}>
@@ -515,14 +597,16 @@ export default function AITrialRoomPage() {
         {/* ─────────────────────────────────────────────────── */}
         {/* SECTION 1 : Upload Workspace                       */}
         {/* ─────────────────────────────────────────────────── */}
+        <style>{UPLOAD_BOX_CSS}</style>
         <motion.section initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }}
-          style={{ background: "#fff", borderRadius: 22, border: "1px solid #E8EFFD", boxShadow: "0 2px 16px rgba(37,99,235,0.06)", padding: "22px 20px", marginBottom: 16 }}>
+          style={{ background: "#fff", borderRadius: 22, border: "1px solid #E8EFFD", boxShadow: "0 2px 16px rgba(37,99,235,0.06)", padding: "20px 18px", marginBottom: 16 }}>
 
           <p style={{ fontSize: 11, fontWeight: 800, color: "#94A3B8", letterSpacing: "0.08em", textTransform: "uppercase", margin: "0 0 16px" }}>
             Upload Photos
           </p>
 
-          <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
+          {/* 2-column grid — always side-by-side like the reference */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
             <UploadBox
               label="Customer Photo"
               hint="Upload a full-body photo"
@@ -545,9 +629,9 @@ export default function AITrialRoomPage() {
             {/* Result panel */}
             <AnimatePresence>
               {(isProcessing || resultImg) && (
-                <motion.div key="result" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} style={{ flex: 1, minWidth: 180 }}>
+                <motion.div key="result" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} style={{ flex: "1 1 140px", minWidth: 0, gridColumn: "1 / -1" }}>
                   <p style={{ fontSize: 11, fontWeight: 800, color: "#94A3B8", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 8 }}>AI Result</p>
-                  <div style={{ aspectRatio: "3/4", borderRadius: 18, overflow: "hidden", background: "#0F172A", border: `2px solid ${BLUE}`, boxShadow: `0 8px 28px rgba(37,99,235,0.2)`, position: "relative" }}>
+                  <div style={{ maxWidth: 280, margin: "0 auto", aspectRatio: "3/4", borderRadius: 18, overflow: "hidden", background: "#0F172A", border: `2px solid ${BLUE}`, boxShadow: `0 8px 28px rgba(37,99,235,0.2)`, position: "relative" }}>
                     {isProcessing ? (
                       <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 14 }}>
                         <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: "linear" }}>
@@ -580,6 +664,7 @@ export default function AITrialRoomPage() {
               )}
             </AnimatePresence>
           </div>
+
 
           {/* Sample carousel – single unified row */}
           <div style={{ marginTop: 20 }}>
