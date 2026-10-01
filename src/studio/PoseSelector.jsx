@@ -6,7 +6,7 @@ import { WOMEN_POSES, MEN_POSES, BOYS_POSES } from "../data/poses";
 /**
  * PoseSelector component for Vizzle Studio
  * - Automatically switches to specialized Saree Drape collection for saree garments
- * - Renders all catalogue poses directly in clean 5-column grid layout
+ * - Renders exactly 10 catalogue poses in a clean 5-column x 2-row grid, with all remaining poses in "View All"
  * - Brand Blue highlight, glow, checkmark badges, and full-screen modal integration
  */
 export default function PoseSelector({
@@ -35,6 +35,18 @@ export default function PoseSelector({
     if (audience === "boys") return BOYS_POSES;
     return WOMEN_POSES;
   }, [isSaree, customPoses, audience]);
+
+  // Render exactly 10 photos in the default grid (5 columns x 2 rows), rest in "View All".
+  // If the user selected a pose from "View All" beyond the top 10, keep it visible in the 10-card view.
+  const displayPoses = useMemo(() => {
+    if (isSaree) return availablePoses;
+    const top10 = availablePoses.slice(0, 10);
+    const inTop10 = top10.some((p) => p.id === selectedPose);
+    if (inTop10 || !selectedPose) return top10;
+    const selectedObj = availablePoses.find((p) => p.id === selectedPose);
+    if (!selectedObj) return top10;
+    return [...top10.slice(0, 9), selectedObj];
+  }, [availablePoses, isSaree, selectedPose]);
 
   return (
     <div>
@@ -75,9 +87,9 @@ export default function PoseSelector({
         )}
       </div>
 
-      {/* Grid Layout & Unified Brand Blue Styling */}
+      {/* Grid of exactly 10 cards (5 columns x 2 rows) */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 p-0.5">
-        {availablePoses.map((pose) => {
+        {displayPoses.map((pose) => {
           const isSelected = selectedPose === pose.id;
           const poseName = pose.name || pose.label;
           const poseImg = pose.imagePath || pose.img;
