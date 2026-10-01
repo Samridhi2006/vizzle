@@ -167,7 +167,7 @@ export default function StudioWorkflow() {
   const [garmentType, setGarmentType] = useState("crop-top");
   const [selectedModel, setSelectedModel] = useState("meera");
   const [selectedBg, setSelectedBg] = useState("natural-limestone-wall");
-  const [selectedCustomPose, setSelectedCustomPose] = useState("women-pose-01");
+  const [selectedCustomPose, setSelectedCustomPose] = useState("front-view");
   const [customBackgrounds, setCustomBackgrounds] = useState([]);
   const customBgInputRef = useRef(null);
 
@@ -214,11 +214,11 @@ export default function StudioWorkflow() {
       }
     } else {
       const isSareePose = sareeSpecificPoses.some((p) => p.id === selectedCustomPose);
-      if (isSareePose || selectedCustomPose === "front-view") {
+      if (isSareePose) {
         setSelectedCustomPose(
           audience === "men" ? "men-front-view" :
           audience === "boys" ? "boy-pose-aarav" :
-          "women-pose-01"
+          "front-view"
         );
       }
     }

@@ -2,6 +2,18 @@
 // Official Studio Catalogue Poses Roster for Vizzle Studio
 
 export const WOMEN_POSES = [
+  // ── Original Classic Catalogue Poses (10) ──────────────────────────────────
+  { id: "front-view", label: "Front View", sublabel: "Standing neutral", img: "/images/poses/women/front_view.jpg", category: "catalog", description: "Classic straight-on front angle showcasing full outfit silhouette." },
+  { id: "side-turn", label: "Side Turn", sublabel: "90° Profile view", img: "/images/poses/women/side_turn.jpg", category: "catalog", description: "Sharp 90-degree lateral side view highlighting contours and fit." },
+  { id: "angle-45", label: "45° Angle", sublabel: "Three-quarter stance", img: "/images/poses/women/angle_45.jpg", category: "profile", description: "Flattering 45-degree three-quarter turn adding depth and dimension." },
+  { id: "hands-on-waist", label: "Hands on Waist", sublabel: "Editorial power pose", img: "/images/poses/women/hands_on_waist.jpg", category: "editorial", description: "Confident power stance with both hands on waist." },
+  { id: "cross-arm", label: "Cross Arm", sublabel: "Confident poise", img: "/images/poses/women/cross_arm.jpg", category: "editorial", description: "Poised arms crossed stance, ideal for blazers and jackets." },
+  { id: "walking", label: "Walking", sublabel: "Dynamic runway stride", img: "/images/poses/women/walking.jpg", category: "motion", description: "Dynamic mid-stride runway walk showcasing fabric drape and flow." },
+  { id: "over-shoulder", label: "Over the Shoulder", sublabel: "Turned gaze", img: "/images/poses/women/over_shoulder.jpg", category: "editorial", description: "Model turned with head looking over shoulder, ideal for back designs." },
+  { id: "back-view", label: "Back View", sublabel: "180° Rear detail", img: "/images/poses/women/back_view.jpg", category: "catalog", description: "Full rear angle showing back neckline, zippers, and tailoring." },
+  { id: "seated-pose", label: "Seated Pose", sublabel: "Minimalist block", img: "/images/poses/women/seated_pose.jpg", category: "seated", description: "Graceful seated pose for lifestyle and luxury lookbooks." },
+  { id: "casual-lean", label: "Casual Lean", sublabel: "Hand in pocket", img: "/images/poses/women/casual_lean.jpg", category: "motion", description: "Relaxed casual stance perfect for denim, co-ords, and everyday wear." },
+
   // ── Upper Body & Portrait Poses (1-20) ──────────────────────────────────
   {
     id: "women-pose-01",
