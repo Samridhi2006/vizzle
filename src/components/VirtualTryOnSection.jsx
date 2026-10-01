@@ -17,8 +17,6 @@ const WIDGET_API_KEY = import.meta.env.VITE_WIDGET_API_KEY;
 /* ─── Women's Garment Type Dataset — 30 items ───────────────────────── */
 const WOMEN_GARMENTS = [
   // ── Dresses ──────────────────────────────────────────────────────────
-  { id: 'Mini Frock',         label: 'Mini Frock',          img: '/garments/women-picker/mini-frock.jpg',          category: 'Dresses',        api: 'dress'         },
-  { id: 'Knee Length Frock',  label: 'Knee Length Frock',   img: '/garments/women-picker/knee-length-frock.jpg',   category: 'Dresses',        api: 'dress'         },
   { id: 'Long Frock',         label: 'Long Frock',          img: '/garments/women-picker/long-frock.jpg',          category: 'Dresses',        api: 'dress'         },
   { id: 'Cocktail',           label: 'Cocktail',            img: '/garments/women-picker/cocktail.jpg',            category: 'Dresses',        api: 'dress'         },
   { id: 'Jumpsuit',           label: 'Jumpsuit',            img: '/garments/women-picker/jumpsuit.jpg',            category: 'Dresses',        api: 'jumpsuit'      },
@@ -54,15 +52,8 @@ const WOMEN_GARMENTS = [
   { id: 'Inner Wear',         label: 'Inner Wear',          img: '/garments/women-picker/inner-wear.jpg',          category: 'Bottoms',        api: 't-shirt'       },
   // ── Mannequin Drapes ──────────────────────────────────────────────────
   { id: 'Saree on Mannequin', label: 'Saree on Mannequin',  img: '/garments/women-picker/saree-mannequin.jpg',     category: 'Mannequin',      api: 'saree'         },
-  { id: 'Mini Frock on Mannequin',        label: 'Mini Frock on Mannequin',        img: '/garments/women-picker/mini-frock-mannequin.jpg',   category: 'Mannequin', api: 'dress'    },
-  { id: 'Knee Frock on Mannequin',        label: 'Knee Length Frock on Mannequin', img: '/garments/women-picker/knee-frock-mannequin.jpg',   category: 'Mannequin', api: 'dress'    },
-  { id: 'Long Frock on Mannequin',        label: 'Long Frock on Mannequin',        img: '/garments/women-picker/long-frock-mannequin.jpg',   category: 'Mannequin', api: 'dress'    },
-  { id: 'Kurti on Mannequin',             label: 'Kurti on Mannequin',             img: '/garments/women-picker/kurti-mannequin.jpg',        category: 'Mannequin', api: 'kurti'    },
-  { id: 'Kurti & Pyjama on Mannequin',    label: 'Kurti & Pyjama on Mannequin',    img: '/garments/women-picker/kurti-pyjama-mannequin.jpg', category: 'Mannequin', api: 'kurti'    },
   { id: 'Lehenga on Mannequin',           label: 'Lehenga on Mannequin',           img: '/garments/women-picker/lehenga-mannequin.jpg',      category: 'Mannequin', api: 'lehenga'  },
   { id: 'Half Saree on Mannequin',        label: 'Half Saree on Mannequin',        img: '/garments/women-picker/half-saree-mannequin.jpg',   category: 'Mannequin', api: 'saree'    },
-  // Assumed labels (from screenshot row 3 of ss2 — partially cut off):
-  { id: 'Cocktail on Mannequin',          label: 'Cocktail on Mannequin',          img: '/garments/women-picker/cocktail-mannequin.jpg',     category: 'Mannequin', api: 'dress'    },
 ];
 
 

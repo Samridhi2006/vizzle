@@ -3,13 +3,13 @@
 // Gender-validated, asset-verified, and free of cross-gender mismatches.
 
 export const GARMENT_CATEGORIES = [
-  { id: 'all', label: 'All', count: 39 },
-  { id: 'ethnic', label: 'Ethnic Wear', count: 7 },
+  { id: 'all', label: 'All', count: 32 },
+  { id: 'ethnic', label: 'Ethnic Wear', count: 5 },
   { id: 'tops', label: 'Tops & Shirts', count: 8 },
   { id: 'outerwear', label: 'Outerwear', count: 4 },
-  { id: 'dresses', label: 'Dresses', count: 5 },
-  { id: 'bottoms', label: 'Bottoms', count: 7 },
-  { id: 'mannequin', label: '3D Drapes', count: 8 },
+  { id: 'dresses', label: 'Dresses', count: 4 },
+  { id: 'bottoms', label: 'Bottoms', count: 8 },
+  { id: 'mannequin', label: '3D Drapes', count: 3 },
 ];
 
 /**
@@ -83,16 +83,6 @@ export const WOMEN_GARMENTS = [
     img: '/garments/women-picker/chudidar.jpg',
     description: 'Purple embroidered straight kameez paired with churidar bottoms and sheer scalloped dupatta.',
     tags: ['georgette', 'churidar', 'kameez', 'embroidered', 'ethnic'],
-  },
-  {
-    id: 'half-saree',
-    label: 'Half Saree',
-    category: 'ethnic',
-    categoryLabel: 'Ethnic Wear',
-    displayStyle: 'flat-lay',
-    img: '/garments/women-picker/half-saree-mannequin.jpg',
-    description: 'Traditional South Indian half saree (Langa Voni) with pleated skirt, matching blouse, and drape.',
-    tags: ['half saree', 'langa voni', 'traditional', 'ethnic', 'silk'],
   },
 
   // ── 2. Tops, Shirts & Knitwear ────────────────────────────────────────
@@ -308,16 +298,6 @@ export const WOMEN_GARMENTS = [
 
   // ── 5. Dresses & Jumpsuits ───────────────────────────────────────────
   {
-    id: 'knee-length-frock',
-    label: 'Knee Length Frock',
-    category: 'dresses',
-    categoryLabel: 'Dresses',
-    displayStyle: 'flat-lay',
-    img: '/garments/women-picker/knee-length-frock.jpg',
-    description: 'Midi sundress with flutter sleeves and flared hem.',
-    tags: ['frock', 'midi', 'casual'],
-  },
-  {
     id: 'long-frock',
     label: 'Long Frock',
     category: 'dresses',
@@ -370,56 +350,6 @@ export const WOMEN_GARMENTS = [
     img: '/garments/women-picker/saree-mannequin.jpg',
     description: 'Silk saree with gold border draped on studio mannequin.',
     tags: ['saree', 'mannequin', '3d drape'],
-  },
-  {
-    id: 'mini-frock-mannequin',
-    label: 'Mini Frock on Mannequin',
-    category: 'mannequin',
-    categoryLabel: '3D Drapes',
-    displayStyle: 'mannequin',
-    img: '/garments/women-picker/mini-frock-mannequin.jpg',
-    description: 'Mini dress displayed on a dressmaker form.',
-    tags: ['mini dress', 'mannequin'],
-  },
-  {
-    id: 'knee-frock-mannequin',
-    label: 'Knee Frock on Mannequin',
-    category: 'mannequin',
-    categoryLabel: '3D Drapes',
-    displayStyle: 'mannequin',
-    img: '/garments/women-picker/knee-frock-mannequin.jpg',
-    description: 'Knee-length dress draped on mannequin.',
-    tags: ['knee length', 'mannequin'],
-  },
-  {
-    id: 'long-frock-mannequin',
-    label: 'Long Frock on Mannequin',
-    category: 'mannequin',
-    categoryLabel: '3D Drapes',
-    displayStyle: 'mannequin',
-    img: '/garments/women-picker/long-frock-mannequin.jpg',
-    description: 'Floor-length gown draped on tailor mannequin.',
-    tags: ['gown', 'mannequin'],
-  },
-  {
-    id: 'kurti-mannequin',
-    label: 'Kurti on Mannequin',
-    category: 'mannequin',
-    categoryLabel: '3D Drapes',
-    displayStyle: 'mannequin',
-    img: '/garments/women-picker/kurti-mannequin.jpg',
-    description: 'Flared kurti on studio mannequin.',
-    tags: ['kurti', 'mannequin'],
-  },
-  {
-    id: 'kurti-pyjama-mannequin',
-    label: 'Kurti & Pyjama on Mannequin',
-    category: 'mannequin',
-    categoryLabel: '3D Drapes',
-    displayStyle: 'mannequin',
-    img: '/garments/women-picker/kurti-pyjama-mannequin.jpg',
-    description: 'Kurti set on studio mannequin.',
-    tags: ['kurti set', 'mannequin'],
   },
   {
     id: 'lehenga-mannequin',
