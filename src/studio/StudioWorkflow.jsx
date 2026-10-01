@@ -23,6 +23,8 @@ import PoseSelector from "./PoseSelector";
 import { WOMEN_POSES, MEN_POSES, BOYS_POSES } from "../data/poses";
 import { sareeSpecificPoses, isSareeGarment } from "../data/sareePoses";
 import { BACKGROUNDS } from "../data/backgrounds";
+import PlatformSelector from "./PlatformSelector";
+import PlatformPreview from "./PlatformPreview";
 
 // ── Data ──────────────────────────────────────────────────────────────────────
 
@@ -262,6 +264,23 @@ export default function StudioWorkflow() {
 
   const credits = resolution === "2K" ? 10 : 20;
 
+  const currentGarmentLabel = useMemo(() => {
+    return GARMENTS[audience]?.find((g) => g.id === garmentType)?.label || "Garment";
+  }, [audience, garmentType]);
+
+  const currentModelName = useMemo(() => {
+    return currentModels?.find((m) => m.id === selectedModel)?.name || "Fashion Model";
+  }, [currentModels, selectedModel]);
+
+  const activePoseObj = useMemo(() => {
+    return currentPoses?.find((p) => p.id === selectedCustomPose) || currentPoses?.[0];
+  }, [currentPoses, selectedCustomPose]);
+
+  const previewAsset = useMemo(() => {
+    if (generated) return "/catalogue/brand_main.jpg";
+    return activePoseObj?.img || activePoseObj?.imagePath || "/images/poses/women/front_view.jpg";
+  }, [generated, activePoseObj]);
+
   const handleGenerate = () => {
     setGenerating(true);
     setTimeout(() => { setGenerating(false); setGenerated(true); }, 2500);
@@ -269,7 +288,7 @@ export default function StudioWorkflow() {
 
   return (
     <div className="flex-1 overflow-y-auto" style={{ background: '#f0f4f8' }}>
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 sm:py-6 space-y-4">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 py-4 sm:py-6 space-y-4">
 
         {/* ── Step 1: Audience ── */}
         <div className="bg-white rounded-2xl border border-gray-200/90 p-5 sm:p-6 shadow-xs">
@@ -693,30 +712,51 @@ export default function StudioWorkflow() {
           />
         </div>
 
-        {/* ── Step 7: Platform ── */}
-        <div className="bg-white rounded-2xl border border-slate-100 p-6 shadow-sm">
-          <StepHeader number={7} title="Publishing Platform" />
-          <div className="flex flex-wrap gap-3">
-            {PLATFORMS.map((p) => (
-              <button
-                key={p.id}
-                onClick={() => setPlatform(p.id)}
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 text-sm font-semibold transition-all ${
-                  platform === p.id
-                    ? "border-blue-600 bg-blue-50 text-slate-900"
-                    : "border-slate-100 text-slate-600 hover:border-blue-200"
-                }`}
-              >
-                <span
-                  className="w-6 h-6 rounded-lg flex items-center justify-center text-white text-[9px] font-black"
-                  style={{ background: p.color }}
-                >
-                  {p.letter}
+        {/* ── Step 7: Publishing Platform (Left) & Catalogue Preview (Right Beside It) ── */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+          {/* Left: Publishing Platform Selection Card */}
+          <div className="lg:col-span-5 bg-white rounded-2xl border border-gray-200/90 p-5 sm:p-6 shadow-xs flex flex-col justify-between">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 text-white text-[11px] font-bold flex items-center justify-center flex-shrink-0">
+                  7
                 </span>
-                {p.label}
-                {platform === p.id && <Check size={12} className="text-blue-600" strokeWidth={3} />}
-              </button>
-            ))}
+                <h3 className="text-sm sm:text-base font-bold text-slate-900">Publishing Platform</h3>
+              </div>
+              <p className="text-xs text-slate-500 ml-8 mb-4">
+                Select your retail or e-commerce destination
+              </p>
+
+              <PlatformSelector
+                selectedPlatform={platform}
+                onSelectPlatform={setPlatform}
+                gridClassName="grid grid-cols-2 gap-2.5"
+              />
+            </div>
+
+            <div className="mt-4 pt-3.5 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400">
+              <span className="flex items-center gap-1.5">
+                <Sparkles size={12} className="text-blue-600" />
+                <span>Auto-calibrated for store</span>
+              </span>
+              <span className="font-bold text-blue-600 uppercase text-[10px] tracking-wider bg-blue-50 px-2 py-0.5 rounded border border-blue-200/60">
+                {platform} Ready
+              </span>
+            </div>
+          </div>
+
+          {/* Right: Dedicated Catalogue Preview Card (Beside Publishing Platform) */}
+          <div className="lg:col-span-7 flex flex-col">
+            <PlatformPreview
+              platform={platform}
+              previewImage={previewAsset}
+              garmentLabel={currentGarmentLabel}
+              modelName={currentModelName}
+              generating={generating}
+              generated={generated}
+              ratio={ratio}
+              resolution={resolution}
+            />
           </div>
         </div>
 
