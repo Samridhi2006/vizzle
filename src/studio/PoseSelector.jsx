@@ -5,8 +5,9 @@ import { WOMEN_POSES, MEN_POSES, BOYS_POSES } from "../data/poses";
 
 /**
  * PoseSelector component for Vizzle Studio
- * Automatically switches to the specialized Saree Drape collection
- * whenever any saree variant is selected (saree, saree-mannequin, half-saree, half-saree-mannequin).
+ * - Automatically switches to specialized Saree Drape collection for saree garments
+ * - Renders all catalogue poses directly in clean 5-column grid layout
+ * - Brand Blue highlight, glow, checkmark badges, and full-screen modal integration
  */
 export default function PoseSelector({
   selectedGarment,
@@ -30,9 +31,9 @@ export default function PoseSelector({
     if (customPoses && customPoses.length > 0) {
       return customPoses;
     }
-    if (audience === "men") return MEN_POSES.slice(0, 10);
-    if (audience === "boys") return BOYS_POSES.slice(0, 10);
-    return WOMEN_POSES.slice(0, 10);
+    if (audience === "men") return MEN_POSES;
+    if (audience === "boys") return BOYS_POSES;
+    return WOMEN_POSES;
   }, [isSaree, customPoses, audience]);
 
   return (
@@ -93,8 +94,8 @@ export default function PoseSelector({
                   : "border border-slate-200/80 hover:border-slate-300 hover:shadow-xs"
               }`}
             >
-              {/* Professional model preview image container */}
-              <div className="w-full h-44 rounded-xl overflow-hidden bg-slate-50 relative flex items-center justify-center">
+              {/* Professional model preview image container (aspect 3/4) */}
+              <div className="w-full aspect-[3/4] rounded-xl overflow-hidden bg-slate-50 relative flex items-center justify-center">
                 <img
                   src={poseImg}
                   alt={poseName}

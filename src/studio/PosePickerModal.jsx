@@ -1,18 +1,8 @@
-import { useState, useMemo } from "react";
+import React from "react";
 import { X, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { POSE_CATEGORIES } from "../data/poses";
 
 export default function PosePickerModal({ isOpen, selected, onSelect, onClose, poses = [] }) {
-  const [filterCategory, setFilterCategory] = useState("all");
-
-  const filteredPoses = useMemo(() => {
-    return poses.filter((p) => {
-      if (filterCategory !== "all" && p.category !== filterCategory) return false;
-      return true;
-    });
-  }, [poses, filterCategory]);
-
   if (!isOpen) return null;
 
   return (
@@ -40,49 +30,25 @@ export default function PosePickerModal({ isOpen, selected, onSelect, onClose, p
           transition={{ duration: 0.2 }}
           className="relative bg-white rounded-2xl shadow-2xl border border-slate-200/80 w-full max-w-6xl max-h-[92vh] flex flex-col overflow-hidden z-10"
         >
-          {/* Fixed Sticky Header & Category Filter Pills */}
-          <div className="flex flex-col border-b border-slate-100 bg-white shrink-0 z-10">
-            {/* Header */}
-            <div className="px-6 sm:px-8 py-5 flex items-center justify-between">
-              <h2 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
-                All Poses
-              </h2>
-              <button
-                type="button"
-                onClick={onClose}
-                className="w-9 h-9 rounded-xl hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
-                aria-label="Close modal"
-              >
-                <X size={20} />
-              </button>
-            </div>
-
-            {/* Category Filter Pill Row */}
-            <div className="px-6 sm:px-8 pb-4.5 pt-0 flex items-center gap-2 overflow-x-auto no-scrollbar">
-              {POSE_CATEGORIES.map((cat) => {
-                const isActive = filterCategory === cat.id;
-                return (
-                  <button
-                    key={cat.id}
-                    type="button"
-                    onClick={() => setFilterCategory(cat.id)}
-                    className={`rounded-full px-4 py-1.5 text-xs sm:text-[13px] font-semibold transition-all whitespace-nowrap cursor-pointer ${
-                      isActive
-                        ? "border border-blue-600 bg-blue-600 text-white shadow-xs"
-                        : "border border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
-                    }`}
-                  >
-                    {cat.label}
-                  </button>
-                );
-              })}
-            </div>
+          {/* Header */}
+          <div className="px-6 sm:px-8 py-5 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 z-10">
+            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
+              All Poses
+            </h2>
+            <button
+              type="button"
+              onClick={onClose}
+              className="w-9 h-9 rounded-xl hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
+              aria-label="Close modal"
+            >
+              <X size={20} />
+            </button>
           </div>
 
           {/* 6-Column Scrollable Grid */}
           <div className="p-6 sm:p-8 overflow-y-auto flex-1">
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3.5 sm:gap-4">
-              {filteredPoses.map((p) => {
+              {poses.map((p) => {
                 const isSelected = selected === p.id;
                 const poseName = p.name || p.label;
                 const poseImg = p.imagePath || p.img;
