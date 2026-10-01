@@ -1,4 +1,4 @@
-﻿import { useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { X, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { POSE_CATEGORIES } from "../data/poses";
@@ -68,7 +68,7 @@ export default function PosePickerModal({ isOpen, selected, onSelect, onClose, p
                     onClick={() => setFilterCategory(cat.id)}
                     className={`rounded-full px-4 py-1.5 text-xs sm:text-[13px] font-semibold transition-all whitespace-nowrap cursor-pointer ${
                       isActive
-                        ? "border border-[#e91e63] bg-[#e91e63] text-white shadow-xs"
+                        ? "border border-blue-600 bg-blue-600 text-white shadow-xs"
                         : "border border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
                     }`}
                   >
@@ -84,6 +84,10 @@ export default function PosePickerModal({ isOpen, selected, onSelect, onClose, p
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3.5 sm:gap-4">
               {filteredPoses.map((p) => {
                 const isSelected = selected === p.id;
+                const poseName = p.name || p.label;
+                const poseImg = p.imagePath || p.img;
+                const poseSub = p.sublabel || "Catalogue pose";
+
                 return (
                   <button
                     key={p.id}
@@ -91,26 +95,26 @@ export default function PosePickerModal({ isOpen, selected, onSelect, onClose, p
                     onClick={() => onSelect(p.id)}
                     className={`group relative rounded-xl border transition-all duration-200 cursor-pointer flex flex-col items-center bg-white text-left p-2.5 ${
                       isSelected
-                        ? "border-[2.5px] border-[#e91e63] shadow-sm ring-1 ring-[#e91e63]/20"
+                        ? "border-2 border-blue-600 bg-blue-50/20 shadow-md ring-2 ring-blue-500/20"
                         : "border border-slate-200 hover:border-slate-300 hover:shadow-xs"
                     }`}
                     style={{ borderRadius: "12px" }}
                   >
-                    {/* Full-body Portrait Photo (3:4 aspect ratio, head-to-shoe crop) */}
+                    {/* Full-body Portrait Photo */}
                     <div className="w-full aspect-[3/4] rounded-lg overflow-hidden bg-slate-50 relative flex items-center justify-center">
                       <img
-                        src={p.img}
-                        alt={p.label}
+                        src={poseImg}
+                        alt={poseName}
                         className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
                         onError={(e) => {
                           e.target.onerror = null;
-                          e.target.src = "/garments/men/suit.jpg";
+                          e.target.src = "/hero_model_1.jpg";
                         }}
                       />
 
-                      {/* Small circular pink badge, top-right corner of the image */}
+                      {/* Small circular blue badge, top-right corner of the image */}
                       {isSelected && (
-                        <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-[#e91e63] text-white flex items-center justify-center shadow-md z-10">
+                        <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-md z-10">
                           <Check size={11} strokeWidth={3} />
                         </div>
                       )}
@@ -119,10 +123,10 @@ export default function PosePickerModal({ isOpen, selected, onSelect, onClose, p
                     {/* Pose name & descriptor in plain white strip below photo */}
                     <div className="w-full pt-2 pb-0.5 text-center bg-white">
                       <p className="text-xs sm:text-[13px] font-bold text-slate-900 tracking-tight truncate">
-                        {p.label}
+                        {poseName}
                       </p>
                       <p className="text-[10px] sm:text-[11px] text-slate-500 font-normal truncate mt-0.5">
-                        {p.sublabel}
+                        {poseSub}
                       </p>
                     </div>
                   </button>

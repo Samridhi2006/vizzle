@@ -1,117 +1,116 @@
 import { useState, useMemo } from 'react';
-import { Check, Sparkles, ChevronRight, Grid } from 'lucide-react';
-import { WOMEN_GARMENTS, GARMENT_CATEGORIES, POPULAR_GARMENT_IDS } from '../data/womenGarments';
+import { Check, LayoutGrid } from 'lucide-react';
+import { WOMEN_GARMENTS, POPULAR_GARMENT_IDS } from '../data/womenGarments';
 import GarmentSelectorModal from './GarmentSelectorModal';
 
-export default function GarmentSelector({ selectedId, onSelect }) {
+export default function GarmentSelector({ selectedId, onSelect, mode = 'single', setMode }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [activeCategory, setActiveCategory] = useState('all');
 
-  // Find currently selected garment
-  const selectedGarment = useMemo(() => {
-    return WOMEN_GARMENTS.find((g) => g.id === selectedId) || WOMEN_GARMENTS[0];
+  // Initial 10 visible garments matching Screenshot 1:
+  // If the user selected a garment not in the top 10, keep it visible in the 10 cards
+  const visibleGarments = useMemo(() => {
+    const top10 = POPULAR_GARMENT_IDS.map((id) =>
+      WOMEN_GARMENTS.find((g) => g.id === id)
+    ).filter(Boolean);
+
+    const isInTop10 = top10.some((g) => g.id === selectedId);
+    if (isInTop10 || !selectedId) return top10;
+
+    const selectedObj = WOMEN_GARMENTS.find((g) => g.id === selectedId);
+    if (!selectedObj) return top10;
+
+    return [...top10.slice(0, 9), selectedObj];
   }, [selectedId]);
 
-  // Main Dashboard Preview Grid:
-  // Shows 5 or 10 curated popular garments in a clean 5-column grid.
-  // If the user selects a garment not in the popular list, ensure it appears in the grid.
-  const previewGarments = useMemo(() => {
-    let list = [];
-    if (activeCategory === 'all') {
-      // Top 10 popular garments
-      list = WOMEN_GARMENTS.filter((g) => POPULAR_GARMENT_IDS.includes(g.id));
-    } else {
-      // First 5-10 garments of selected category
-      list = WOMEN_GARMENTS.filter((g) => g.category === activeCategory).slice(0, 10);
-    }
-
-    // If current selected garment isn't in preview, prepend or include it
-    if (selectedGarment && !list.some((g) => g.id === selectedGarment.id)) {
-      list = [selectedGarment, ...list.slice(0, 9)];
-    }
-
-    return list;
-  }, [activeCategory, selectedGarment]);
-
   return (
-    <div className="space-y-3.5">
-      {/* ── Top Bar: Single Row Categories & "View All" Action ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-1">
-        {/* Single-Row Clean Category Pills (No overflow scrollbar) */}
-        <div className="flex items-center gap-1.5 flex-wrap">
-          {GARMENT_CATEGORIES.map((cat) => {
-            const isActive = activeCategory === cat.id;
-            return (
-              <button
-                key={cat.id}
-                type="button"
-                onClick={() => setActiveCategory(cat.id)}
-                className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
-                  isActive
-                    ? 'bg-slate-900 text-white shadow-xs'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200/80'
-                }`}
-              >
-                <span>{cat.label}</span>
-              </button>
-            );
-          })}
+    <div>
+      {/* ── Header with Number 2, Title, Subtitle, and "View All" button ── */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 mb-3">
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            <span className="w-6 h-6 rounded-full bg-blue-600 text-white text-[11px] font-bold flex items-center justify-center flex-shrink-0">
+              2
+            </span>
+            <h3 className="text-sm sm:text-base font-bold text-slate-900">
+              Select Your Garment Type
+            </h3>
+          </div>
+          <p className="text-xs text-slate-500 ml-8">
+            Choose the garment category for your catalogue
+          </p>
         </div>
 
-        {/* View All Modal Trigger */}
+        {/* View All Button with 4-square grid icon matching Screenshot 1 */}
         <button
           type="button"
           onClick={() => setIsModalOpen(true)}
-          className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100/80 px-3 py-1 rounded-lg border border-blue-200/70 transition-colors cursor-pointer shrink-0 self-start sm:self-auto"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-700 bg-blue-100/70 hover:bg-blue-100 px-3.5 py-1.5 rounded-lg border border-blue-200/70 transition-all cursor-pointer shrink-0 self-start sm:self-auto"
         >
-          <Grid size={12} />
-          <span>View All (38)</span>
-          <ChevronRight size={12} />
+          <LayoutGrid size={14} />
+          <span>View All</span>
         </button>
       </div>
 
-      {/* ── 5-Column Clean Product Tile Grid (Reference: AI Vastra style) ── */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-4.5">
-        {previewGarments.map((garment) => {
+      {/* ── Single / Batch Toggle Pills directly under Title matching Screenshot 1 ── */}
+      {setMode && (
+        <div className="inline-flex items-center bg-slate-100 p-1 rounded-full mb-4 ml-8">
+          {['single', 'batch'].map((m) => (
+            <button
+              key={m}
+              type="button"
+              onClick={() => setMode(m)}
+              className={`px-4 py-1 rounded-full text-xs font-bold capitalize transition-all cursor-pointer ${
+                mode === m
+                  ? 'bg-white text-slate-900 shadow-xs'
+                  : 'text-slate-500 hover:text-slate-800'
+              }`}
+            >
+              {m}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* ── 5-Column by 2-Row Grid (Exactly 10 Items matching Screenshot 1) ── */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3.5 sm:gap-4">
+        {visibleGarments.map((garment) => {
           const isSelected = selectedId === garment.id;
           return (
             <button
               key={garment.id}
               type="button"
               onClick={() => onSelect(garment.id)}
-              className={`group relative rounded-2xl border transition-all duration-200 cursor-pointer flex flex-col items-center bg-[#FAFAFC] hover:bg-white text-left ${
+              className={`group relative rounded-xl border transition-all duration-200 cursor-pointer flex flex-col bg-white text-left overflow-hidden ${
                 isSelected
-                  ? 'border-2 border-blue-600 ring-2 ring-blue-100 shadow-md shadow-blue-500/20 bg-white'
-                  : 'border-slate-200 hover:border-slate-300 shadow-xs'
+                  ? 'border-2 border-blue-600 ring-2 ring-blue-500/20 shadow-none bg-blue-50/10'
+                  : 'border-slate-200 hover:border-slate-300 shadow-none'
               }`}
+              style={{ borderRadius: '12px' }}
             >
-              {/* Product image container with clean white background and padding */}
-              <div className="w-full aspect-square rounded-xl bg-white flex items-center justify-center p-3.5 overflow-hidden">
+              {/* Product image container with clean soft grey background */}
+              <div className="w-full aspect-square bg-slate-50/70 flex items-center justify-center p-3 sm:p-4 overflow-hidden relative">
                 <img
                   src={garment.img}
                   alt={garment.label}
                   className="w-full h-full object-contain transition-transform duration-200 group-hover:scale-105"
                   onError={(e) => {
                     e.target.onerror = null;
-                    e.target.src = '/garments/women/saree.jpg';
+                    e.target.src = '/garments/women-picker/saree.jpg';
                   }}
                 />
+
+                {/* Selected checkmark badge top-right */}
+                {isSelected && (
+                  <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-xs z-10">
+                    <Check size={11} strokeWidth={3} />
+                  </div>
+                )}
               </div>
 
-              {/* Selected checkmark badge top-right */}
-              {isSelected && (
-                <div className="absolute top-2.5 right-2.5 w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-xs">
-                  <Check size={11} strokeWidth={3} />
-                </div>
-              )}
-
-              {/* Garment label in plain area BELOW the image (no overlay text, no dark gradient) */}
-              <div className="w-full pt-2 pb-2.5 px-2.5 text-center">
+              {/* Garment label in plain white area below the image */}
+              <div className="w-full py-2.5 px-2 text-center bg-white">
                 <p className="text-xs sm:text-[13px] font-bold text-slate-800 tracking-tight truncate">
                   {garment.label}
-                </p>
-                <p className="text-[10px] text-slate-400 font-medium truncate capitalize mt-0.5">
-                  {garment.categoryLabel}
                 </p>
               </div>
             </button>
@@ -119,7 +118,7 @@ export default function GarmentSelector({ selectedId, onSelect }) {
         })}
       </div>
 
-      {/* ── Full Catalog Modal ── */}
+      {/* ── Full Catalog Modal matching Screenshot 2 ── */}
       <GarmentSelectorModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

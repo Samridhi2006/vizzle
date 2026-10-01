@@ -1,10 +1,11 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Upload, Check, ChevronRight, Sparkles, Plus, ArrowRight,
   LayoutGrid, Zap, Star, Image as ImageIcon, Layers, X
 } from "lucide-react";
 import ModelPickerModal from "./ModelPickerModal";
+import BackgroundPickerModal from "./BackgroundPickerModal";
 import GarmentSelector from "./GarmentSelector";
 import GarmentUploadStep from "./GarmentUploadStep";
 import BoysUploadStep from "./BoysUploadStep";
@@ -18,7 +19,9 @@ import { MEN_AI_MODELS } from "../data/menAiModels";
 import { BOYS_AI_MODELS } from "../data/boysAiModels";
 import { GIRLS_AI_MODELS } from "../data/girlsAiModels";
 import PosePickerModal from "./PosePickerModal";
+import PoseSelector from "./PoseSelector";
 import { WOMEN_POSES, MEN_POSES, BOYS_POSES } from "../data/poses";
+import { sareeSpecificPoses, isSareeGarment } from "../data/sareePoses";
 import { BACKGROUNDS } from "../data/backgrounds";
 
 // ── Data ──────────────────────────────────────────────────────────────────────
@@ -186,19 +189,69 @@ export default function StudioWorkflow() {
   const [ratio, setRatio] = useState("1:1");
   const [resolution, setResolution] = useState("2K");
   const [modelModalOpen, setModelModalOpen] = useState(false);
+  const [bgModalOpen, setBgModalOpen] = useState(false);
   const [poseModalOpen, setPoseModalOpen] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [generated, setGenerated] = useState(false);
 
+  const isSaree = useMemo(() => {
+    if (audience !== "women") return false;
+    return isSareeGarment(garmentType);
+  }, [garmentType, audience]);
+
   const currentPoses =
+    isSaree             ? sareeSpecificPoses :
     audience === "boys" ? BOYS_POSES :
     audience === "men"  ? MEN_POSES  :
     WOMEN_POSES;
+
+  // Auto-sync pose selection when switching between saree and regular garments
+  useEffect(() => {
+    if (isSaree) {
+      const isSareePose = sareeSpecificPoses.some((p) => p.id === selectedCustomPose);
+      if (!isSareePose) {
+        setSelectedCustomPose("saree-pose-1");
+      }
+    } else {
+      const isSareePose = sareeSpecificPoses.some((p) => p.id === selectedCustomPose);
+      if (isSareePose) {
+        setSelectedCustomPose(
+          audience === "men" ? "men-front-view" :
+          audience === "boys" ? "boy-pose-aarav" :
+          "front-view"
+        );
+      }
+    }
+  }, [isSaree, audience]);
   const currentModels =
     audience === "men"   ? MEN_AI_MODELS   :
     audience === "boys"  ? BOYS_AI_MODELS  :
     audience === "girls" ? GIRLS_AI_MODELS :
     AI_MODELS;
+
+  // Render exactly 10 models in the default grid (5 columns x 2 rows).
+  // If the user selected a model from the "View All" modal beyond the first 10,
+  // keep the selection visible in the 10-card view.
+  const visibleModels = useMemo(() => {
+    const top10 = currentModels.slice(0, 10);
+    const inTop10 = top10.some((m) => m.id === selectedModel);
+    if (inTop10 || !selectedModel) return top10;
+    const selectedObj = currentModels.find((m) => m.id === selectedModel);
+    if (!selectedObj) return top10;
+    return [...top10.slice(0, 9), selectedObj];
+  }, [currentModels, selectedModel]);
+
+  // Render exactly 10 backgrounds in the default grid (5 columns x 2 rows).
+  // If the user selected a background from the "View All" modal beyond the first 10,
+  // keep the selection visible in the 10-card view.
+  const visibleBackgrounds = useMemo(() => {
+    const top10 = BACKGROUNDS.slice(0, 10);
+    const inTop10 = top10.some((b) => b.id === selectedBg);
+    if (inTop10 || !selectedBg || selectedBg.startsWith("custom-")) return top10;
+    const selectedObj = BACKGROUNDS.find((b) => b.id === selectedBg);
+    if (!selectedObj) return top10;
+    return [...top10.slice(0, 9), selectedObj];
+  }, [selectedBg]);
 
   const AUDIENCES = [
     { id: "women", label: "Women" },
@@ -217,24 +270,6 @@ export default function StudioWorkflow() {
   return (
     <div className="flex-1 overflow-y-auto" style={{ background: '#f0f4f8' }}>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 sm:py-6 space-y-4">
-
-        {/* Single / Batch Toggle */}
-        <div className="flex items-center gap-2">
-          {["single", "batch"].map((m) => (
-            <button
-              key={m}
-              type="button"
-              onClick={() => setMode(m)}
-              className={`px-5 py-1.5 rounded-full text-xs sm:text-sm font-bold capitalize transition-all cursor-pointer ${
-                mode === m
-                  ? "bg-blue-600 text-white shadow-xs"
-                  : "bg-white border border-slate-200 text-slate-600 hover:border-slate-300 hover:text-slate-800"
-              }`}
-            >
-              {m}
-            </button>
-          ))}
-        </div>
 
         {/* ── Step 1: Audience ── */}
         <div className="bg-white rounded-2xl border border-gray-200/90 p-5 sm:p-6 shadow-xs">
@@ -272,43 +307,35 @@ export default function StudioWorkflow() {
 
         {/* ── Step 2: Garment Type ── */}
         <div className="bg-white rounded-2xl border border-gray-200/90 p-5 sm:p-6 shadow-xs">
-          <div className="flex items-center justify-between mb-4">
-            <StepHeader number={2} title="Select Your Garment Type" />
-            {audience === "women" && (
-              <span className="text-[11px] font-bold px-2.5 py-1 bg-blue-50 text-blue-700 border border-blue-200/80 rounded-full flex items-center gap-1">
-                <Sparkles size={11} className="text-blue-600" /> 38 Unique Styles Available
-              </span>
-            )}
-          </div>
-
           {audience === "women" ? (
-            <GarmentSelector selectedId={garmentType} onSelect={setGarmentType} />
+            <GarmentSelector
+              selectedId={garmentType}
+              onSelect={setGarmentType}
+              mode={mode}
+              setMode={setMode}
+            />
           ) : (
-            <div className="space-y-3.5">
-              {/* View All link row + subtext */}
-              <div className="flex items-center justify-between">
-                <p className="text-xs text-slate-500">Select the garment category</p>
-                <button
-                  type="button"
-                  className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100/80 px-3 py-1.5 rounded-lg border border-blue-200/70 transition-colors cursor-pointer"
-                >
-                  <ChevronRight size={13} />
-                  View All
-                </button>
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <StepHeader number={2} title="Select Your Garment Type" />
               </div>
-              {/* 5-column garment grid */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5 sm:gap-4">
-                {GARMENTS[audience].map((g) => (
-                  <SelectionCard
-                    key={g.id}
-                    img={g.img}
-                    label={g.label}
-                    sublabel={g.categoryLabel}
-                    selected={garmentType === g.id}
-                    onClick={() => setGarmentType(g.id)}
-                    aspectClass="aspect-square"
-                  />
-                ))}
+              <div className="space-y-3.5">
+                <div className="flex items-center justify-between">
+                  <p className="text-xs text-slate-500">Select the garment category</p>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3.5 sm:gap-4">
+                  {GARMENTS[audience].map((g) => (
+                    <SelectionCard
+                      key={g.id}
+                      img={g.img}
+                      label={g.label}
+                      sublabel={g.categoryLabel}
+                      selected={garmentType === g.id}
+                      onClick={() => setGarmentType(g.id)}
+                      aspectClass="aspect-square"
+                    />
+                  ))}
+                </div>
               </div>
             </div>
           )}
@@ -417,20 +444,20 @@ export default function StudioWorkflow() {
               </p>
             </div>
 
-            {/* "View All" link aligned top-right of this section */}
+            {/* "View All >" pill button aligned top-right of this section */}
             <button
               type="button"
               onClick={() => setModelModalOpen(true)}
-              className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100/80 px-3 py-1.5 rounded-lg border border-blue-200/70 transition-colors cursor-pointer shrink-0 self-start sm:self-auto"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-600 hover:text-blue-700 bg-blue-50/80 hover:bg-blue-100 px-3.5 py-1.5 rounded-full border border-blue-200/70 transition-all cursor-pointer shrink-0 self-start sm:self-auto"
             >
               <span>View All</span>
-              <ChevronRight size={13} />
+              <ChevronRight size={13} strokeWidth={2.5} />
             </button>
           </div>
 
-          {/* 5-Column Grid, responsive to 2-3 columns on smaller screens */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-4.5 max-h-[580px] overflow-y-auto p-0.5">
-            {currentModels.map((m) => {
+          {/* 10-Item Grid (5 columns x 2 rows, responsive to 2-3 cols on mobile) */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+            {visibleModels.map((m) => {
               const isSelected = selectedModel === m.id;
               return (
                 <button
@@ -439,7 +466,7 @@ export default function StudioWorkflow() {
                   onClick={() => setSelectedModel(m.id)}
                   className={`group relative rounded-xl border transition-all duration-200 cursor-pointer flex flex-col items-center bg-white text-left p-2.5 ${
                     isSelected
-                      ? "border-blue-600 ring-2 ring-blue-500/20 shadow-none bg-white"
+                      ? "border-2 border-blue-600 ring-2 ring-blue-500/20 shadow-none bg-blue-50/10"
                       : "border-slate-200 hover:border-slate-300 shadow-none"
                   }`}
                   style={{ borderRadius: "12px" }}
@@ -458,7 +485,7 @@ export default function StudioWorkflow() {
 
                     {/* Small circular badge, top-right corner of the image, blue background with white checkmark */}
                     {isSelected && (
-                      <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-500 text-white flex items-center justify-center shadow-xs z-10">
+                      <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-xs z-10">
                         <Check size={11} strokeWidth={3} />
                       </div>
                     )}
@@ -492,14 +519,24 @@ export default function StudioWorkflow() {
               </p>
             </div>
 
-            <button
-              type="button"
-              onClick={() => customBgInputRef.current?.click()}
-              className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100/80 px-3 py-1.5 rounded-lg border border-blue-200/70 transition-colors cursor-pointer shrink-0 self-start sm:self-auto"
-            >
-              <Plus size={13} strokeWidth={2.5} />
-              <span>Upload Background</span>
-            </button>
+            <div className="flex items-center gap-2 shrink-0 self-start sm:self-auto">
+              <button
+                type="button"
+                onClick={() => setBgModalOpen(true)}
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-600 hover:text-blue-700 bg-blue-50/80 hover:bg-blue-100 px-3.5 py-1.5 rounded-full border border-blue-200/70 transition-all cursor-pointer"
+              >
+                <span>View All</span>
+                <ChevronRight size={13} strokeWidth={2.5} />
+              </button>
+              <button
+                type="button"
+                onClick={() => customBgInputRef.current?.click()}
+                className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-lg border border-slate-200/80 transition-colors cursor-pointer"
+              >
+                <Plus size={13} strokeWidth={2.5} />
+                <span>Upload Background</span>
+              </button>
+            </div>
           </div>
 
           {/* Hidden file input for custom background */}
@@ -585,12 +622,22 @@ export default function StudioWorkflow() {
           {/* Studio Backgrounds Header */}
           <div className="mb-3 flex items-center justify-between">
             <p className="text-xs font-bold text-slate-700 tracking-tight">Studio Backgrounds</p>
-            <span className="text-[11px] text-slate-400 font-medium">{BACKGROUNDS.length} options</span>
+            <div className="flex items-center gap-3">
+              <span className="text-[11px] text-slate-400 font-medium">{BACKGROUNDS.length} options</span>
+              <button
+                type="button"
+                onClick={() => setBgModalOpen(true)}
+                className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-700 transition-colors cursor-pointer"
+              >
+                <span>View All</span>
+                <ChevronRight size={13} strokeWidth={2.5} />
+              </button>
+            </div>
           </div>
 
-          {/* 5-Column Responsive Grid matching reference */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5 sm:gap-4">
-            {BACKGROUNDS.map((b) => {
+          {/* 10-Item Grid (5 columns x 2 rows, responsive to 2-3 cols on mobile) */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3.5 sm:gap-4">
+            {visibleBackgrounds.map((b) => {
               const isSelected = selectedBg === b.id;
               return (
                 <button
@@ -599,7 +646,7 @@ export default function StudioWorkflow() {
                   onClick={() => setSelectedBg(b.id)}
                   className={`group relative rounded-xl border transition-all duration-200 cursor-pointer flex flex-col bg-white text-left overflow-hidden ${
                     isSelected
-                      ? "border-2 border-blue-600 ring-2 ring-blue-500/20 shadow-none"
+                      ? "border-2 border-blue-600 ring-2 ring-blue-500/20 shadow-none bg-blue-50/10"
                       : "border-slate-200 hover:border-slate-300 shadow-none"
                   }`}
                   style={{ borderRadius: "12px" }}
@@ -616,7 +663,7 @@ export default function StudioWorkflow() {
                       }}
                     />
                     {isSelected && (
-                      <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-500 text-white flex items-center justify-center shadow-xs z-10">
+                      <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-xs z-10">
                         <Check size={11} strokeWidth={3} />
                       </div>
                     )}
@@ -634,82 +681,16 @@ export default function StudioWorkflow() {
           </div>
         </div>
 
-        {/* ── Step 6: Choose Pose ── */}
+        {/* ── Step 6: Choose Pose (Dynamic Saree Drape collection for Saree garments) ── */}
         <div className="bg-white rounded-2xl border border-gray-200/90 p-5 sm:p-6 shadow-xs">
-          {/* Header with numbered circle ⑥ */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 mb-4">
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <span className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 text-white text-[11px] font-bold flex items-center justify-center flex-shrink-0">
-                  6
-                </span>
-                <h3 className="text-sm sm:text-base font-bold text-slate-900">Choose Pose</h3>
-              </div>
-              <p className="text-xs text-slate-500 ml-8">
-                Select full-body catalogue pose for your {audience === "men" ? "men's" : "women's"} collection
-              </p>
-            </div>
-
-            {/* "View All" link aligned top-right of this section */}
-            <button
-              type="button"
-              onClick={() => setPoseModalOpen(true)}
-              className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100/80 px-3 py-1.5 rounded-lg border border-blue-200/70 transition-colors cursor-pointer shrink-0 self-start sm:self-auto"
-            >
-              <span>View All</span>
-              <ChevronRight size={13} />
-            </button>
-          </div>
-
-          {/* Grid of cards with clear gutters between them (not edge-to-edge) */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-4.5 max-h-[580px] overflow-y-auto p-0.5">
-            {currentPoses.map((p) => {
-              const isSelected = selectedCustomPose === p.id;
-              return (
-                <button
-                  key={p.id}
-                  type="button"
-                  onClick={() => setSelectedCustomPose(p.id)}
-                  className={`group relative rounded-xl border transition-all duration-200 cursor-pointer flex flex-col items-center bg-white text-left p-2.5 ${
-                    isSelected
-                      ? "border-blue-600 ring-2 ring-blue-500/20 shadow-none bg-white"
-                      : "border-slate-200 hover:border-slate-300 shadow-none"
-                  }`}
-                  style={{ borderRadius: "12px" }}
-                >
-                  {/* Photo container with ~8-12px padding around photo (image does NOT touch card edges) */}
-                  <div className="w-full aspect-[3/4] rounded-lg overflow-hidden bg-slate-50 relative flex items-center justify-center">
-                    <img
-                      src={p.img}
-                      alt={p.label}
-                      className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
-                      onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.src = "/hero_model_1.jpg";
-                      }}
-                    />
-
-                    {/* Small circular badge, top-right corner of the image, blue background with white checkmark */}
-                    {isSelected && (
-                      <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-500 text-white flex items-center justify-center shadow-xs z-10">
-                        <Check size={11} strokeWidth={3} />
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Below each photo, a labeled name in bold, centered, in a plain white strip separate from the image */}
-                  <div className="w-full pt-2 pb-0.5 text-center bg-white">
-                    <p className="text-xs sm:text-[13px] font-bold text-slate-800 tracking-tight truncate">
-                      {p.label}
-                    </p>
-                    <p className="text-[10px] text-slate-400 font-medium truncate mt-0.5">
-                      {p.sublabel}
-                    </p>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
+          <PoseSelector
+            selectedGarment={garmentType}
+            selectedPose={selectedCustomPose}
+            onSelectPose={setSelectedCustomPose}
+            onViewAll={() => setPoseModalOpen(true)}
+            audience={audience}
+            customPoses={currentPoses}
+          />
         </div>
 
         {/* ── Step 7: Platform ── */}
@@ -874,6 +855,15 @@ export default function StudioWorkflow() {
         onSelect={setSelectedModel}
         onClose={() => setModelModalOpen(false)}
         audience={audience}
+      />
+
+      {/* Background Picker Modal */}
+      <BackgroundPickerModal
+        isOpen={bgModalOpen}
+        selected={selectedBg}
+        onSelect={setSelectedBg}
+        onClose={() => setBgModalOpen(false)}
+        backgrounds={BACKGROUNDS}
       />
 
       {/* Pose Picker Modal */}

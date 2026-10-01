@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { X, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { AI_MODELS } from "../data/aiModels";
@@ -12,7 +13,18 @@ export default function ModelPickerModal({ isOpen, selected, onSelect, onClose, 
     audience === "girls" ? GIRLS_AI_MODELS :
     AI_MODELS;
 
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
+
+  const currentSelectedModel = models.find((m) => m.id === selected);
 
   return (
     <AnimatePresence>
@@ -41,9 +53,14 @@ export default function ModelPickerModal({ isOpen, selected, onSelect, onClose, 
         >
           {/* Fixed Header */}
           <div className="px-6 sm:px-8 py-5 border-b border-slate-100 flex items-center justify-between bg-white shrink-0">
-            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
-              All AI Models
-            </h2>
+            <div>
+              <h2 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
+                All AI Models
+              </h2>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Choose from {models.length} fashion models for your catalogue
+              </p>
+            </div>
             <button
               type="button"
               onClick={onClose}
@@ -66,7 +83,7 @@ export default function ModelPickerModal({ isOpen, selected, onSelect, onClose, 
                     onClick={() => onSelect(m.id)}
                     className={`group relative rounded-xl border transition-all duration-200 cursor-pointer flex flex-col items-center bg-white text-left p-2.5 ${
                       isSelected
-                        ? "border-[2.5px] border-[#e91e63] shadow-sm ring-1 ring-[#e91e63]/20"
+                        ? "border-2 border-blue-600 bg-blue-50/20 ring-2 ring-blue-500/20 shadow-xs"
                         : "border border-slate-200 hover:border-slate-300 hover:shadow-xs"
                     }`}
                     style={{ borderRadius: "12px" }}
@@ -83,9 +100,9 @@ export default function ModelPickerModal({ isOpen, selected, onSelect, onClose, 
                         }}
                       />
 
-                      {/* Small circular badge, top-right corner of the image */}
+                      {/* Small circular badge, top-right corner of the image, unified Vizzle Brand Blue */}
                       {isSelected && (
-                        <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-[#e91e63] text-white flex items-center justify-center shadow-md z-10">
+                        <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-xs z-10">
                           <Check size={11} strokeWidth={3} />
                         </div>
                       )}
@@ -101,6 +118,20 @@ export default function ModelPickerModal({ isOpen, selected, onSelect, onClose, 
                 );
               })}
             </div>
+          </div>
+
+          {/* Modal Footer with Active Selection and Done Button */}
+          <div className="px-6 sm:px-8 py-3.5 border-t border-slate-100 bg-slate-50 flex items-center justify-between shrink-0">
+            <div className="text-xs text-slate-600">
+              Selected: <span className="font-bold text-slate-900">{currentSelectedModel?.name || "None"}</span>
+            </div>
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-bold transition-all shadow-xs cursor-pointer"
+            >
+              Done
+            </button>
           </div>
         </motion.div>
       </div>
