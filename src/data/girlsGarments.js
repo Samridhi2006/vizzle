@@ -1,12 +1,67 @@
 // src/data/girlsGarments.js
-// 10 authentic Girls' garments — each image is unique to this section,
-// correctly labelled, zero reuse from Women's or Boys' catalog.
+// 18 authentic Girls' garments — 8 extracted directly from screenshot, 10 preserved existing items.
 // Images live under /garments/girls/.
-// Note: half_sleeve_shirt, half_sleeve_tshirt, hoodie, jacket are using
-// placeholder images (quota reset ~04:21 IST) — swap with girl-specific
-// images when quota resets.
 
 export const GIRLS_GARMENTS = [
+  // ── Extracted directly from User Screenshot (Row 1 & Row 2) ──
+  {
+    id: "girl-sweatshirt",
+    label: "Sweatshirt",
+    category: "Winterwear",
+    categoryLabel: "Winterwear",
+    img: "/garments/girls/sweatshirt.png",
+  },
+  {
+    id: "girl-top",
+    label: "Top",
+    category: "Tops",
+    categoryLabel: "Tops",
+    img: "/garments/girls/top.png",
+  },
+  {
+    id: "girl-long-frock-mannequin",
+    label: "Long Frock Mannequin",
+    category: "Dresses",
+    categoryLabel: "Dresses",
+    img: "/garments/girls/long_frock_mannequin.png",
+  },
+  {
+    id: "girl-mini-frock-mannequin",
+    label: "Mini Frock Mannequin",
+    category: "Dresses",
+    categoryLabel: "Dresses",
+    img: "/garments/girls/mini_frock_mannequin.png",
+  },
+  {
+    id: "girl-blazer",
+    label: "Blazer",
+    category: "Outerwear",
+    categoryLabel: "Outerwear",
+    img: "/garments/girls/blazer.png",
+  },
+  {
+    id: "girl-kurti-on-mannequin",
+    label: "Kurti on Mannequin",
+    category: "Ethnic",
+    categoryLabel: "Ethnic",
+    img: "/garments/girls/kurti_on_mannequin.png",
+  },
+  {
+    id: "girl-jumpsuit",
+    label: "Jumpsuit",
+    category: "Dresses",
+    categoryLabel: "Dresses",
+    img: "/garments/girls/jumpsuit.png",
+  },
+  {
+    id: "girl-lehanga-on-manniquene",
+    label: "Lehanga on manniquene",
+    category: "Ethnic",
+    categoryLabel: "Ethnic",
+    img: "/garments/girls/lehanga_on_manniquene.png",
+  },
+
+  // ── Preserved Existing Girls' Garments ──
   {
     id: "girl-crop-top",
     label: "Crop top",
@@ -91,14 +146,14 @@ export const GIRLS_GARMENT_CATEGORIES = [
 ];
 
 export const GIRLS_POPULAR_IDS = [
+  "girl-sweatshirt",
+  "girl-top",
+  "girl-long-frock-mannequin",
+  "girl-mini-frock-mannequin",
+  "girl-blazer",
+  "girl-kurti-on-mannequin",
+  "girl-jumpsuit",
+  "girl-lehanga-on-manniquene",
   "girl-crop-top",
-  "girl-full-sleeve-shirt",
-  "girl-full-sleeve-tshirt",
-  "girl-half-sleeve-shirt",
-  "girl-half-sleeve-tshirt",
-  "girl-hoodie",
   "girl-jacket",
-  "girl-kurti",
-  "girl-long-frock",
-  "girl-mini-frock",
 ];

@@ -20,7 +20,7 @@ import { BOYS_AI_MODELS } from "../data/boysAiModels";
 import { GIRLS_AI_MODELS } from "../data/girlsAiModels";
 import PosePickerModal from "./PosePickerModal";
 import PoseSelector from "./PoseSelector";
-import { WOMEN_POSES, MEN_POSES, BOYS_POSES } from "../data/poses";
+import { WOMEN_POSES, MEN_POSES, BOYS_POSES, GIRLS_POSES } from "../data/poses";
 import { sareeSpecificPoses, isSareeGarment } from "../data/sareePoses";
 import { BACKGROUNDS } from "../data/backgrounds";
 import PlatformSelector from "./PlatformSelector";
@@ -202,9 +202,10 @@ export default function StudioWorkflow() {
   }, [garmentType, audience]);
 
   const currentPoses =
-    isSaree             ? sareeSpecificPoses :
-    audience === "boys" ? BOYS_POSES :
-    audience === "men"  ? MEN_POSES  :
+    isSaree              ? sareeSpecificPoses :
+    audience === "girls" ? GIRLS_POSES :
+    audience === "boys"  ? BOYS_POSES :
+    audience === "men"   ? MEN_POSES  :
     WOMEN_POSES;
 
   // Auto-sync pose selection when switching between saree and regular garments
@@ -218,8 +219,9 @@ export default function StudioWorkflow() {
       const isSareePose = sareeSpecificPoses.some((p) => p.id === selectedCustomPose);
       if (isSareePose) {
         setSelectedCustomPose(
-          audience === "men" ? "men-front-view" :
-          audience === "boys" ? "boy-pose-aarav" :
+          audience === "men" ? "men-pose-01" :
+          audience === "boys" ? "boy-pose-01" :
+          audience === "girls" ? "girl-pose-01" :
           "front-view"
         );
       }
@@ -300,15 +302,16 @@ export default function StudioWorkflow() {
                 type="button"
                 onClick={() => {
                   setAudience(a.id);
-                  setGarmentType(a.id === "girls" ? "girl-crop-top" : GARMENTS[a.id][0].id);
-                  if (a.id === "boys")      setSelectedCustomPose("boy-pose-aarav");
-                  else if (a.id === "men")  setSelectedCustomPose("men-front-view");
-                  else                      setSelectedCustomPose("front-view");
+                  setGarmentType(a.id === "girls" ? "girl-sweatshirt" : GARMENTS[a.id][0].id);
+                  if (a.id === "boys")       setSelectedCustomPose("boy-pose-01");
+                  else if (a.id === "girls") setSelectedCustomPose("girl-pose-01");
+                  else if (a.id === "men")   setSelectedCustomPose("men-pose-01");
+                  else                       setSelectedCustomPose("front-view");
                   // Reset selectedModel to the correct default for this audience
                   // Using unique per-audience IDs prevents any cross-audience border bleed
-                  if (a.id === "men")        setSelectedModel("arjun");
-                  else if (a.id === "boys")  setSelectedModel("boy-pranav");
-                  else if (a.id === "girls") setSelectedModel("girl-aadhya");
+                  if (a.id === "men")        setSelectedModel("jun");
+                  else if (a.id === "boys")  setSelectedModel("boy-leo");
+                  else if (a.id === "girls") setSelectedModel("girl-model-01");
                   else                       setSelectedModel("meera");
                 }}
                 className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all border-2 cursor-pointer ${
@@ -326,12 +329,13 @@ export default function StudioWorkflow() {
 
         {/* ── Step 2: Garment Type ── */}
         <div className="bg-white rounded-2xl border border-gray-200/90 p-5 sm:p-6 shadow-xs">
-          {audience === "women" ? (
+          {audience === "women" || audience === "men" || audience === "boys" || audience === "girls" ? (
             <GarmentSelector
               selectedId={garmentType}
               onSelect={setGarmentType}
               mode={mode}
               setMode={setMode}
+              audience={audience}
             />
           ) : (
             <div>
@@ -490,8 +494,8 @@ export default function StudioWorkflow() {
                   }`}
                   style={{ borderRadius: "12px" }}
                 >
-                  {/* Portrait photo container (3:4 aspect ratio), head-to-mid-chest crop */}
-                  <div className="w-full aspect-[3/4] rounded-lg overflow-hidden bg-slate-50 relative flex items-center justify-center">
+                  {/* Portrait photo container (square for men, boys & girls matching reference, 3:4 for others) */}
+                  <div className={`w-full ${audience === "men" || audience === "boys" || audience === "girls" ? "aspect-square" : "aspect-[3/4]"} rounded-lg overflow-hidden bg-slate-50 relative flex items-center justify-center`}>
                     <img
                       src={m.img}
                       alt={m.name}

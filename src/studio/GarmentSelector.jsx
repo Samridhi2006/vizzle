@@ -1,26 +1,47 @@
 import { useState, useMemo } from 'react';
 import { Check, LayoutGrid } from 'lucide-react';
 import { WOMEN_GARMENTS, POPULAR_GARMENT_IDS } from '../data/womenGarments';
+import { MEN_GARMENTS, MEN_POPULAR_IDS } from '../data/menGarments';
+import { BOYS_GARMENTS, BOYS_POPULAR_IDS } from '../data/boysGarments';
+import { GIRLS_GARMENTS, GIRLS_POPULAR_IDS } from '../data/girlsGarments';
 import GarmentSelectorModal from './GarmentSelectorModal';
 
-export default function GarmentSelector({ selectedId, onSelect, mode = 'single', setMode }) {
+export default function GarmentSelector({
+  selectedId,
+  onSelect,
+  mode = 'single',
+  setMode,
+  audience = 'women',
+}) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Initial 10 visible garments matching Screenshot 1:
+  const isMen = audience === 'men';
+  const isBoys = audience === 'boys';
+  const isGirls = audience === 'girls';
+  const allGarments = isGirls ? GIRLS_GARMENTS : isBoys ? BOYS_GARMENTS : isMen ? MEN_GARMENTS : WOMEN_GARMENTS;
+  const popularIds = isGirls ? GIRLS_POPULAR_IDS : isBoys ? BOYS_POPULAR_IDS : isMen ? MEN_POPULAR_IDS : POPULAR_GARMENT_IDS;
+  const fallbackImg = isGirls ? '/garments/girls/sweatshirt.png' : isBoys ? '/garments/boys/sweatshirt.png' : isMen ? '/garments/men/full_sleeve_shirt.png' : '/garments/women-picker/saree.jpg';
+
+  const selectedBorderClass = isMen
+    ? 'border-2 border-[#e11d74] ring-2 ring-[#e11d74]/20 shadow-none bg-pink-50/10'
+    : 'border-2 border-blue-600 ring-2 ring-blue-500/20 shadow-none bg-blue-50/10';
+  const selectedBadgeClass = isMen ? 'bg-[#e11d74]' : 'bg-blue-600';
+
+  // Initial 10 visible garments matching Screenshots:
   // If the user selected a garment not in the top 10, keep it visible in the 10 cards
   const visibleGarments = useMemo(() => {
-    const top10 = POPULAR_GARMENT_IDS.map((id) =>
-      WOMEN_GARMENTS.find((g) => g.id === id)
-    ).filter(Boolean);
+    const top10 = popularIds
+      .map((id) => allGarments.find((g) => g.id === id))
+      .filter(Boolean);
 
     const isInTop10 = top10.some((g) => g.id === selectedId);
     if (isInTop10 || !selectedId) return top10;
 
-    const selectedObj = WOMEN_GARMENTS.find((g) => g.id === selectedId);
+    const selectedObj = allGarments.find((g) => g.id === selectedId);
     if (!selectedObj) return top10;
 
     return [...top10.slice(0, 9), selectedObj];
-  }, [selectedId]);
+  }, [allGarments, popularIds, selectedId]);
 
   return (
     <div>
@@ -40,7 +61,7 @@ export default function GarmentSelector({ selectedId, onSelect, mode = 'single',
           </p>
         </div>
 
-        {/* View All Button with 4-square grid icon matching Screenshot 1 */}
+        {/* View All Button with 4-square grid icon matching reference */}
         <button
           type="button"
           onClick={() => setIsModalOpen(true)}
@@ -51,7 +72,7 @@ export default function GarmentSelector({ selectedId, onSelect, mode = 'single',
         </button>
       </div>
 
-      {/* ── Single / Batch Toggle Pills directly under Title matching Screenshot 1 ── */}
+      {/* ── Single / Batch Toggle Pills directly under Title ── */}
       {setMode && (
         <div className="inline-flex items-center bg-slate-100 p-1 rounded-full mb-4 ml-8">
           {['single', 'batch'].map((m) => (
@@ -71,7 +92,7 @@ export default function GarmentSelector({ selectedId, onSelect, mode = 'single',
         </div>
       )}
 
-      {/* ── 5-Column by 2-Row Grid (Exactly 10 Items matching Screenshot 1) ── */}
+      {/* ── 5-Column by 2-Row Grid (Exactly 10 Items matching Screenshot) ── */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3.5 sm:gap-4">
         {visibleGarments.map((garment) => {
           const isSelected = selectedId === garment.id;
@@ -82,7 +103,7 @@ export default function GarmentSelector({ selectedId, onSelect, mode = 'single',
               onClick={() => onSelect(garment.id)}
               className={`group relative rounded-xl border transition-all duration-200 cursor-pointer flex flex-col bg-white text-left overflow-hidden ${
                 isSelected
-                  ? 'border-2 border-blue-600 ring-2 ring-blue-500/20 shadow-none bg-blue-50/10'
+                  ? selectedBorderClass
                   : 'border-slate-200 hover:border-slate-300 shadow-none'
               }`}
               style={{ borderRadius: '12px' }}
@@ -95,13 +116,13 @@ export default function GarmentSelector({ selectedId, onSelect, mode = 'single',
                   className="w-full h-full object-contain transition-transform duration-200 group-hover:scale-105"
                   onError={(e) => {
                     e.target.onerror = null;
-                    e.target.src = '/garments/women-picker/saree.jpg';
+                    e.target.src = fallbackImg;
                   }}
                 />
 
                 {/* Selected checkmark badge top-right */}
                 {isSelected && (
-                  <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-xs z-10">
+                  <div className={`absolute top-2 right-2 w-5 h-5 rounded-full ${selectedBadgeClass} text-white flex items-center justify-center shadow-xs z-10`}>
                     <Check size={11} strokeWidth={3} />
                   </div>
                 )}
@@ -118,12 +139,13 @@ export default function GarmentSelector({ selectedId, onSelect, mode = 'single',
         })}
       </div>
 
-      {/* ── Full Catalog Modal matching Screenshot 2 ── */}
+      {/* ── Full Catalog Modal matching Screenshot 1 & 2 ── */}
       <GarmentSelectorModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         selectedId={selectedId}
         onSelect={onSelect}
+        audience={audience}
       />
     </div>
   );

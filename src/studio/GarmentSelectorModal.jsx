@@ -2,8 +2,11 @@ import { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Check, X } from 'lucide-react';
 import { WOMEN_GARMENTS } from '../data/womenGarments';
+import { MEN_GARMENTS } from '../data/menGarments';
+import { BOYS_GARMENTS } from '../data/boysGarments';
+import { GIRLS_GARMENTS } from '../data/girlsGarments';
 
-export default function GarmentSelectorModal({ isOpen, onClose, selectedId, onSelect }) {
+export default function GarmentSelectorModal({ isOpen, onClose, selectedId, onSelect, audience = 'women' }) {
   useEffect(() => {
     if (!isOpen) return;
     const handleKeyDown = (e) => {
@@ -14,6 +17,17 @@ export default function GarmentSelectorModal({ isOpen, onClose, selectedId, onSe
   }, [isOpen, onClose]);
 
   if (!isOpen) return null;
+
+  const isMen = audience === 'men';
+  const isBoys = audience === 'boys';
+  const isGirls = audience === 'girls';
+  const garments = isGirls ? GIRLS_GARMENTS : isBoys ? BOYS_GARMENTS : isMen ? MEN_GARMENTS : WOMEN_GARMENTS;
+  const title = isGirls ? "All Girls' Garments" : isBoys ? "All Boys' Garments" : isMen ? 'Select Your Garment Type' : "All Women's Garments";
+  const fallbackImg = isGirls ? '/garments/girls/sweatshirt.png' : isBoys ? '/garments/boys/sweatshirt.png' : isMen ? '/garments/men/full_sleeve_shirt.png' : '/garments/women-picker/saree.jpg';
+  const selectedBorderClass = isMen
+    ? 'border-2 border-[#e11d74] bg-pink-50/20 ring-2 ring-[#e11d74]/20 shadow-xs'
+    : 'border-2 border-blue-600 bg-blue-50/20 ring-2 ring-blue-500/20 shadow-xs';
+  const selectedBadgeClass = isMen ? 'bg-[#e11d74]' : 'bg-blue-600';
 
   return (
     <AnimatePresence>
@@ -40,10 +54,10 @@ export default function GarmentSelectorModal({ isOpen, onClose, selectedId, onSe
           transition={{ duration: 0.2 }}
           className="relative w-full max-w-5xl max-h-[90vh] bg-white rounded-2xl shadow-2xl border border-slate-200/80 overflow-hidden flex flex-col z-10"
         >
-          {/* Header matching Screenshot 2 */}
+          {/* Header matching Screenshot 1 & 2 */}
           <div className="px-6 sm:px-8 py-5 border-b border-slate-100 flex items-center justify-between bg-white shrink-0">
             <h2 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
-              All Women's Garments
+              {title}
             </h2>
             <button
               type="button"
@@ -55,10 +69,10 @@ export default function GarmentSelectorModal({ isOpen, onClose, selectedId, onSe
             </button>
           </div>
 
-          {/* 5-Column Scrollable Grid matching Screenshot 2 */}
+          {/* 5-Column Scrollable Grid matching Screenshots */}
           <div className="p-6 sm:p-8 overflow-y-auto flex-1 bg-white">
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5 sm:gap-4">
-              {WOMEN_GARMENTS.map((garment) => {
+              {garments.map((garment) => {
                 const isSelected = selectedId === garment.id;
                 return (
                   <button
@@ -70,7 +84,7 @@ export default function GarmentSelectorModal({ isOpen, onClose, selectedId, onSe
                     }}
                     className={`group relative rounded-xl border transition-all duration-200 cursor-pointer flex flex-col bg-white text-left overflow-hidden ${
                       isSelected
-                        ? 'border-2 border-blue-600 bg-blue-50/20 ring-2 ring-blue-500/20 shadow-xs'
+                        ? selectedBorderClass
                         : 'border-slate-200 hover:border-slate-300 shadow-none hover:shadow-xs'
                     }`}
                     style={{ borderRadius: '12px' }}
@@ -83,13 +97,13 @@ export default function GarmentSelectorModal({ isOpen, onClose, selectedId, onSe
                         className="w-full h-full object-contain transition-transform duration-200 group-hover:scale-105"
                         onError={(e) => {
                           e.target.onerror = null;
-                          e.target.src = '/garments/women-picker/saree.jpg';
+                          e.target.src = fallbackImg;
                         }}
                       />
 
                       {/* Selected checkmark badge top-right */}
                       {isSelected && (
-                        <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-xs z-10">
+                        <div className={`absolute top-2 right-2 w-5 h-5 rounded-full ${selectedBadgeClass} text-white flex items-center justify-center shadow-xs z-10`}>
                           <Check size={11} strokeWidth={3} />
                         </div>
                       )}

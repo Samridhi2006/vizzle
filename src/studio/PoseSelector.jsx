@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { Check, ChevronRight, Sparkles } from "lucide-react";
 import { sareeSpecificPoses, isSareeGarment } from "../data/sareePoses";
-import { WOMEN_POSES, MEN_POSES, BOYS_POSES } from "../data/poses";
+import { WOMEN_POSES, MEN_POSES, BOYS_POSES, GIRLS_POSES } from "../data/poses";
 
 /**
  * PoseSelector component for Vizzle Studio
@@ -33,6 +33,7 @@ export default function PoseSelector({
     }
     if (audience === "men") return MEN_POSES;
     if (audience === "boys") return BOYS_POSES;
+    if (audience === "girls") return GIRLS_POSES;
     return WOMEN_POSES;
   }, [isSaree, customPoses, audience]);
 
@@ -70,7 +71,7 @@ export default function PoseSelector({
           <p className="text-xs text-slate-500 ml-8">
             {isSaree
               ? "Specialized traditional and contemporary saree drape poses showcasing pallu flow and silhouette"
-              : `Select full-body catalogue pose for your ${audience === "men" ? "men's" : "women's"} collection`}
+              : `Select catalogue pose for your ${audience === "men" ? "men's" : audience === "boys" ? "boys'" : audience === "girls" ? "girls'" : "women's"} collection`}
           </p>
         </div>
 

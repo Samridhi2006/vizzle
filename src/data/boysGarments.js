@@ -1,8 +1,60 @@
 // src/data/boysGarments.js
-// 10 authentic Boys' garments — each image is unique to this section,
-// correctly labelled, zero reuse from Men's or Women's catalog.
+// 17 authentic Boys' garments — real product photos extracted directly from screenshot,
+// plus preserved existing catalog items.
 
 export const BOYS_GARMENTS = [
+  // ── Screenshot Garments (Displayed in Top Grid exactly matching reference) ──
+  {
+    id: "boy-sweatshirt",
+    label: "Sweatshirt",
+    category: "Winterwear",
+    categoryLabel: "Winterwear",
+    img: "/garments/boys/sweatshirt.png",
+  },
+  {
+    id: "boy-jean",
+    label: "Jean",
+    category: "Bottoms",
+    categoryLabel: "Bottoms",
+    img: "/garments/boys/jean.png",
+  },
+  {
+    id: "boy-trouser",
+    label: "Trouser",
+    category: "Bottoms",
+    categoryLabel: "Bottoms",
+    img: "/garments/boys/trouser.png",
+  },
+  {
+    id: "boy-short",
+    label: "Short",
+    category: "Bottoms",
+    categoryLabel: "Bottoms",
+    img: "/garments/boys/short.png",
+  },
+  {
+    id: "boy-cargo",
+    label: "Cargo",
+    category: "Bottoms",
+    categoryLabel: "Bottoms",
+    img: "/garments/boys/cargo.png",
+  },
+  {
+    id: "boy-track",
+    label: "Track",
+    category: "Sportswear",
+    categoryLabel: "Sportswear",
+    img: "/garments/boys/track.png",
+  },
+  {
+    id: "boy-casual",
+    label: "Casual",
+    category: "Bottoms",
+    categoryLabel: "Bottoms",
+    img: "/garments/boys/casual.png",
+  },
+
+  // ── Preserved Existing Boys' Garments ──
   {
     id: "boy-blazer",
     label: "Blazer",
@@ -77,23 +129,26 @@ export const BOYS_GARMENTS = [
 
 export const BOYS_GARMENT_CATEGORIES = [
   { id: "all", label: "All" },
+  { id: "Bottoms", label: "Bottoms" },
+  { id: "Winterwear", label: "Winterwear" },
+  { id: "Sportswear", label: "Sportswear" },
   { id: "Shirts", label: "Shirts" },
   { id: "T-Shirts", label: "T-Shirts" },
   { id: "Formal", label: "Formal" },
   { id: "Outerwear", label: "Outerwear" },
-  { id: "Winterwear", label: "Winterwear" },
   { id: "Ethnic", label: "Ethnic" },
 ];
 
 export const BOYS_POPULAR_IDS = [
+  "boy-sweatshirt",
+  "boy-jean",
+  "boy-trouser",
+  "boy-short",
+  "boy-cargo",
+  "boy-track",
+  "boy-casual",
   "boy-blazer",
   "boy-full-sleeve-shirt",
-  "boy-full-sleeve-tshirt",
-  "boy-half-sleeve-shirt",
-  "boy-half-sleeve-tshirt",
   "boy-hoodie",
-  "boy-jacket",
-  "boy-kurta",
-  "boy-polo",
-  "boy-suit",
 ];
+

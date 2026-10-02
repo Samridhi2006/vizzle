@@ -88,8 +88,8 @@ export default function ModelPickerModal({ isOpen, selected, onSelect, onClose, 
                     }`}
                     style={{ borderRadius: "12px" }}
                   >
-                    {/* Portrait Photo (3:4 aspect ratio, head-to-mid-chest crop) */}
-                    <div className="w-full aspect-[3/4] rounded-lg overflow-hidden bg-slate-50 relative flex items-center justify-center">
+                    {/* Portrait Photo (square for men, boys & girls matching reference, 3:4 for others) */}
+                    <div className={`w-full ${audience === "men" || audience === "boys" || audience === "girls" ? "aspect-square" : "aspect-[3/4]"} rounded-lg overflow-hidden bg-slate-50 relative flex items-center justify-center`}>
                       <img
                         src={m.img}
                         alt={m.name}
