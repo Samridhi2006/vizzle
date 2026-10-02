@@ -64,8 +64,8 @@
                   "value": {
                     "product_id": "SKU-BLUE-SHIRT-001",
                     "user_photo_url": "https://cdn.vizzle.in/vizzle/tryon-temp/abc123/photo.jpg",
-                    "garment_type": "upper_body",
-                    "use_vision": true
+                    "garment_type": "Shirt",
+                    "fit_type": "Regular fit"
                   }
                 },
                 "byImageUrl": {
@@ -473,9 +473,17 @@
           },
           "garment_type": {
             "type": "string",
-            "description": "Garment category hint for the ML model.",
-            "default": "auto_detect",
-            "example": "upper_body"
+            "description": "Optional. Target garment being tried on — same values as the try-on app's \"Target Garment\" dropdown. Case- and hyphen-insensitive (e.g. \"two piece\"). Legacy values such as `saree` or `salwar_kameez` are still accepted.",
+            "enum": ["Two-piece outfit", "T-Shirt", "Shirt", "Top", "Kurti", "Saree", "Lehenga", "Dress", "Jumpsuit", "Skirt", "Jeans", "Trousers", "Jacket", "Blazer", "Coat", "Other"],
+            "default": "Two-piece outfit",
+            "example": "Shirt"
+          },
+          "fit_type": {
+            "type": "string",
+            "description": "Optional. How the garment should fit — same values as the \"Garment Fit\" dropdown.",
+            "enum": ["Natural realistic fit", "Slim fit", "Regular fit", "Loose fit"],
+            "default": "Natural realistic fit",
+            "example": "Regular fit"
           },
           "use_vision": {
             "type": "boolean",

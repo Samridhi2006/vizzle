@@ -41,6 +41,78 @@ const FEMALE_GARMENTS = [
   { id: "salwar",      label: "Salwar Suit",   sub: "Ethnic set",              emoji: "🧵" },
 ];
 
+/* ─── Try-on API (same Gemini flow as the homepage widget) ───────── */
+const API_BASE = import.meta.env.VITE_API_BASE_URL || "https://dashboard.vizzle.in";
+const WIDGET_API_KEY = import.meta.env.VITE_WIDGET_API_KEY;
+
+// Garment tiles → /api/v1/tryon garment_type (a "Target Garment" label or a
+// legacy value; see vizzle-api-platform garment-options.ts).
+const GARMENT_ID_TO_API_VALUE = {
+  shirt: "Shirt", trousers: "Trousers", blazer: "Blazer", "3piece": "Two-piece outfit",
+  nehru: "Jacket", indo: "kurta", sherwani: "sherwani", kurta: "kurta",
+  saree: "Saree", kurti: "Kurti", lehenga: "Lehenga", gown: "Dress",
+  dress: "Dress", top: "Top", skirt: "Skirt", salwar: "salwar_kameez",
+};
+
+const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+
+// Keeps uploads well inside Vercel's 4.5 MB request-body limit.
+async function downscaleImage(file, filename, maxSide = 2048) {
+  const bitmap = await createImageBitmap(file);
+  const scale = Math.min(1, maxSide / Math.max(bitmap.width, bitmap.height));
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.round(bitmap.width * scale);
+  canvas.height = Math.round(bitmap.height * scale);
+  canvas.getContext("2d").drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+  bitmap.close();
+  const blob = await new Promise(r => canvas.toBlob(r, "image/jpeg", 0.9));
+  return new File([blob], filename, { type: "image/jpeg" });
+}
+
+async function uploadPhoto(file) {
+  const form = new FormData();
+  form.append("photo", file);
+  const res = await fetch(`${API_BASE}/api/v1/upload`, {
+    method: "POST",
+    headers: { "x-api-key": WIDGET_API_KEY },
+    body: form,
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data?.error || "Upload failed");
+  return data.url;
+}
+
+async function generateTryOn({ personUrl, garmentUrl, garmentType }) {
+  const startRes = await fetch(`${API_BASE}/api/v1/tryon`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "x-api-key": WIDGET_API_KEY },
+    body: JSON.stringify({
+      product_id: garmentUrl,
+      user_photo_url: personUrl,
+      ...(garmentType ? { garment_type: garmentType } : {}),
+      use_vision: true,
+    }),
+  });
+  const startData = await startRes.json();
+  if (!startRes.ok) throw new Error(startData?.error || "Try-on generation failed");
+
+  // Cold Render starts have taken ~105s on their own, so allow real margin.
+  const deadline = Date.now() + 180_000;
+  while (Date.now() < deadline) {
+    await sleep(2500);
+    const statusRes = await fetch(`${API_BASE}/api/v1/tryon/status/${startData.prediction_id}`, {
+      headers: { "x-api-key": WIDGET_API_KEY },
+    });
+    const statusData = await statusRes.json();
+    if (!statusRes.ok) throw new Error(statusData?.error || "Try-on generation failed");
+    if (statusData.status === "succeeded" && statusData.output_url) return statusData.output_url;
+    if (statusData.status === "failed" || statusData.status === "canceled") {
+      throw new Error(statusData.error || "Try-on generation failed");
+    }
+  }
+  throw new Error("Try-on is taking longer than expected. Please try again.");
+}
+
 /* ─── Sample models ──────────────────────────────────────────────── */
 const FEMALE_SAMPLES = [
   { id: "anaya",  name: "Anaya",  src: "/images/models/headshots/anaya.jpg" },
@@ -511,33 +583,26 @@ export default function AITrialRoomPage() {
       };
 
       const [customerBlob, garmentBlob] = await Promise.all([
-        toBlob(customerPreview, "customer.jpg"),
-        toBlob(garmentPreview,  "garment.jpg"),
+        toBlob(customerPreview, "customer.jpg").then(f => downscaleImage(f, "customer.jpg")),
+        toBlob(garmentPreview,  "garment.jpg").then(f => downscaleImage(f, "garment.jpg")),
       ]);
 
-      const form = new FormData();
-      form.append("customerImage", customerBlob, "customer.jpg");
-      form.append("garmentImage",  garmentBlob,  "garment.jpg");
-      form.append("garmentDesc", selectedGarment
-        ? (garmentList.find(g => g.id === selectedGarment)?.label ?? "a garment")
-        : "a garment");
+      const [personUrl, garmentUrl] = await Promise.all([
+        uploadPhoto(customerBlob),
+        uploadPhoto(garmentBlob),
+      ]);
 
-      const res = await fetch("http://localhost:3001/api/tryon", {
-        method: "POST",
-        body:   form,
+      const outputUrl = await generateTryOn({
+        personUrl,
+        garmentUrl,
+        garmentType: selectedGarment ? GARMENT_ID_TO_API_VALUE[selectedGarment] : undefined,
       });
 
-      const json = await res.json();
-
-      if (!res.ok || json.error) {
-        throw new Error(json.error || "Try-on server returned an error.");
-      }
-
-      setResultImg(json.resultUrl);
+      setResultImg(outputUrl);
       saveTrials(trialsLeft - 1);
     } catch (err) {
       console.error("[handleTryOn]", err);
-      setTryOnError(err.message || "Something went wrong. Is the try-on server running?");
+      setTryOnError(err.message || "Something went wrong. Please try again.");
     } finally {
       setIsProcessing(false);
     }

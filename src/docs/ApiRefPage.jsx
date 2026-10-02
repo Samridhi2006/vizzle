@@ -2,6 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import Navbar from '../components/Navbar';
 import './apiref.css';
 
+// Optional try-on params — same values as the "Target Garment" and "Garment Fit"
+// dropdowns in the try-on app (vizzle-api-platform/src/server/services/garment-options.ts).
+const TARGET_GARMENTS = ['Two-piece outfit', 'T-Shirt', 'Shirt', 'Top', 'Kurti', 'Saree', 'Lehenga', 'Dress', 'Jumpsuit', 'Skirt', 'Jeans', 'Trousers', 'Jacket', 'Blazer', 'Coat', 'Other'];
+const GARMENT_FITS = ['Natural realistic fit', 'Slim fit', 'Regular fit', 'Loose fit'];
+
 const API_GROUPS = [
   {
     id: 'intro', label: 'Getting Started',
@@ -104,21 +109,23 @@ const EP = {
     subtitle: 'Initiate an asynchronous virtual garment try-on. Returns a prediction ID immediately — poll for results.',
     type: 'endpoint', method: 'POST', endpoint: '/api/v1/tryon', cost: 'Deducted from your credit pack (₹5.00–₹6.25 per successful Try-On depending on pack)',
     params: [
-      { name: 'product_id',     type: 'string',  required: true,  desc: 'Your product identifier (must exist in this store)' },
+      { name: 'product_id',     type: 'string',  required: true,  desc: 'Your product identifier (must exist in this store), or a direct https:// garment image URL' },
       { name: 'user_photo_url', type: 'string',  required: true,  desc: 'Publicly accessible URL of the person photo (JPEG / PNG / WebP)' },
-      { name: 'mode',           type: 'string',  required: false, desc: 'Try-on mode. Default: "image_id"' },
+      { name: 'garment_type',   type: 'string',  required: false, desc: 'Target garment — what is being tried on. Case-insensitive ("two piece" works).', options: TARGET_GARMENTS, default: 'Two-piece outfit' },
+      { name: 'fit_type',       type: 'string',  required: false, desc: 'How the garment should fit the shopper.', options: GARMENT_FITS, default: 'Natural realistic fit' },
     ],
     responseSchema: `{\n  "prediction_id": "gm4rbfxrf9rn...",\n  "status": "starting"\n}`,
     errorResponses: [
+      { code: '400', desc: 'Invalid garment_type or fit_type — the error lists the allowed values' },
       { code: '401', desc: 'Invalid or missing API key' },
       { code: '402', desc: 'Insufficient credits' },
       { code: '404', desc: 'product_id not found for this store' },
       { code: '422', desc: 'Photo rejected by AI content moderation' },
     ],
     code: {
-      curl: `curl -X POST https://dashboard.vizzle.in/api/v1/tryon \\\n  -H "x-api-key: vzk_9114d52b..." \\\n  -H "Content-Type: application/json" \\\n  -H "Origin: https://your-store.com" \\\n  -d '{\n    "product_id": "SHIRT-001",\n    "user_photo_url": "https://cdn.yourstore.com/user-photo.jpg"\n  }'`,
-      python: `from vizzle import VizzleClient\n\nclient = VizzleClient(api_key="vzk_9114d52b...", base_url="https://dashboard.vizzle.in")\n\njob = client.tryon(\n    product_id="SHIRT-001",\n    user_photo_url="https://cdn.yourstore.com/user-photo.jpg"\n)\nprint("Job started:", job.prediction_id)\n\n# Auto-poll until done:\nresult = job.wait()\nprint("Output URL:", result.output_url)`,
-      javascript: `const response = await fetch("https://dashboard.vizzle.in/api/v1/tryon", {\n  method: "POST",\n  headers: {\n    "x-api-key": "vzk_9114d52b...",\n    "Content-Type": "application/json",\n    "Origin": "https://your-store.com",\n  },\n  body: JSON.stringify({\n    product_id: "SHIRT-001",\n    user_photo_url: "https://cdn.yourstore.com/user-photo.jpg",\n  }),\n});\nconst { prediction_id, status } = await response.json();\nconsole.log("Started:", prediction_id, status);`,
+      curl: `curl -X POST https://dashboard.vizzle.in/api/v1/tryon \\\n  -H "x-api-key: vzk_9114d52b..." \\\n  -H "Content-Type: application/json" \\\n  -H "Origin: https://your-store.com" \\\n  -d '{\n    "product_id": "SHIRT-001",\n    "user_photo_url": "https://cdn.yourstore.com/user-photo.jpg",\n    "garment_type": "Shirt",\n    "fit_type": "Regular fit"\n  }'\n\n# garment_type and fit_type are optional — omit them to use\n# "Two-piece outfit" and "Natural realistic fit".`,
+      python: `from vizzle import VizzleClient\n\nclient = VizzleClient(api_key="vzk_9114d52b...", base_url="https://dashboard.vizzle.in")\n\njob = client.tryon(\n    product_id="SHIRT-001",\n    user_photo_url="https://cdn.yourstore.com/user-photo.jpg",\n    garment_type="Shirt",       # optional, default "Two-piece outfit"\n    fit_type="Regular fit",     # optional, default "Natural realistic fit"\n)\nprint("Job started:", job.prediction_id)\n\n# Auto-poll until done:\nresult = job.wait()\nprint("Output URL:", result.output_url)`,
+      javascript: `const response = await fetch("https://dashboard.vizzle.in/api/v1/tryon", {\n  method: "POST",\n  headers: {\n    "x-api-key": "vzk_9114d52b...",\n    "Content-Type": "application/json",\n    "Origin": "https://your-store.com",\n  },\n  body: JSON.stringify({\n    product_id: "SHIRT-001",\n    user_photo_url: "https://cdn.yourstore.com/user-photo.jpg",\n    garment_type: "Shirt",      // optional, default "Two-piece outfit"\n    fit_type: "Regular fit",    // optional, default "Natural realistic fit"\n  }),\n});\nconst { prediction_id, status } = await response.json();\nconsole.log("Started:", prediction_id, status);`,
     },
   },
 
@@ -144,7 +151,7 @@ const EP = {
   'video-start': {
     title: 'Start Video Generation',
     subtitle: 'Animate a try-on result image into a short fashion video. Returns a prediction ID — poll for the MP4 URL.',
-    type: 'endpoint', method: 'POST', endpoint: '/api/v1/generate-video', cost: 'Rs 5.00 per call',
+    type: 'endpoint', method: 'POST', endpoint: '/api/v1/generate-video', cost: 'Rs 15.00 per call',
     params: [
       { name: 'image_url',   type: 'string',  required: true,  desc: 'URL of the try-on output image (or any fashion photo)' },
       { name: 'motion_type', type: 'string',  required: false, desc: '"subtle_walk" | "pose_showcase" | "gentle_turn" — default: "subtle_walk"' },
@@ -155,7 +162,7 @@ const EP = {
     errorResponses: [
       { code: '400', desc: 'Invalid fps value (must be 24) or duration out of range' },
       { code: '401', desc: 'Invalid or missing API key' },
-      { code: '402', desc: 'Insufficient credits (costs Rs 5.00)' },
+      { code: '402', desc: 'Insufficient credits (costs Rs 15.00)' },
     ],
     code: {
       curl: `curl -X POST https://dashboard.vizzle.in/api/v1/generate-video \\\n  -H "x-api-key: vzk_9114d52b..." \\\n  -H "Content-Type: application/json" \\\n  -H "Origin: https://your-store.com" \\\n  -d '{\n    "image_url": "https://cdn.vizzle.in/vizzle/output.jpg",\n    "motion_type": "subtle_walk",\n    "duration": 4,\n    "fps": 24\n  }'`,
@@ -373,13 +380,24 @@ function TryItPanel({ ep }) {
               <label className="ar-tryit-label">
                 {p.name}{p.required && <span className="ar-req">required</span>}
               </label>
-              <input
-                className="ar-tryit-input"
-                type="text"
-                placeholder={p.desc}
-                value={values[p.name] ?? ''}
-                onChange={e => setValues(v => ({ ...v, [p.name]: e.target.value }))}
-              />
+              {p.options ? (
+                <select
+                  className="ar-tryit-input"
+                  value={values[p.name] ?? ''}
+                  onChange={e => setValues(v => ({ ...v, [p.name]: e.target.value }))}
+                >
+                  <option value="">{p.default ? `Not sent (default: ${p.default})` : 'Not sent'}</option>
+                  {p.options.map(o => <option key={o} value={o}>{o}</option>)}
+                </select>
+              ) : (
+                <input
+                  className="ar-tryit-input"
+                  type="text"
+                  placeholder={p.desc}
+                  value={values[p.name] ?? ''}
+                  onChange={e => setValues(v => ({ ...v, [p.name]: e.target.value }))}
+                />
+              )}
             </div>
           ))}
 
@@ -410,7 +428,19 @@ function ParamRow({ p }) {
     <tr>
       <td><code className="ar-pname">{p.name}</code>{p.required && <span className="ar-req">required</span>}</td>
       <td><span className="ar-ptype">{p.type}</span></td>
-      <td className="ar-pdesc">{p.desc}</td>
+      <td className="ar-pdesc">
+        {p.desc}
+        {p.default && (
+          <div className="ar-pmeta">Default: <code>{p.default}</code></div>
+        )}
+        {p.options && (
+          <div className="ar-pmeta">
+            One of: {p.options.map((o, i) => (
+              <span key={o}>{i > 0 && ", "}<code>{o}</code></span>
+            ))}
+          </div>
+        )}
+      </td>
     </tr>
   );
 }
