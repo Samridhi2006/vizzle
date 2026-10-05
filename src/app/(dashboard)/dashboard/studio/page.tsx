@@ -7,7 +7,7 @@ import {
   Camera, Sparkles, Info, Zap
 } from "lucide-react";
 import { cn } from "@/lib/client/utils";
-import { WOMEN_GARMENTS, GARMENT_CATEGORIES, POPULAR_GARMENT_IDS, type GarmentItem } from "@/data/womenGarments";
+import { WOMEN_GARMENTS, POPULAR_GARMENT_IDS, type GarmentItem } from "@/data/womenGarments";
 import { MEN_GARMENTS } from "@/data/menGarments";
 import { BOYS_GARMENTS } from "@/data/boysGarments";
 import { GIRLS_GARMENTS } from "@/data/girlsGarments";
@@ -17,6 +17,9 @@ import { WOMEN_POSES, MEN_POSES, POSE_CATEGORIES, type Pose } from "@/data/poses
 import { BACKGROUNDS, type Background } from "@/data/backgrounds";
 
 import { PLATFORMS, ASPECT_RATIOS, type AspectRatioOption } from "@/data/studioOptions";
+import PlatformSelector from "@/components/studio/PlatformSelector";
+import PlatformPreview from "@/components/studio/PlatformPreview";
+import { sareeSpecificPoses, isSareeGarment } from "@/data/sareePoses";
 
 /* ============================================================
    TYPES
@@ -341,17 +344,16 @@ export default function StudioPage() {
     ? garments.filter((g) => POPULAR_GARMENT_IDS.includes(g.id)).slice(0, 10)
     : garments.slice(0, 10);
 
-  const filteredGarments = category === "all" ? garments : garments.filter((g) => g.category === category);
-  const poses = audience === "men" ? MEN_POSES : WOMEN_POSES;
+  const filteredGarments = garments;
+  const selectedGarmentItem = garments.find((g) => g.id === selectedGarment);
+  const isSaree = isSareeGarment(selectedGarmentItem?.id || "") || selectedGarmentItem?.category === "ethnic";
+  const poses = isSaree ? sareeSpecificPoses : (audience === "men" ? MEN_POSES : WOMEN_POSES);
   const filteredPoses = poseCategory === "all" ? poses : poses.filter((p) => p.category === poseCategory);
 
-  const selectedGarmentItem = garments.find((g) => g.id === selectedGarment);
   const models = (audience === "men" || audience === "boys") ? MEN_AI_MODELS : AI_MODELS;
   const selectedModelItem = models.find((m) => m.id === selectedModel) || models[0];
   const selectedPoseItem = poses.find((p) => p.id === selectedPose) || poses[0];
   const selectedBgItem = BACKGROUNDS.find((b) => b.id === selectedBg);
-
-  const isSaree = selectedGarmentItem?.id === "saree" || selectedGarmentItem?.category === "ethnic";
 
   function makePreview(file: File, setter: (s: string | null) => void) {
     const reader = new FileReader();
@@ -463,8 +465,9 @@ export default function StudioPage() {
           </div>
           <button
             onClick={() => setGarmentModalOpen(true)}
-            className="rounded-lg border border-studio-200 bg-studio-50 px-3 py-1.5 text-xs font-semibold text-studio-700 hover:bg-studio-100 transition-colors"
+            className="flex items-center gap-1.5 rounded-lg border border-studio-200 bg-studio-50 px-3 py-1.5 text-xs font-semibold text-studio-700 hover:bg-studio-100 transition-colors"
           >
+            <LayoutGrid size={13} />
             View All
           </button>
         </div>
@@ -681,7 +684,7 @@ export default function StudioPage() {
 
       {/* STEP 4 — AI MODEL */}
       <section className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-        <div className="mb-4 flex items-center justify-between">
+        <div className="mb-4 flex items-center gap-3">
           <div className="flex items-center gap-3">
             <StepBadge n={4} />
             <div>
@@ -710,7 +713,7 @@ export default function StudioPage() {
 
       {/* STEP 5 — POSE */}
       <section className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-        <div className="mb-4 flex items-center justify-between">
+        <div className="mb-4 flex items-center gap-3">
           <div className="flex items-center gap-3">
             <StepBadge n={5} />
             <div>
@@ -739,7 +742,7 @@ export default function StudioPage() {
 
       {/* STEP 6 — BACKGROUND */}
       <section className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-        <div className="mb-4 flex items-center justify-between">
+        <div className="mb-4 flex items-center gap-3">
           <div className="flex items-center gap-3">
             <StepBadge n={6} />
             <div>
@@ -996,25 +999,6 @@ export default function StudioPage() {
         onClose={() => setGarmentModalOpen(false)}
         title={`All ${audience.charAt(0).toUpperCase() + audience.slice(1)}'s Garments`}
       >
-        {audience === "women" && (
-          <div className="mb-4 flex flex-wrap gap-2">
-            {GARMENT_CATEGORIES.map((cat) => (
-              <button
-                key={cat.id}
-                type="button"
-                onClick={() => setCategory(cat.id)}
-                className={cn(
-                  "rounded-full border px-3 py-1 text-xs font-semibold transition-all",
-                  category === cat.id
-                    ? "border-studio-600 bg-studio-600 text-white"
-                    : "border-gray-200 bg-white text-gray-600 hover:border-studio-300"
-                )}
-              >
-                {cat.label} {cat.count > 0 && <span className="opacity-70">({cat.count})</span>}
-              </button>
-            ))}
-          </div>
-        )}
         <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 lg:grid-cols-5">
           {filteredGarments.map((g) => (
             <GarmentCard
